@@ -36,6 +36,14 @@ class DonationRequestController extends Controller
         ]);
     }
 
+    public function showReschedule()
+    {
+        // return $this->service->getAllRescheduleByHospital();
+        return view('donation-reschedule-requests')->with([
+            "data" => $this->service->getAllRescheduleByHospital()
+        ]);
+    }
+
     public function show($id)
     {
         $request = $this->service->getById($id);
@@ -71,6 +79,29 @@ class DonationRequestController extends Controller
 
         $this->service->approve($id, $data);
         return redirect()->back()->with('success', 'Request Approved Successfully!');
+    }
+
+    public function reschedule(Request $request, $id)
+    {
+        $data = $request->validate([
+            'date' => 'required|date',
+            'notes' => 'nullable|string'
+        ]);
+
+        $this->service->reschedule($id, $data);
+        return redirect()->back()->with('success', 'Submitted Reschedule Request Successfully!');
+    }
+
+    public function approveReschedule($id)
+    {
+        $this->service->approveReschedule($id);
+        return redirect()->back()->with('success', 'Approved Reschedule Request Successfully!');
+    }
+
+    public function declineReschedule($id)
+    {
+        $this->service->declineReschedule($id);
+        return redirect()->back()->with('success', 'Declined Reschedule Request Successfully!');
     }
 
     public function cancel($id)

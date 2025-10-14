@@ -36,4 +36,25 @@ class DonationRequest extends Model
     {
         return $this->hasMany(DonationRequestSchedule::class);
     }
+
+    public function latestActiveSchedule()
+    {
+        return $this->hasOne(DonationRequestSchedule::class)
+            ->where('status', 'Active')
+            ->latest(); // this orders by created_at DESC and takes the first one
+    }
+
+    public function latestRescheduleRequest()
+    {
+        return $this->hasOne(DonationRequestSchedule::class)
+            ->where('status', 'Pending')
+            ->latest();
+    }
+
+    public function latestDeclinedRescheduleRequest()
+    {
+        return $this->hasOne(DonationRequestSchedule::class)
+            ->where('status', 'Declined')
+            ->latest();
+    }
 }

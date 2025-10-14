@@ -47,7 +47,7 @@
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
-                            <h5 class="mb-0">Donation Requests</h5>
+                            <h5 class="mb-0">Blood Requests</h5>
                         </div>
                         <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#confirmCreateDonationRequestModal">+&nbsp; New</a>
                     </div>
@@ -61,7 +61,7 @@
                                         ID
                                     </th>
                                     <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                        Name
+                                        Requester
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Email
@@ -70,25 +70,19 @@
                                         Location
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Hospital
+                                        Blood Type
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Hospital Location
+                                        Quantity
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Creation Date
+                                        Urgency Level
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Scheduled Date
+                                        Request Date
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Status
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Requested Date
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Requested Date Status
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Action
@@ -96,40 +90,34 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($data->donations as $dat)
+                                @foreach($data as $dat)
                                 <tr>
                                     <td class="ps-4">
                                         <p class="text-xs font-weight-bold mb-0">{{$dat->id}}</p>
                                     </td>
                                     <td>
-                                        <p class="text-xs font-weight-bold mb-0">{{$data->name}}</p>
-                                    </td>
-                                    <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{$data->email}}</p>
-                                    </td>
-                                    <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $data->location)[0]}}</p>
-                                    </td>
-                                    <td class="text-center">
                                         <p class="text-xs font-weight-bold mb-0">{{$dat->hospital->name}}</p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->hospital->user->email}}</p>
                                     </td>
                                     <td class="text-center">
                                         <p class="text-xs font-weight-bold mb-0">{{explode('|', $dat->hospital->location)[0]}}</p>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->created_at->format('Y-m-d')}}</span>
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->blood_type}}</p>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->date}}</span>
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->quantity}}</p>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->urgency_lvl}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->date :  $dat->latestDeclinedRescheduleRequest?->date}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->request_date->format('Y-m-d')}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->status :  $dat->latestDeclinedRescheduleRequest?->status}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->status}}</span>
                                     </td>
                                     <td class="text-center">
                                         <a 

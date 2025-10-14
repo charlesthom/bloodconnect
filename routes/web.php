@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BloodRequestController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\DonationRequestController;
 use App\Http\Controllers\HomeController;
@@ -82,12 +83,18 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/donation-requests', [DonationRequestController::class, 'index'])->name('donation-requests.index');
 	Route::get('/donation-requests/donor', [DonationRequestController::class, 'donor'])->name('donation-requests.donor');
 	Route::get('/donation-requests/hospital', [DonationRequestController::class, 'hospital'])->name('donation-requests.hospital');
+	Route::get('/donation-requests/reschedule', [DonationRequestController::class, 'showReschedule'])->name('donation-requests.reschedule.show');
 	Route::get('/donation-requests/{id}', [DonationRequestController::class, 'show'])->name('donation-requests.show');
 	Route::post('/donation-requests', [DonationRequestController::class, 'store'])->name('donation-requests.store');
 	Route::patch('/donation-requests/{id}', [DonationRequestController::class, 'update'])->name('donation-requests.update');
 	Route::patch('/donation-requests/approve/{id}', [DonationRequestController::class, 'approve'])->name('donation-requests.approve');
+	Route::patch('/donation-requests/reschedule/{id}', [DonationRequestController::class, 'reschedule'])->name('donation-requests.reschedule');
+	Route::patch('/donation-requests/reschedule/approve/{id}', [DonationRequestController::class, 'approveReschedule'])->name('donation-requests.reschedule.approve');
+	Route::patch('/donation-requests/reschedule/decline/{id}', [DonationRequestController::class, 'declineReschedule'])->name('donation-requests.reschedule.decline');
 	Route::patch('/donation-requests/cancel/{id}', [DonationRequestController::class, 'cancel'])->name('donation-requests.cancel');
 	Route::delete('/donation-requests/{id}', [DonationRequestController::class, 'destroy'])->name('donation-requests.destroy');
+
+	Route::get('/blood-requests', [BloodRequestController::class, 'index'])->name('blood-requests.index');
 });
 
 
@@ -109,3 +116,11 @@ use Stevebauman\Location\Facades\Location;
 Route::get('/login', function () {
 	return view('session/login-session');
 })->name('login');
+
+use App\Mail\TestMail;
+use Illuminate\Support\Facades\Mail;
+
+Route::get('/send-test-email', function () {
+	Mail::to('charlesthommatidios@gmail.com')->send(new TestMail());
+	return 'Email sent successfully!';
+});

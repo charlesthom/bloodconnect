@@ -42,12 +42,14 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
-                {{-- reschedule request modal --}}
-                <x-reschedule-request />
+                {{-- approve reschedule request modal --}}
+                <x-approve-reschedule-request />
+                {{-- decline reschedule request modal --}}
+                <x-decline-reschedule-request />
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
-                            <h5 class="mb-0">Donation Requests</h5>
+                            <h5 class="mb-0">Reschedule Requests</h5>
                         </div>
                         <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#confirmCreateDonationRequestModal">+&nbsp; New</a>
                     </div>
@@ -70,12 +72,6 @@
                                         Location
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Hospital
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Hospital Location
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                         Creation Date
                                     </th>
                                     <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
@@ -96,25 +92,19 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($data->donations as $dat)
+                                @foreach($data as $dat)
                                 <tr>
                                     <td class="ps-4">
                                         <p class="text-xs font-weight-bold mb-0">{{$dat->id}}</p>
                                     </td>
                                     <td>
-                                        <p class="text-xs font-weight-bold mb-0">{{$data->name}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->user->name}}</p>
                                     </td>
                                     <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{$data->email}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->user->email}}</p>
                                     </td>
                                     <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $data->location)[0]}}</p>
-                                    </td>
-                                    <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{$dat->hospital->name}}</p>
-                                    </td>
-                                    <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $dat->hospital->location)[0]}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $dat->user->location)[0]}}</p>
                                     </td>
                                     <td class="text-center">
                                         <span class="text-secondary text-xs font-weight-bold">{{$dat->created_at->format('Y-m-d')}}</span>
@@ -126,35 +116,34 @@
                                         <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->date :  $dat->latestDeclinedRescheduleRequest?->date}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestRescheduleRequest?->date}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->status :  $dat->latestDeclinedRescheduleRequest?->status}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestRescheduleRequest?->status}}</span>
                                     </td>
                                     <td class="text-center">
                                         <a 
                                             href="#"
                                             class="mx-3"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#rescheduleRequestModal"
+                                            data-bs-target="#approveRescheduleRequestModal"
                                             data-bs-original-title="Edit user"
-                                            data-id="{{ $dat->id }}"
+                                            data-id="{{ $dat->latestRescheduleRequest?->id }}"
                                         >
                                             <i class="fas fa-user-edit text-secondary"></i>
                                         </a>
-                                        {{-- <span>
+                                        <span>
                                             <a
                                                 href="#"
                                                 class="mx-3"
                                                 data-bs-toggle="modal"
-                                                data-bs-target="#deleteHospitalModal"
+                                                data-bs-target="#declineRescheduleRequestModal"
                                                 data-bs-original-title="Delete user"
-                                                data-id="{{ $dat->id }}"
-                                                data-name="{{ $dat->name }}"
+                                                data-id="{{ $dat->latestRescheduleRequest?->id }}"
                                             >
                                                 <i class="cursor-pointer fas fa-trash text-secondary"></i>
                                             </a>
-                                        </span> --}}
+                                        </span>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -177,13 +166,21 @@
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const rescheduleRequestModal = document.getElementById('rescheduleRequestModal');
-    const rescheduleRequestForm = document.getElementById('rescheduleRequestForm');
-    rescheduleRequestModal.addEventListener('show.bs.modal', event => {
+    const approveRescheduleRequestModal = document.getElementById('approveRescheduleRequestModal');
+    const approveRescheduleRequestForm = document.getElementById('approveRescheduleRequestForm');
+    const declineRescheduleRequestModal = document.getElementById('declineRescheduleRequestModal');
+    const declineRescheduleRequestForm = document.getElementById('declineRescheduleRequestForm');
+    approveRescheduleRequestModal.addEventListener('show.bs.modal', event => {
         let button = event.relatedTarget; // the clicked button
         let id = button.getAttribute('data-id');
 
-        rescheduleRequestForm.action = `/donation-requests/reschedule/${id}`;
+        approveRescheduleRequestForm.action = `/donation-requests/reschedule/approve/${id}`;
+    });
+    declineRescheduleRequestModal.addEventListener('show.bs.modal', event => {
+        let button = event.relatedTarget; // the clicked button
+        let id = button.getAttribute('data-id');
+
+        declineRescheduleRequestForm.action = `/donation-requests/reschedule/decline/${id}`;
     });
 });
 </script>

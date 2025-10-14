@@ -22,7 +22,7 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     {
         $user = Auth::user();
         return User::with(['donations' => function ($query) {
-            $query->with('hospital')
+            $query->with(['hospital', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
                 ->orderBy('id', 'asc');
         }])
             ->where('id', $user->id)
@@ -35,6 +35,17 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
             $query->orderBy('id', 'asc');
         }])
             ->where('hospital_id', $hospital_id)
+            ->where('status', DonationRequestStatusEnum::Pending)
+            ->get();
+    }
+
+    public function allRescheduleByHospital(int $hospital_id)
+    {
+        return DonationRequest::with(['user' => function ($query) {
+            $query->orderBy('id', 'asc');
+        }, 'latestActiveSchedule', 'latestRescheduleRequest'])
+            ->where('hospital_id', $hospital_id)
+            ->where('status', DonationRequestStatusEnum::RescheduleRequest)
             ->get();
     }
 
@@ -67,6 +78,41 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
             'notes' => $data['notes'],
             'status' => DonationRequestScheduleStatusEnum::Active
         ]);
+        return $donationRequest;
+    }
+
+    public function reschedule(int $id, array $data)
+    {
+        $donationRequest = DonationRequest::findOrFail($id);
+        $donationRequest->update(['status' => DonationRequestStatusEnum::RescheduleRequest]);
+        // DonationRequestSchedule::where('donation_request_id', $donationRequest->id)
+        //     ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
+        DonationRequestSchedule::create([
+            'donation_request_id' => $donationRequest->id,
+            'date' => $data['date'],
+            'notes' => $data['notes'],
+            'status' => DonationRequestScheduleStatusEnum::Pending
+        ]);
+        return $donationRequest;
+    }
+
+    public function approveReschedule(int $id)
+    {
+        $donationRequestSchedule = DonationRequestSchedule::findOrFail($id);
+        DonationRequestSchedule::where('donation_request_id', $donationRequestSchedule->donation_request_id)
+            ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
+        $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Active]);
+        $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
+        $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
+        return $donationRequest;
+    }
+
+    public function declineReschedule(int $id)
+    {
+        $donationRequestSchedule = DonationRequestSchedule::findOrFail($id);
+        $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Declined]);
+        $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
+        $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
         return $donationRequest;
     }
 

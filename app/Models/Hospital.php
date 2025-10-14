@@ -25,4 +25,9 @@ class Hospital extends Model
     {
         return $this->hasMany(DonationRequest::class);
     }
+
+    public function blood_requests()
+    {
+        return $this->hasMany(BloodRequest::class);
+    }
 }

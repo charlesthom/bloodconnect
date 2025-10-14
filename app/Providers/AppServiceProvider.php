@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Repositories\BloodRequestRepository;
+use App\Repositories\Contracts\BloodRequestRepositoryInterface;
 use App\Repositories\Contracts\HospitalRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use App\Repositories\Contracts\DonationRequestRepositoryInterface;
@@ -22,6 +24,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(HospitalRepositoryInterface::class, HospitalRepository::class);
         $this->app->bind(DonationRequestRepositoryInterface::class, DonationRequestRepository::class);
+        $this->app->bind(BloodRequestRepositoryInterface::class, BloodRequestRepository::class);
     }
 
     /**

@@ -49,6 +49,19 @@ class DonationRequestService
         return $this->repository->allByHospital($hospital->id);
     }
 
+    public function getAllRescheduleByHospital()
+    {
+        $user = Auth::user();
+        if (!$user || $user->role->value !== 'hospital') {
+            abort(403, 'Forbidden.');
+        }
+        $hospital = Hospital::where('user_id', $user->id)->first();
+        if (!$hospital) {
+            abort(403, 'Forbidden.');
+        }
+        return $this->repository->allRescheduleByHospital($hospital->id);
+    }
+
     public function getById(int $id)
     {
         return $this->repository->find($id);
@@ -75,6 +88,21 @@ class DonationRequestService
     public function approve(int $id, array $data)
     {
         return $this->repository->approve($id, $data);
+    }
+
+    public function reschedule(int $id, array $data)
+    {
+        return $this->repository->reschedule($id, $data);
+    }
+
+    public function approveReschedule(int $id)
+    {
+        return $this->repository->approveReschedule($id);
+    }
+
+    public function declineReschedule(int $id)
+    {
+        return $this->repository->declineReschedule($id);
     }
 
     public function cancel(int $id)
