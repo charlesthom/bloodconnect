@@ -34,10 +34,10 @@ class BloodRequest extends Model
     }
 
     /**
-     * Relationship: BloodRequest may be confirmed by a User
+     * Relationship: BloodRequest may be confirmed by a Hospital
      */
     public function confirmedBy()
     {
-        return $this->belongsTo(User::class, 'confirmed_by');
+        return $this->belongsTo(Hospital::class, 'confirmed_by');
     }
 }

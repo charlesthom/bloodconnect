@@ -95,6 +95,8 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::delete('/donation-requests/{id}', [DonationRequestController::class, 'destroy'])->name('donation-requests.destroy');
 
 	Route::get('/blood-requests', [BloodRequestController::class, 'index'])->name('blood-requests.index');
+	Route::post('/blood-requests', [BloodRequestController::class, 'store'])->name('blood-requests.store');
+	Route::patch('/blood-requests/fulfill/{id}', [BloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
 });
 
 

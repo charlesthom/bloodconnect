@@ -2,9 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Enums\BloodRequestStatusEnum;
 use App\Models\BloodRequest;
 use App\Models\DonationRequest;
+use App\Models\Hospital;
 use App\Repositories\Contracts\BloodRequestRepositoryInterface;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class BloodRequestRepository implements BloodRequestRepositoryInterface
 {
@@ -23,7 +27,24 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
 
     public function create(array $data)
     {
+        $user = Auth::user();
+        $hospital = Hospital::where('user_id', $user->id)->first();
+        $data['hospital_id'] = $hospital->id;
+        $data['status'] = BloodRequestStatusEnum::Pending;
+        $data['request_date'] = Carbon::now();
         return BloodRequest::create($data);
+    }
+
+    public function fulfill(int $id)
+    {
+        $user = Auth::user();
+        $hospital = Hospital::where('user_id', $user->id)->first();
+        $blood_request = BloodRequest::find($id);
+        $blood_request->update([
+            'status' => BloodRequestStatusEnum::Fulfilled,
+            'confirmed_by' => $hospital->id,
+        ]);
+        return $blood_request;
     }
 
     public function update(int $id, array $data)

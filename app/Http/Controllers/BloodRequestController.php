@@ -31,16 +31,18 @@ class BloodRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'hospital_id'   => 'required|exists:hospitals,id',
             'blood_type'    => 'required|string',
             'quantity'      => 'required|string',
             'urgency_lvl'   => 'required|string',
-            'request_date'  => 'required|date',
-            'confirmed_by'  => 'nullable|exists:users,id',
-            'status'        => 'required|string',
         ]);
         $this->service->create($validated);
         return redirect()->back()->with('success', 'Request Created Successfully!');
+    }
+
+    public function fulfill($id)
+    {
+        $this->service->fulfill($id);
+        return redirect()->back()->with('success', 'Fulfileld Blood Request Successfully!');
     }
 
     public function update(Request $request, $id)

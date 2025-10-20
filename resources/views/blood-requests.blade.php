@@ -42,14 +42,16 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
-                {{-- reschedule request modal --}}
-                <x-reschedule-request />
+                {{-- new blood request modal --}}
+                <x-create-blood-request />
+                {{-- fulfill blood request modal --}}
+                <x-fulfill-blood-request />
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
                             <h5 class="mb-0">Blood Requests</h5>
                         </div>
-                        <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#confirmCreateDonationRequestModal">+&nbsp; New</a>
+                        <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#createBloodRequestModal">+&nbsp; New</a>
                     </div>
                 </div>
                 <div class="card-body px-0 pt-0 pb-2">
@@ -122,9 +124,9 @@
                                     <td class="text-center">
                                         <a 
                                             href="#"
-                                            class="mx-3"
+                                            class="mx-3 {{Auth::user()->id === $dat->hospital->user->id ? 'disabled' : ''}}"
                                             data-bs-toggle="modal"
-                                            data-bs-target="#rescheduleRequestModal"
+                                            data-bs-target="#fulfillBloodRequestModal"
                                             data-bs-original-title="Edit user"
                                             data-id="{{ $dat->id }}"
                                         >
@@ -160,18 +162,24 @@
 .btn-close-white {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
+a.disabled {
+    pointer-events: none;   /* disables clicking */
+    opacity: 0.5;           /* visual feedback */
+    cursor: not-allowed;    /* shows disabled cursor */
+    text-decoration: none;
+}
 </style>
 @endpush
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const rescheduleRequestModal = document.getElementById('rescheduleRequestModal');
-    const rescheduleRequestForm = document.getElementById('rescheduleRequestForm');
-    rescheduleRequestModal.addEventListener('show.bs.modal', event => {
+    const fulfillBloodRequestModal = document.getElementById('fulfillBloodRequestModal');
+    const fulfillBloodRequestForm = document.getElementById('fulfillBloodRequestForm');
+    fulfillBloodRequestModal.addEventListener('show.bs.modal', event => {
         let button = event.relatedTarget; // the clicked button
         let id = button.getAttribute('data-id');
 
-        rescheduleRequestForm.action = `/donation-requests/reschedule/${id}`;
+        fulfillBloodRequestForm.action = `/blood-requests/fulfill/${id}`;
     });
 });
 </script>
