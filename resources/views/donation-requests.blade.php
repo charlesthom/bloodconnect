@@ -42,6 +42,8 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
+                {{-- confirm creation of new donation request modal --}}
+                <x-confirm-create-donation-request />
                 {{-- reschedule request modal --}}
                 <x-reschedule-request />
                 <div class="card-header pb-0">
@@ -123,7 +125,7 @@
                                         <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->date}}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status ?? $dat->status}}</span>
                                     </td>
                                     <td class="text-center">
                                         <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->date :  $dat->latestDeclinedRescheduleRequest?->date}}</span>
