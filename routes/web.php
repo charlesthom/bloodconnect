@@ -120,9 +120,11 @@ Route::get('/login', function () {
 })->name('login');
 
 use App\Mail\TestMail;
+use App\Mail\DonationRequestMail;
 use Illuminate\Support\Facades\Mail;
 
 Route::get('/send-test-email', function () {
-	Mail::to('charlesthommatidios@gmail.com')->send(new TestMail());
-	return 'Email sent successfully!';
+	// Mail::to('charlesthommatidios@gmail.com')->send(new DonationRequestMail());
+	// return 'Email sent successfully!';
+	return view('emails.donation-request-admin-mail');
 });

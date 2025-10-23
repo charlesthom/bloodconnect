@@ -56,7 +56,8 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
 
     public function create(array $data)
     {
-        return DonationRequest::create($data);
+        $donationRequest = DonationRequest::create($data);
+        return DonationRequest::with(['user', 'hospital', 'hospital.user'])->where('id', $donationRequest->id)->first();
     }
 
     public function update(int $id, array $data)
@@ -93,7 +94,11 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
             'notes' => $data['notes'],
             'status' => DonationRequestScheduleStatusEnum::Pending
         ]);
-        return $donationRequest;
+        // return $donationRequest;
+        return User::with(['donations' => function ($query) use ($donationRequest) {
+            $query->with(['hospital', 'hospital.user', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
+                ->where('id', $donationRequest->id);
+        }])->find($donationRequest->user_id);
     }
 
     public function approveReschedule(int $id)

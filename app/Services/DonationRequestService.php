@@ -3,12 +3,17 @@
 namespace App\Services;
 
 use App\Enums\DonationRequestStatusEnum;
+use App\Mail\DonationRequestAdminMail;
+use App\Mail\DonationRequestMail;
+use App\Mail\RescheduleRequestAdminMail;
+use App\Mail\RescheduleRequestMail;
 use App\Models\Hospital;
 use App\Repositories\Contracts\DonationRequestRepositoryInterface;
 use App\Repositories\Contracts\HospitalRepositoryInterface;
 use App\Repositories\Contracts\UserRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class DonationRequestService
 {
@@ -77,7 +82,10 @@ class DonationRequestService
         $data['hospital_id'] = $nearestHospital->id;
         $data['date'] = now();
         $data['status'] = DonationRequestStatusEnum::Pending;
-        return $this->repository->create($data);
+        $donationRequest = $this->repository->create($data);
+        Mail::to($donationRequest->user->email)->send(new DonationRequestMail($donationRequest));
+        Mail::to($donationRequest->user->email)->send(new DonationRequestAdminMail($donationRequest));
+        return $donationRequest;
     }
 
     public function update(int $id, array $data)
@@ -92,7 +100,10 @@ class DonationRequestService
 
     public function reschedule(int $id, array $data)
     {
-        return $this->repository->reschedule($id, $data);
+        $donationRequest = $this->repository->reschedule($id, $data);
+        Mail::to($donationRequest->email)->send(new RescheduleRequestMail($donationRequest));
+        Mail::to($donationRequest->donations[0]->hospital->user->email)->send(new RescheduleRequestAdminMail($donationRequest));
+        return $donationRequest;
     }
 
     public function approveReschedule(int $id)

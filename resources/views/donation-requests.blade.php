@@ -136,7 +136,7 @@
                                     <td class="text-center">
                                         <a 
                                             href="#"
-                                            class="mx-3"
+                                            class="mx-3 {{!$dat->latestActiveSchedule?->date ? 'disabled': ''}}"
                                             data-bs-toggle="modal"
                                             data-bs-target="#rescheduleRequestModal"
                                             data-bs-original-title="Edit user"
@@ -173,6 +173,12 @@
 <style>
 .btn-close-white {
     filter: invert(1) grayscale(100%) brightness(200%);
+}
+a.disabled {
+    pointer-events: none;   /* disables clicking */
+    opacity: 0.5;           /* visual feedback */
+    cursor: not-allowed;    /* shows disabled cursor */
+    text-decoration: none;
 }
 </style>
 @endpush
