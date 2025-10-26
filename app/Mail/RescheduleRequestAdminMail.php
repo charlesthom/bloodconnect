@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RescheduleRequestAdminMail extends Mailable
+class RescheduleRequestAdminMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     public $donationRequest;

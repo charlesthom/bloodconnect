@@ -95,8 +95,8 @@ class DonationRequestService
         $data['date'] = now();
         $data['status'] = DonationRequestStatusEnum::Pending;
         $donationRequest = $this->repository->create($data);
-        Mail::to($donationRequest->user->email)->send(new DonationRequestMail($donationRequest));
-        Mail::to($donationRequest->hospital->user->email)->send(new DonationRequestAdminMail($donationRequest));
+        Mail::to($donationRequest->user->email)->queue(new DonationRequestMail($donationRequest));
+        Mail::to($donationRequest->hospital->user->email)->queue(new DonationRequestAdminMail($donationRequest));
         return $donationRequest;
     }
 
@@ -113,16 +113,16 @@ class DonationRequestService
     public function reschedule(int $id, array $data)
     {
         $donationRequest = $this->repository->reschedule($id, $data);
-        Mail::to($donationRequest->email)->send(new RescheduleRequestMail($donationRequest));
-        Mail::to($donationRequest->donations[0]->hospital->user->email)->send(new RescheduleRequestAdminMail($donationRequest));
+        Mail::to($donationRequest->email)->queue(new RescheduleRequestMail($donationRequest));
+        Mail::to($donationRequest->donations[0]->hospital->user->email)->queue(new RescheduleRequestAdminMail($donationRequest));
         return $donationRequest;
     }
 
     public function approveReschedule(int $id)
     {
         $donationRequest = $this->repository->approveReschedule($id);
-        Mail::to($donationRequest->email)->send(new ApproveRequestMail($donationRequest));
-        Mail::to($donationRequest->donations[0]->hospital->user->email)->send(new ApproveRequestAdminMail($donationRequest));
+        Mail::to($donationRequest->email)->queue(new ApproveRequestMail($donationRequest));
+        Mail::to($donationRequest->donations[0]->hospital->user->email)->queue(new ApproveRequestAdminMail($donationRequest));
         return $donationRequest;
     }
 
