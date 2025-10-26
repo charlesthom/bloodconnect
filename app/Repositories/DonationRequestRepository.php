@@ -116,6 +116,25 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
 
     public function create(array $data)
     {
+        $user = Auth::user();
+        $latestDonationRequest = DonationRequest::where('user_id', $data['user_id'])->latest()->first();
+        if ($latestDonationRequest) {
+            if (strtoupper($user->gender) == 'MALE') {
+                $allowDate = $latestDonationRequest->created_at->addMonths(4)->format('M d, Y');
+                if ($latestDonationRequest->created_at->gt(now()->subMonths(4))) {
+                    throw new \Exception(
+                        "You can only request again after {$allowDate}."
+                    );
+                }
+            } else {
+                $allowDate = $latestDonationRequest->created_at->addMonths(3)->format('M d, Y');
+                if ($latestDonationRequest->created_at->gt(now()->subMonths(3))) {
+                    throw new \Exception(
+                        "You can only request again after {$allowDate}."
+                    );
+                }
+            }
+        }
         $donationRequest = DonationRequest::create($data);
         return DonationRequest::with(['user', 'hospital', 'hospital.user'])->where('id', $donationRequest->id)->first();
     }
@@ -169,7 +188,10 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
         $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Active]);
         $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
         $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
-        return $donationRequest;
+        return User::with(['donations' => function ($query) use ($donationRequest) {
+            $query->with(['hospital', 'hospital.user', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
+                ->where('id', $donationRequest->id);
+        }])->find($donationRequest->user_id);
     }
 
     public function declineReschedule(int $id)

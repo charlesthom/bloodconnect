@@ -52,8 +52,12 @@ class DonationRequestController extends Controller
 
     public function store(Request $request)
     {
-        $this->service->create();
-        return redirect()->back()->with('success', 'Request Created Successfully!');
+        try {
+            $this->service->create();
+            return redirect()->back()->with('success', 'Request Created Successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 
     public function update(Request $request, $id)

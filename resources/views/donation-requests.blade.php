@@ -21,6 +21,14 @@
             </div>
         @endforeach
     @endif
+    @if(session()->has('error'))
+        <div class="alert alert-danger alert-dismissible fade show mx-4" role="alert">
+                <span class="text-white">
+                    {{ session('error') }}
+                </span>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close">x</button>
+            </div>
+    @endif
     {{-- @if($errors->any())
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
             <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">

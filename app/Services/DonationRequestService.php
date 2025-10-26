@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Enums\DonationRequestStatusEnum;
+use App\Mail\ApproveRequestAdminMail;
+use App\Mail\ApproveRequestMail;
 use App\Mail\DonationRequestAdminMail;
 use App\Mail\DonationRequestMail;
 use App\Mail\RescheduleRequestAdminMail;
@@ -94,7 +96,7 @@ class DonationRequestService
         $data['status'] = DonationRequestStatusEnum::Pending;
         $donationRequest = $this->repository->create($data);
         Mail::to($donationRequest->user->email)->send(new DonationRequestMail($donationRequest));
-        Mail::to($donationRequest->user->email)->send(new DonationRequestAdminMail($donationRequest));
+        Mail::to($donationRequest->hospital->user->email)->send(new DonationRequestAdminMail($donationRequest));
         return $donationRequest;
     }
 
@@ -118,7 +120,10 @@ class DonationRequestService
 
     public function approveReschedule(int $id)
     {
-        return $this->repository->approveReschedule($id);
+        $donationRequest = $this->repository->approveReschedule($id);
+        Mail::to($donationRequest->email)->send(new ApproveRequestMail($donationRequest));
+        Mail::to($donationRequest->donations[0]->hospital->user->email)->send(new ApproveRequestAdminMail($donationRequest));
+        return $donationRequest;
     }
 
     public function declineReschedule(int $id)

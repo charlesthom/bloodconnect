@@ -33,7 +33,7 @@
               <div class="numbers">
                 <p class="text-sm mb-0 text-capitalize font-weight-bold">Latest Request</p>
                 <h5 class="font-weight-bolder mb-0" style="font-size: 14px">
-                  Created At {{$latest?->created_at?->format('m-d-Y') ?? ''}}
+                  {{ $latest?->created_at ? 'Created At ' . $latest?->created_at?->format('m-d-Y') : '' }}
                 </h5>
               </div>
             </div>
