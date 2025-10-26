@@ -10,6 +10,7 @@ use App\Models\Hospital;
 use App\Models\User;
 use App\Repositories\Contracts\DonationRequestRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class DonationRequestRepository implements DonationRequestRepositoryInterface
 {
@@ -37,6 +38,65 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
             ->where('hospital_id', $hospital_id)
             ->where('status', DonationRequestStatusEnum::Pending)
             ->get();
+    }
+
+    public function getMonthlyDataThisYearByHospital()
+    {
+        $user = Auth::user();
+        $hospital = Hospital::where('user_id', $user->id)->first();
+
+        $results = DonationRequest::select(
+            DB::raw('MONTH(created_at) AS month'),
+            DB::raw('COUNT(*) AS total')
+        )
+            ->whereYear('created_at', now()->year)
+            ->where('hospital_id', $hospital->id)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get();
+
+        // Create an array of 12 months with 0 default
+        $fullData = collect(range(1, 12))->map(function ($month) use ($results) {
+            $match = $results->firstWhere('month', $month);
+
+            return [
+                'month' => $month,
+                'total' => $match ? $match->total : 0,
+            ];
+        });
+
+        return $fullData;
+    }
+
+    public function getMonthlyAcceptedDataThisYearByHospital()
+    {
+        $user = Auth::user();
+        $hospital = Hospital::where('user_id', $user->id)->first();
+
+        $results = DonationRequest::select(
+            DB::raw('MONTH(created_at) AS month'),
+            DB::raw('COUNT(*) AS total')
+        )
+            ->whereYear('created_at', now()->year)
+            ->where('hospital_id', $hospital->id)
+            ->whereHas('schedules', function ($query) {
+                $query->where('status', DonationRequestScheduleStatusEnum::Active);
+            })
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy('month')
+            ->get();
+
+        // Create an array of 12 months with 0 default
+        $fullData = collect(range(1, 12))->map(function ($month) use ($results) {
+            $match = $results->firstWhere('month', $month);
+
+            return [
+                'month' => $month,
+                'total' => $match ? $match->total : 0,
+            ];
+        });
+
+        return $fullData;
     }
 
     public function allRescheduleByHospital(int $hospital_id)
@@ -131,5 +191,45 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     public function delete(int $id)
     {
         return DonationRequest::destroy($id);
+    }
+
+    public function findLatestActiveDonation()
+    {
+        $user = Auth::user();
+        return DonationRequest::with([
+            'schedules' => function ($query) {
+                $query->where('status', DonationRequestScheduleStatusEnum::Active);
+            },
+            'hospital'
+        ])
+            ->where('user_id', $user->id)
+            ->whereHas('schedules', function ($query) {
+                $query->where('status', DonationRequestScheduleStatusEnum::Active);
+            })
+            ->latest('id')
+            ->first();
+    }
+
+    public function findLatestDonationRequest()
+    {
+        $user = Auth::user();
+        return DonationRequest::with(['schedules' => function ($query) {
+            $query->orderBy('date', 'desc')->first();
+        }, 'hospital'])
+            ->where('user_id', $user->id)
+            ->orderBy('id', 'desc')
+            ->first();
+    }
+
+    public function findAllByDonor()
+    {
+        $user = Auth::user();
+        return DonationRequest::where('user_id', $user->id)->get();
+    }
+
+    public function findAllScheduledByDonor()
+    {
+        $user = Auth::user();
+        return DonationRequest::where('user_id', $user->id)->whereHas('schedules')->get();
     }
 }

@@ -5,6 +5,7 @@ namespace App\Repositories\Contracts;
 interface BloodRequestRepositoryInterface
 {
     public function all();
+    public function allByHospital();
     public function find(int $id);
     public function create(array $data);
     public function fulfill(int $id);

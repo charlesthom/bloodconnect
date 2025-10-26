@@ -77,6 +77,7 @@
         </a>
       </li>
       @endif
+      @if(Auth::user()->role->value !== 'admin')
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('donation-requests/donor') || Request::is('donation-requests/hospital') ? 'active' : '') }}" href="{{ Auth::user()->role->value === 'donor'
               ? route('donation-requests.donor') 
@@ -100,6 +101,7 @@
             <span class="nav-link-text ms-1">Donation Requests</span>
         </a>
       </li>
+      @endif
       @if(Auth::user()->role->value === 'hospital')
       <li class="nav-item">
         <a class="nav-link {{ (Request::is('donation-requests/reschedule') ? 'active' : '') }}" href="{{ route('donation-requests.reschedule.show') }}">
@@ -146,7 +148,7 @@
         </a>
       </li>
       @endif
-      <li class="nav-item mt-2">
+      {{-- <li class="nav-item mt-2">
         <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Example pages</h6>
       </li>
       <li class="nav-item">
@@ -300,7 +302,7 @@
       <li class="nav-link mb-0">
         <a href="https://www.creative-tim.com/product/soft-ui-dashboard-pro-laravel" class="btn btn-primary btn-md active px-5 text-white" target="_blank" role="button" aria-pressed="true">
             Upgrade to PRO</a>
-      </li>
+      </li> --}}
     </ul>
   </div>
   {{-- <div class="sidenav-footer mx-3 ">

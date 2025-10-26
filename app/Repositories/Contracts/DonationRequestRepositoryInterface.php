@@ -17,4 +17,10 @@ interface DonationRequestRepositoryInterface
     public function declineReschedule(int $id);
     public function cancel(int $id);
     public function delete(int $id);
+    public function findLatestActiveDonation();
+    public function findLatestDonationRequest();
+    public function findAllByDonor();
+    public function findAllScheduledByDonor();
+    public function getMonthlyAcceptedDataThisYearByHospital();
+    public function getMonthlyDataThisYearByHospital();
 }

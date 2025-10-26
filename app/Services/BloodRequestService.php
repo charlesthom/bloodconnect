@@ -19,6 +19,11 @@ class BloodRequestService
         return $this->repository->all();
     }
 
+    public function getAllByHospital()
+    {
+        return $this->repository->allByHospital();
+    }
+
     public function getById(int $id)
     {
         return $this->repository->find($id);

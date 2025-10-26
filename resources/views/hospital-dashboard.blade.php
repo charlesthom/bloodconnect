@@ -9,9 +9,9 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-capitalize font-weight-bold">Latest Active Donation</p>
-                <h5 class="font-weight-bolder mb-0" style="font-size: 15px">
-                  {{$latest_active->schedules[0]->date}}
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Pending Requests</p>
+                <h5 class="font-weight-bolder mb-0">
+                  {{$pending_count}}
                   {{-- <span class="text-success text-sm font-weight-bolder">+55%</span> --}}
                 </h5>
               </div>
@@ -31,9 +31,10 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-capitalize font-weight-bold">Latest Request</p>
-                <h5 class="font-weight-bolder mb-0" style="font-size: 14px">
-                  Created At {{$latest->created_at->format('m-d-Y')}}
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Reschedule Requests</p>
+                <h5 class="font-weight-bolder mb-0">
+                  {{$reschedule_count}}
+                  {{-- <span class="text-success text-sm font-weight-bolder">+3%</span> --}}
                 </h5>
               </div>
             </div>
@@ -52,9 +53,10 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Requests</p>
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Blood Requests</p>
                 <h5 class="font-weight-bolder mb-0">
-                  {{$all_count}}
+                  {{$blood_request_count}}
+                  {{-- <span class="text-danger text-sm font-weight-bolder">-2%</span> --}}
                 </h5>
               </div>
             </div>
@@ -73,9 +75,10 @@
           <div class="row">
             <div class="col-8">
               <div class="numbers">
-                <p class="text-sm mb-0 text-capitalize font-weight-bold">Scheduled Request</p>
+                <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Blood Requests</p>
                 <h5 class="font-weight-bolder mb-0">
-                  {{$all_scheduled_count}}
+                  {{$all_blood_request_count}}
+                  {{-- <span class="text-success text-sm font-weight-bolder">+5%</span> --}}
                 </h5>
               </div>
             </div>
@@ -133,8 +136,8 @@
       </div>
     </div>
   </div> --}}
-  {{-- <div class="row mt-4">
-    <div class="col-lg-5 mb-lg-0 mb-4">
+  <div class="row mt-4">
+    {{-- <div class="col-lg-5 mb-lg-0 mb-4">
       <div class="card z-index-2">
         <div class="card-body p-3">
           <div class="bg-gradient-dark border-radius-lg py-3 pe-1 mb-3">
@@ -249,14 +252,14 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="col-lg-7">
+    </div> --}}
+    <div class="col-lg-12">
       <div class="card z-index-2">
         <div class="card-header pb-0">
-          <h6>Sales overview</h6>
+          <h6>Donation Requests</h6>
           <p class="text-sm">
-            <i class="fa fa-arrow-up text-success"></i>
-            <span class="font-weight-bold">4% more</span> in 2021
+            {{-- <i class="fa fa-arrow-up text-success"></i>
+            <span class="font-weight-bold">4% more</span> in 2021 --}}
           </p>
         </div>
         <div class="card-body p-3">
@@ -266,7 +269,7 @@
         </div>
       </div>
     </div>
-  </div> --}}
+  </div>
   {{-- <div class="row my-4">
     <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
       <div class="card">
@@ -615,73 +618,81 @@
 
 @endsection
 @push('dashboard')
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    window.onload = function() {
-      var ctx = document.getElementById("chart-bars").getContext("2d");
+    window.onload = async function() {
+      // const hospitalData = await axios.get('/api/hospital-data', { withCredentials: true });
+      await axios.get('/sanctum/csrf-cookie');
 
-      new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-          datasets: [{
-            label: "Sales",
-            tension: 0.4,
-            borderWidth: 0,
-            borderRadius: 4,
-            borderSkipped: false,
-            backgroundColor: "#fff",
-            data: [450, 200, 100, 220, 500, 100, 400, 230, 500],
-            maxBarThickness: 6
-          }, ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false,
-            }
-          },
-          interaction: {
-            intersect: false,
-            mode: 'index',
-          },
-          scales: {
-            y: {
-              grid: {
-                drawBorder: false,
-                display: false,
-                drawOnChartArea: false,
-                drawTicks: false,
-              },
-              ticks: {
-                suggestedMin: 0,
-                suggestedMax: 500,
-                beginAtZero: true,
-                padding: 15,
-                font: {
-                  size: 14,
-                  family: "Open Sans",
-                  style: 'normal',
-                  lineHeight: 2
-                },
-                color: "#fff"
-              },
-            },
-            x: {
-              grid: {
-                drawBorder: false,
-                display: false,
-                drawOnChartArea: false,
-                drawTicks: false
-              },
-              ticks: {
-                display: false
-              },
-            },
-          },
-        },
+      const res = await axios.get('/api/hospital-data', {
+          withCredentials: true
       });
+
+      // var ctx = document.getElementById("chart-bars").getContext("2d");
+
+      // new Chart(ctx, {
+      //   type: "bar",
+      //   data: {
+      //     labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+      //     datasets: [{
+      //       label: "Sales",
+      //       tension: 0.4,
+      //       borderWidth: 0,
+      //       borderRadius: 4,
+      //       borderSkipped: false,
+      //       backgroundColor: "#fff",
+      //       data: [100, 200, 300, 450, 200, 100, 220, 500, 100, 400, 230, 500],
+      //       maxBarThickness: 6
+      //     }, ],
+      //   },
+      //   options: {
+      //     responsive: true,
+      //     maintainAspectRatio: false,
+      //     plugins: {
+      //       legend: {
+      //         display: false,
+      //       }
+      //     },
+      //     interaction: {
+      //       intersect: false,
+      //       mode: 'index',
+      //     },
+      //     scales: {
+      //       y: {
+      //         grid: {
+      //           drawBorder: false,
+      //           display: false,
+      //           drawOnChartArea: false,
+      //           drawTicks: false,
+      //         },
+      //         ticks: {
+      //           suggestedMin: 0,
+      //           suggestedMax: 500,
+      //           beginAtZero: true,
+      //           padding: 15,
+      //           font: {
+      //             size: 14,
+      //             family: "Open Sans",
+      //             style: 'normal',
+      //             lineHeight: 2
+      //           },
+      //           color: "#fff"
+      //         },
+      //       },
+      //       x: {
+      //         grid: {
+      //           drawBorder: false,
+      //           display: false,
+      //           drawOnChartArea: false,
+      //           drawTicks: false
+      //         },
+      //         ticks: {
+      //           display: false
+      //         },
+      //       },
+      //     },
+      //   },
+      // });
 
 
       var ctx2 = document.getElementById("chart-line").getContext("2d");
@@ -701,9 +712,9 @@
       new Chart(ctx2, {
         type: "line",
         data: {
-          labels: ["Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+          labels: res.data.total_requests.map(data => data.month_name),
           datasets: [{
-              label: "Mobile apps",
+              label: "Total Requests",
               tension: 0.4,
               borderWidth: 0,
               pointRadius: 0,
@@ -711,12 +722,12 @@
               borderWidth: 3,
               backgroundColor: gradientStroke1,
               fill: true,
-              data: [50, 40, 300, 220, 500, 250, 400, 230, 500],
+              data: res.data.total_requests.map(data => data.total),
               maxBarThickness: 6
 
             },
             {
-              label: "Websites",
+              label: 'Total Accepted Requests',
               tension: 0.4,
               borderWidth: 0,
               pointRadius: 0,
@@ -724,7 +735,7 @@
               borderWidth: 3,
               backgroundColor: gradientStroke2,
               fill: true,
-              data: [30, 90, 40, 140, 290, 290, 340, 230, 400],
+              data: res.data.total_accepted_requests.map(data => data.total),
               maxBarThickness: 6
             },
           ],

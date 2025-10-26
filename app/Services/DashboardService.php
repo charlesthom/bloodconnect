@@ -15,40 +15,30 @@ use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
-class DonationRequestService
+class DashboardService
 {
-    protected $repository;
+    protected $donationRequestRepository;
     protected $userRepository;
     protected $hospitalRepository;
 
     public function __construct(
-        DonationRequestRepositoryInterface $repository,
+        DonationRequestRepositoryInterface $donationRequestRepository,
         UserRepositoryInterface $userRepository,
         HospitalRepositoryInterface $hospitalRepository,
     ) {
-        $this->repository = $repository;
+        $this->donationRequestRepository = $donationRequestRepository;
         $this->userRepository = $userRepository;
         $this->hospitalRepository = $hospitalRepository;
     }
 
     public function getAll()
     {
-        return $this->repository->all();
+        return $this->donationRequestRepository->all();
     }
 
     public function getAllByDonor()
     {
-        return $this->repository->allByDonor();
-    }
-
-    public function getMonthlyDataThisYearByHospital()
-    {
-        return $this->repository->getMonthlyDataThisYearByHospital();
-    }
-
-    public function getMonthlyAcceptedDataThisYearByHospital()
-    {
-        return $this->repository->getMonthlyAcceptedDataThisYearByHospital();
+        return $this->donationRequestRepository->allByDonor();
     }
 
     public function getAllByHospital()
@@ -61,7 +51,7 @@ class DonationRequestService
         if (!$hospital) {
             abort(403, 'Forbidden.');
         }
-        return $this->repository->allByHospital($hospital->id);
+        return $this->donationRequestRepository->allByHospital($hospital->id);
     }
 
     public function getAllRescheduleByHospital()
@@ -74,12 +64,12 @@ class DonationRequestService
         if (!$hospital) {
             abort(403, 'Forbidden.');
         }
-        return $this->repository->allRescheduleByHospital($hospital->id);
+        return $this->donationRequestRepository->allRescheduleByHospital($hospital->id);
     }
 
     public function getById(int $id)
     {
-        return $this->repository->find($id);
+        return $this->donationRequestRepository->find($id);
     }
 
     public function create()
@@ -92,7 +82,7 @@ class DonationRequestService
         $data['hospital_id'] = $nearestHospital->id;
         $data['date'] = now();
         $data['status'] = DonationRequestStatusEnum::Pending;
-        $donationRequest = $this->repository->create($data);
+        $donationRequest = $this->donationRequestRepository->create($data);
         Mail::to($donationRequest->user->email)->send(new DonationRequestMail($donationRequest));
         Mail::to($donationRequest->user->email)->send(new DonationRequestAdminMail($donationRequest));
         return $donationRequest;
@@ -100,17 +90,17 @@ class DonationRequestService
 
     public function update(int $id, array $data)
     {
-        return $this->repository->update($id, $data);
+        return $this->donationRequestRepository->update($id, $data);
     }
 
     public function approve(int $id, array $data)
     {
-        return $this->repository->approve($id, $data);
+        return $this->donationRequestRepository->approve($id, $data);
     }
 
     public function reschedule(int $id, array $data)
     {
-        $donationRequest = $this->repository->reschedule($id, $data);
+        $donationRequest = $this->donationRequestRepository->reschedule($id, $data);
         Mail::to($donationRequest->email)->send(new RescheduleRequestMail($donationRequest));
         Mail::to($donationRequest->donations[0]->hospital->user->email)->send(new RescheduleRequestAdminMail($donationRequest));
         return $donationRequest;
@@ -118,21 +108,41 @@ class DonationRequestService
 
     public function approveReschedule(int $id)
     {
-        return $this->repository->approveReschedule($id);
+        return $this->donationRequestRepository->approveReschedule($id);
     }
 
     public function declineReschedule(int $id)
     {
-        return $this->repository->declineReschedule($id);
+        return $this->donationRequestRepository->declineReschedule($id);
     }
 
     public function cancel(int $id)
     {
-        return $this->repository->cancel($id);
+        return $this->donationRequestRepository->cancel($id);
     }
 
     public function delete(int $id)
     {
-        return $this->repository->delete($id);
+        return $this->donationRequestRepository->delete($id);
+    }
+
+    public function findLatestActiveDonation()
+    {
+        return $this->donationRequestRepository->findLatestActiveDonation();
+    }
+
+    public function findLatestDonationRequest()
+    {
+        return $this->donationRequestRepository->findLatestDonationRequest();
+    }
+
+    public function findAllByDonor()
+    {
+        return $this->donationRequestRepository->findAllByDonor();
+    }
+
+    public function findAllScheduledByDonor()
+    {
+        return $this->donationRequestRepository->findAllScheduledByDonor();
     }
 }

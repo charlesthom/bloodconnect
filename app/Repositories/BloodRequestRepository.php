@@ -20,6 +20,17 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
             ->get();
     }
 
+    public function allByHospital()
+    {
+        $user = Auth::user();
+        $hospital = Hospital::where('user_id', $user->id)->first();
+        return BloodRequest::with(['hospital' => function ($query) {
+            $query->with(['user']);
+        }])
+            ->where('hospital_id', $hospital->id)
+            ->get();
+    }
+
     public function find(int $id)
     {
         return BloodRequest::findOrFail($id);
