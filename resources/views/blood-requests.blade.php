@@ -124,7 +124,7 @@
                                     <td class="text-center">
                                         <a 
                                             href="#"
-                                            class="mx-3 {{Auth::user()->id === $dat->hospital->user->id ? 'disabled' : ''}}"
+                                            class="mx-3 {{(Auth::user()->id === $dat->hospital->user->id || $dat->status === 'Fulfilled') ? 'disabled' : ''}}"
                                             data-bs-toggle="modal"
                                             data-bs-target="#fulfillBloodRequestModal"
                                             data-bs-original-title="Edit user"
