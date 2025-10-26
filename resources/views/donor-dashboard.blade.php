@@ -11,7 +11,7 @@
               <div class="numbers">
                 <p class="text-sm mb-0 text-capitalize font-weight-bold">Latest Active Donation</p>
                 <h5 class="font-weight-bolder mb-0" style="font-size: 15px">
-                  {{$latest_active->schedules[0]->date}}
+                  {{$latest_active->schedules[0]->date ?? ''}}
                   {{-- <span class="text-success text-sm font-weight-bolder">+55%</span> --}}
                 </h5>
               </div>
