@@ -3,12 +3,15 @@
 namespace App\Repositories;
 
 use App\Enums\BloodRequestStatusEnum;
+use App\Mail\BloodRequestMail;
+use App\Mail\BloodRequestOwnerMail;
 use App\Models\BloodRequest;
 use App\Models\DonationRequest;
 use App\Models\Hospital;
 use App\Repositories\Contracts\BloodRequestRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class BloodRequestRepository implements BloodRequestRepositoryInterface
 {
@@ -43,7 +46,14 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
         $data['hospital_id'] = $hospital->id;
         $data['status'] = BloodRequestStatusEnum::Pending;
         $data['request_date'] = Carbon::now();
-        return BloodRequest::create($data);
+        $create = BloodRequest::create($data);
+        $bloodRequest = BloodRequest::with(['hospital', 'hospital.user'])->where('id', $create->id)->first();
+        $hospitals = Hospital::with(['user'])->where('id', '<>', $hospital->id)->get();
+        Mail::to($bloodRequest->hospital->user->email)->queue(new BloodRequestOwnerMail($bloodRequest));
+        foreach ($hospitals as $hos) {
+            Mail::to($hos->user->email)->queue(new BloodRequestMail($bloodRequest, $hos));
+        }
+        return $bloodRequest;
     }
 
     public function fulfill(int $id)
