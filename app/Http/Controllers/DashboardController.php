@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Hospital;
+use App\Models\User;
 use App\Services\BloodRequestService;
 use App\Services\DashboardService;
 use App\Services\DonationRequestService;
@@ -51,7 +53,16 @@ class DashboardController extends Controller
                 ]);
                 break;
             default:
-                return view('dashboard');
+                $allBloodRequests = $this->bloodRequestService->getAll();
+                $donationRequests = $this->donationRequestService->getAll();
+                $users = User::get();
+                $hospitals = Hospital::get();
+                return view('dashboard')->with([
+                    'blood_request_count' => $allBloodRequests->count(),
+                    'donation_request_count' => $donationRequests->count(),
+                    'user_count' => $users->count(),
+                    'hospital_count' => $hospitals->count(),
+                ]);
                 break;
         }
     }
