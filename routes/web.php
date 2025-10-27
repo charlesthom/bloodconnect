@@ -103,6 +103,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::group(['middleware' => 'guest'], function () {
 	Route::get('/', [LandingController::class, 'index']);
+	Route::get('/hospital-list', [LandingController::class, 'hospital']);
 	Route::get('/register', [UserController::class, 'create']);
 	Route::post('/register', [UserController::class, 'store']);
 	Route::get('/login', [SessionsController::class, 'create']);

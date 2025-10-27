@@ -111,8 +111,8 @@
                      <div class="container">
                         <div class="row">
                            <div class="col-md-6">
-                              <h1 class="banner_taital">Hosting <br>And Domain</h1>
-                              <div class="read_bt"><a href="#">Read More</a></div>
+                              <h1 class="banner_taital">Connecting <br>Life Together</h1>
+                              <div class="read_bt"><a href="/hospital-list">See Hospital List</a></div>
                            </div>
                            <div class="col-md-6">
                               <div class="banner_img"><img src="{{asset('landing/images/banner-img.png')}}"></div>
@@ -120,7 +120,7 @@
                         </div>
                      </div>
                   </div>
-                  <div class="carousel-item">
+                  {{-- <div class="carousel-item">
                      <div class="container">
                         <div class="row">
                            <div class="col-md-6">
@@ -145,7 +145,7 @@
                            </div>
                         </div>
                      </div>
-                  </div>
+                  </div> --}}
                </div>
                <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
                <i class="fa fa-angle-left"></i>
@@ -159,7 +159,7 @@
       </div>
       <!-- header section end -->
       <!-- domain section start -->
-      <div class="domain_section">
+      {{-- <div class="domain_section">
          <div class="container">
             <div class="domain_box">
                <div class="domain_rate">
@@ -180,7 +180,7 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- domain section end -->
       <!-- about section start -->
       <div class="about_section layout_padding">
@@ -212,7 +212,7 @@
       </div>
       <!-- about section end -->
       <!-- hosting section start -->
-      <div class="hosting_section layout_padding">
+      {{-- <div class="hosting_section layout_padding">
          <div class="container">
             <div class="row">
                <div class="col-md-6">
@@ -271,10 +271,10 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- pricing section end -->
       <!-- services section start -->
-      <div class="services_section layout_padding">
+      {{-- <div class="services_section layout_padding">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -397,10 +397,10 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- services section end -->
       <!-- testimonial section start -->
-      <div class="testimonial_section layout_padding">
+      {{-- <div class="testimonial_section layout_padding">
          <div class="container">
             <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                <ol class="carousel-indicators">
@@ -454,10 +454,10 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- testimonial section end -->
       <!-- newslatter section start -->
-      <div class="newslatter_section">
+      {{-- <div class="newslatter_section">
          <div class="container">
             <div class="row">
                <div class="col-md-12">
@@ -469,7 +469,7 @@
                </div>
             </div>
          </div>
-      </div>
+      </div> --}}
       <!-- newslatter section end -->
       <!-- footer section start -->
       <div class="footer_section layout_padding">
@@ -479,12 +479,12 @@
                   <h3 class="footer_text">Useful links</h3>
                   <div class="footer_menu">
                      <ul>
-                        <li class="active"><a href="index.html"><span class="angle_icon active"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Home</a></li>
-                        <li><a href="#"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  About</a></li>
-                        <li><a href="services.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Services</a></li>
-                        <li><a href="domain.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Domain</a></li>
+                        <li class="{{ request()->is('') ? 'active' : ''}}"><a href="/"><span class="angle_icon {{ request()->is('/') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Home</a></li>
+                        <li class="{{ request()->is('/login') ? 'active' : ''}}"><a href="/login"><span class="angle_icon {{ request()->is('login') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Login</a></li>
+                        <li class="{{ request()->is('/hospital-list') ? 'active' : ''}}"><a href="/hospital-list"><span class="angle_icon {{ request()->is('hospital-list') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Hospital List</a></li>
+                        {{-- <li><a href="domain.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Domain</a></li>
                         <li><a href="testimonial.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Testimonial</a></li>
-                        <li><a href="contact.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Contact Us</a></li>
+                        <li><a href="contact.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Contact Us</a></li> --}}
                      </ul>
                   </div>
                </div>
@@ -494,9 +494,9 @@
                      <ul>
                         <li>
                            <a href="#">
-                           <span class="padding_left_10"><i class="fa fa-map-marker" aria-hidden="true"></i></span>It is a long established fact that a<br> reader will be distracted</a>
+                           <span class="padding_left_10"><i class="fa fa-map-marker" aria-hidden="true"></i></span>Mandaue City</a>
                         </li>
-                        <li>
+                        {{-- <li>
                            <a href="#">
                            <span class="padding_left_10"><i class="fa fa-phone" aria-hidden="true"></i></span>(+71) 1234567890<br>(+71) 1234567890
                            </a>
@@ -505,14 +505,14 @@
                            <a href="#">
                            <span class="padding_left_10"><i class="fa fa-envelope" aria-hidden="true"></i></span>demo@gmail.com
                            </a>
-                        </li>
+                        </li> --}}
                      </ul>
                   </div>
                </div>
                <div class="col-sm-4">
                   <div class="footer_main">
-                     <h3 class="footer_text">Find Us</h3>
-                     <p class="dummy_text">more-or-less normal distribution </p>
+                     {{-- <h3 class="footer_text">Find Us</h3>
+                     <p class="dummy_text">more-or-less normal distribution </p> --}}
                      <div class="social_icon">
                         <ul>
                            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
@@ -529,7 +529,7 @@
       <!-- copyright section start -->
       <div class="copyright_section">
          <div class="container">
-            <p class="copyright_text">2020 All Rights Reserved. Design by <a href="https://html.design">Free Html Templates</a>. Distributed by <a href="https://themewagon.com" target="_blank">ThemeWagon</a></p>
+            <p class="copyright_text">© 2025 BloodConnect. All Rights Reserved.</p>
          </div>
       </div>
       <!-- copyright section end -->
