@@ -19,6 +19,12 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
         return DonationRequest::all();
     }
 
+    public function allWithRelation()
+    {
+        return DonationRequest::with(['user', 'hospital'])
+            ->get();
+    }
+
     public function allByDonor()
     {
         $user = Auth::user();

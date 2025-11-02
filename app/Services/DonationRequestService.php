@@ -38,6 +38,11 @@ class DonationRequestService
         return $this->repository->all();
     }
 
+    public function getAllWithRelation()
+    {
+        return $this->repository->allWithRelation();
+    }
+
     public function getAllByDonor()
     {
         return $this->repository->allByDonor();

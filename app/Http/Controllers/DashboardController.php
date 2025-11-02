@@ -9,6 +9,9 @@ use App\Services\DashboardService;
 use App\Services\DonationRequestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DashboardController extends Controller
 {
@@ -83,5 +86,181 @@ class DashboardController extends Controller
             'total_requests' => $mapped_data,
             'total_accepted_requests' => $accepted_mapped_data
         ];
+    }
+
+    public function exportDonationRequests()
+    {
+        $donationRequests = $this->donationRequestService->getAllWithRelation();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // ✅ Define headings
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Name');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Birth Date');
+        $sheet->setCellValue('E1', 'Hospital');
+        $sheet->setCellValue('F1', 'Request Date');
+
+        // ✅ Fill data (starting row 2)
+        $row = 2;
+        foreach ($donationRequests as $request) {
+            $sheet->setCellValue("A{$row}", $request->id);
+            $sheet->setCellValue("B{$row}", $request->user->name);
+            $sheet->setCellValue("C{$row}", $request->user->email);
+            $sheet->setCellValue("D{$row}", $request->user->birth_date);
+            $sheet->setCellValue("E{$row}", $request->hospital->name);
+            $sheet->setCellValue("F{$row}", $request->created_at->format('Y-m-d H:i'));
+            $row++;
+        }
+
+        // ✅ Auto-size columns
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // ✅ Stream the file to browser
+        $writer = new Xlsx($spreadsheet);
+
+        return new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="donation_requests.xlsx"',
+        ]);
+    }
+
+    public function exportBloodRequests()
+    {
+        $bloodRequests = $this->bloodRequestService->getAll();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // ✅ Define headings
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Requester');
+        $sheet->setCellValue('C1', 'Blood Type');
+        $sheet->setCellValue('D1', 'Quantity');
+        $sheet->setCellValue('E1', 'Urgency Level');
+        $sheet->setCellValue('F1', 'Request Date');
+
+        // ✅ Fill data (starting row 2)
+        $row = 2;
+        foreach ($bloodRequests as $request) {
+            $sheet->setCellValue("A{$row}", $request->id);
+            $sheet->setCellValue("B{$row}", $request->hospital->name);
+            $sheet->setCellValue("C{$row}", $request->blood_type);
+            $sheet->setCellValue("D{$row}", $request->quantity);
+            $sheet->setCellValue("E{$row}", $request->urgency_lvl);
+            $sheet->setCellValue("F{$row}", $request->request_date->format('Y-m-d H:i'));
+            $row++;
+        }
+
+        // ✅ Auto-size columns
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // ✅ Stream the file to browser
+        $writer = new Xlsx($spreadsheet);
+
+        return new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="blood_requests.xlsx"',
+        ]);
+    }
+
+    public function exportHospitals()
+    {
+        $hospitals = Hospital::with(['user'])->get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // ✅ Define headings
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Name');
+        $sheet->setCellValue('C1', 'Admin Name');
+        $sheet->setCellValue('D1', 'Location');
+        $sheet->setCellValue('E1', 'Latitude');
+        $sheet->setCellValue('F1', 'Longitude');
+
+        // ✅ Fill data (starting row 2)
+        $row = 2;
+        foreach ($hospitals as $hospital) {
+            $sheet->setCellValue("A{$row}", $hospital->id);
+            $sheet->setCellValue("B{$row}", $hospital->name);
+            $sheet->setCellValue("C{$row}", $hospital->user->name);
+            $sheet->setCellValue("D{$row}", explode('|', $hospital->location)[0]);
+            $sheet->setCellValue("E{$row}", explode('|', $hospital->location)[1]);
+            $sheet->setCellValue("F{$row}", explode('|', $hospital->location)[2]);
+            $row++;
+        }
+
+        // ✅ Auto-size columns
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // ✅ Stream the file to browser
+        $writer = new Xlsx($spreadsheet);
+
+        return new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="hospitals.xlsx"',
+        ]);
+    }
+
+    public function exportUsers()
+    {
+        $users = User::get();
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // ✅ Define headings
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Name');
+        $sheet->setCellValue('C1', 'Email');
+        $sheet->setCellValue('D1', 'Role');
+        $sheet->setCellValue('E1', 'Birth Date');
+        $sheet->setCellValue('F1', 'Gender');
+        $sheet->setCellValue('G1', 'Phone Number');
+        $sheet->setCellValue('H1', 'Status');
+
+        // ✅ Fill data (starting row 2)
+        $row = 2;
+        foreach ($users as $user) {
+            $sheet->setCellValue("A{$row}", $user->id);
+            $sheet->setCellValue("B{$row}", $user->name);
+            $sheet->setCellValue("C{$row}", $user->email);
+            $sheet->setCellValue("D{$row}", $user->role->value);
+            $sheet->setCellValue("E{$row}", $user->birth_date);
+            $sheet->setCellValue("F{$row}", $user->gender);
+            $sheet->setCellValue("G{$row}", $user->phone);
+            $sheet->setCellValue("H{$row}", $user->status);
+            $row++;
+        }
+
+        // ✅ Auto-size columns
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // ✅ Stream the file to browser
+        $writer = new Xlsx($spreadsheet);
+
+        return new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="users.xlsx"',
+        ]);
     }
 }

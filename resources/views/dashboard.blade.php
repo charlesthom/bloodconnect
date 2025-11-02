@@ -23,6 +23,11 @@
             </div>
           </div>
         </div>
+        <div class="d-flex justify-content-center align-items-center">
+          <a href="{{ route('export.users') }}" class="btn btn-sm btn-primary">
+            Export
+          </a>
+        </div>
       </div>
     </div>
     <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -44,6 +49,11 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+          <a href="{{ route('export.hospitals') }}" class="btn btn-sm btn-primary">
+            Export
+          </a>
         </div>
       </div>
     </div>
@@ -67,6 +77,11 @@
             </div>
           </div>
         </div>
+        <div class="d-flex justify-content-center align-items-center">
+          <a href="{{ route('export.donation-requests') }}" class="btn btn-sm btn-primary">
+            Export
+          </a>
+        </div>
       </div>
     </div>
     <div class="col-xl-3 col-sm-6">
@@ -88,6 +103,11 @@
               </div>
             </div>
           </div>
+        </div>
+        <div class="d-flex justify-content-center align-items-center">
+          <a href="{{ route('export.blood-requests') }}" class="btn btn-sm btn-primary">
+            Export
+          </a>
         </div>
       </div>
     </div>

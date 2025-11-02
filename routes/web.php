@@ -32,6 +32,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+	Route::get('export/donation-requests', [DashboardController::class, 'exportDonationRequests'])->name('export.donation-requests');
+	Route::get('export/blood-requests', [DashboardController::class, 'exportBloodRequests'])->name('export.blood-requests');
+	Route::get('export/hospitals', [DashboardController::class, 'exportHospitals'])->name('export.hospitals');
+	Route::get('export/users', [DashboardController::class, 'exportUsers'])->name('export.users');
 	Route::get('/api/hospital-data', [DashboardController::class, 'hospitalData']);
 
 	Route::get('billing', function () {

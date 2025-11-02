@@ -5,6 +5,7 @@ namespace App\Repositories\Contracts;
 interface DonationRequestRepositoryInterface
 {
     public function all();
+    public function allWithRelation();
     public function allByDonor();
     public function allByHospital(int $hospital_id);
     public function allRescheduleByHospital(int $hospital_id);
