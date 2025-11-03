@@ -25,12 +25,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
-        // 'blood_type',
         'location',
         'birth_date',
         'gender',
         'phone',
-        'status'
+        'status',
+        'otp'
     ];
 
     /**

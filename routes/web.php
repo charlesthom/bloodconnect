@@ -110,6 +110,8 @@ Route::group(['middleware' => 'guest'], function () {
 	Route::get('/hospital-list', [LandingController::class, 'hospital']);
 	Route::get('/register', [UserController::class, 'create']);
 	Route::post('/register', [UserController::class, 'store']);
+	Route::get('/otp', [UserController::class, 'otp'])->name('otp');
+	Route::post('/verify-otp', [UserController::class, 'verifyOtp'])->name('otp.verify');
 	Route::get('/login', [SessionsController::class, 'create']);
 	Route::post('/session', [SessionsController::class, 'store']);
 	Route::get('/login/forgot-password', [ResetController::class, 'create']);

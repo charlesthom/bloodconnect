@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserStatusEnum;
+use App\Mail\OTPMail;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -32,11 +34,46 @@ class UserController extends Controller
         $attributes['role'] = 'donor';
         $attributes['status'] = UserStatusEnum::Active;
 
+        // Generate 6-digit OTP
+        $otp = rand(100000, 999999);
+        $attributes['otp'] = $otp;
 
-
-        session()->flash('success', 'Your account has been created.');
         $user = User::create($attributes);
+        session()->flash('success', 'Your account has been created.');
+
+        // Auth::login($user);
+        Mail::to($user->email)->queue(new OTPMail($user));
+        return redirect()->route('otp', ['email' => $user->email]);
+    }
+
+    public function otp()
+    {
+        return view('session.otp');
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request->validate([
+            'email' => ['required', 'email', 'exists:users,email'],
+            'otp'   => ['required', 'digits:6']
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'User not found.']);
+        }
+
+        if ($user->otp !== $request->otp) {
+            return back()->withErrors(['otp' => 'Invalid OTP code.'])->withInput();
+        }
+
+        $user->email_verified_at = now();
+        $user->otp = null;
+        $user->save();
+
         Auth::login($user);
-        return redirect('/dashboard');
+
+        return redirect('/dashboard')->with('success', 'Your account has been verified.');
     }
 }
