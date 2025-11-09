@@ -4,8 +4,9 @@
 
 <div>
     <div class="container-fluid">
-        <div class="page-header min-height-300 border-radius-xl mt-4" style="background-image: url('../assets/img/curved-images/curved0.jpg'); background-position-y: 50%;">
-            <span class="mask bg-gradient-primary opacity-6"></span>
+        <div class="page-header min-height-300 border-radius-xl mt-4" style="background-color: #da282e; background-position-y: 50%; justify-content: center;">
+            {{-- <span class="mask bg-gradient-primary opacity-6"></span> --}}
+            <div style="color: #fff; font-weight: 700; font-size: 40px">BloodConnect</div>
         </div>
         {{-- <div class="card card-body blur shadow-blur mx-4 mt-n6">
             <div class="row gx-4">

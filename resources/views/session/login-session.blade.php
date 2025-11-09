@@ -27,16 +27,33 @@
                       @enderror
                     </div>
                     <label>Password</label>
-                    <div class="mb-3">
-                      <input type="password" class="form-control" name="password" id="password" placeholder="Password" value="" aria-label="Password" aria-describedby="password-addon">
+                    <div class="mb-3 position-relative">
+                      <input 
+                        type="password" 
+                        class="form-control" 
+                        name="password" 
+                        id="password" 
+                        placeholder="Password" 
+                        aria-label="Password"
+                      >
+                      
+                      <!-- Toggle Button -->
+                      <span 
+                        class="position-absolute top-50 end-0 translate-middle-y me-3" 
+                        style="cursor: pointer;"
+                        onclick="togglePassword()"
+                      >
+                        <i id="togglePasswordIcon" class="fa fa-eye"></i>
+                      </span>
+
                       @error('password')
                         <p class="text-danger text-xs mt-2">{{ $message }}</p>
                       @enderror
                     </div>
-                    <div class="form-check form-switch">
+                    {{-- <div class="form-check form-switch">
                       <input class="form-check-input" type="checkbox" id="rememberMe" checked="">
                       <label class="form-check-label" for="rememberMe">Remember me</label>
-                    </div>
+                    </div> --}}
                     <div class="text-center">
                       <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Sign in</button>
                     </div>
@@ -55,7 +72,12 @@
             </div>
             <div class="col-md-6">
               <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
-                <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url('../assets/img/curved-images/curved6.jpg')"></div>
+                <div 
+                  class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6 d-flex justify-content-center align-items-center text-white fw-bold"
+                  style="background-color: #da282e;"
+                >
+                  <div style="font-size: 40px; font-weight: 700">BloodConnect</div>
+                </div>
               </div>
             </div>
           </div>
@@ -65,3 +87,21 @@
   </main>
 
 @endsection
+@push('scripts')
+<script>
+function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    const icon = document.getElementById('togglePasswordIcon');
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
+@endpush
