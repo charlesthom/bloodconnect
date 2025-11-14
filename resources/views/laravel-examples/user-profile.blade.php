@@ -104,6 +104,12 @@
                 <h6 class="mb-0">{{ __('Profile Information') }}</h6>
             </div>
             <div class="card-body pt-4 p-3">
+                <div class="card-header pb-0 px-3 d-flex justify-content-end align-items-center">
+                    <button type="button" id="editProfileBtn" class="btn btn-dark btn-sm">
+                        <i class="fa fa-pen me-1"></i> Edit
+                    </button>
+                </div>
+                <div id="geocodeContainer"></div>
                 <form action="/user-profile" method="POST" role="form text-left">
                     @csrf
                     @if($errors->any())
@@ -140,7 +146,7 @@
                             <div class="form-group">
                                 <label for="user-email" class="form-control-label">{{ __('Email') }}</label>
                                 <div class="@error('email')border border-danger rounded-3 @enderror">
-                                    <input class="form-control" value="{{ auth()->user()->email }}" type="email" placeholder="@example.com" id="user-email" name="email" readonly>
+                                    <input class="form-control" value="{{ auth()->user()->email }}" type="email" placeholder="@example.com" id="email" name="email" readonly>
                                         @error('email')
                                             <p class="text-danger text-xs mt-2">{{ $message }}</p>
                                         @enderror
@@ -164,7 +170,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('Location') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="Location" id="name" name="location" value="{{ explode('|', auth()->user()->location)[0] }}" readonly>
+                                    <input class="form-control" type="text" placeholder="Location" id="location" name="location" value="{{ auth()->user()->location }}" readonly>
                                 </div>
                             </div>
                         </div>
@@ -182,10 +188,15 @@
                             <div class="form-group">
                                 <label for="user.gender" class="form-control-label">{{ __('Gender') }}</label>
                                 <div class="@error('user.gender')border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="tel" placeholder="40770888444" id="number" name="gender" value="{{ auth()->user()->gender }}" readonly>
-                                        @error('gender')
-                                            <p class="text-danger text-xs mt-2">{{ $message }}</p>
-                                        @enderror
+                                    <select class="form-control" name="gender" id="gender" aria-label="gender" aria-describedby="gender" disabled>
+                                        <option value="">-- Select Gender --</option>
+                                        <option value="Male" {{ auth()->user()->gender == 'Male' ? 'selected' : '' }}>Male</option>
+                                        <option value="Female" {{ auth()->user()->gender == 'Female' ? 'selected' : '' }}>Female</option>
+                                        <option value="Other" {{ auth()->user()->gender == 'Other' ? 'selected' : '' }}>Other</option>
+                                    </select>
+                                    @error('gender')
+                                        <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -206,3 +217,98 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>
+    document.getElementById('editProfileBtn').addEventListener('click', function () {
+        const inputs = document.querySelectorAll('input[readonly], select');
+        inputs.forEach(el => {
+            el.dataset.originalValue = el.value;
+        });
+
+        const exclude = ["location", "email"];
+        inputs.forEach(el => {
+            if (!exclude.includes(el.id)) {
+                el.removeAttribute('readonly');
+            }
+        });
+        document.getElementById('editProfileBtn').classList.add("disabled")
+        document.getElementById('gender').disabled = false;
+
+        if (!document.getElementById('saveChangesBtn')) {
+            let saveBtn = document.createElement('button');
+            saveBtn.className = "btn bg-gradient-dark btn-md mt-4 mb-4";
+            saveBtn.textContent = "Save Changes";
+            saveBtn.type = "submit";
+            saveBtn.id = "saveChangesBtn";
+
+            let cancelBtn = document.createElement('button');
+            cancelBtn.className = "btn btn-md mt-4 mb-4";
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.type = "button";
+            cancelBtn.id = "cancelBtn";
+
+            document.querySelector('form').appendChild(cancelBtn);
+            document.querySelector('form').appendChild(saveBtn);
+            document.getElementById('geocodeContainer').innerHTML = `
+                <div class="mb-3">
+                  <input type="text" class="form-control" placeholder="Barangay, City/Municipality" name="address" id="address" aria-label="address" aria-describedby="address">
+                  <div class="text-center">
+                    <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2" onclick="geocodeAddress()">Find Address</button>
+                  </div>
+                </div>
+            `;
+
+            cancelBtn.addEventListener('click', function () {
+                inputs.forEach(el => {
+                if (el.dataset.originalValue !== undefined) {
+                    el.value = el.dataset.originalValue;
+                }
+                });
+
+                inputs.forEach(el => {
+                    el.setAttribute('readonly', true);
+                });
+
+                saveBtn.remove();
+                cancelBtn.remove();
+
+                document.getElementById('editProfileBtn').classList.remove("disabled");
+                document.getElementById('geocodeContainer').innerHTML = ``;
+                document.getElementById('gender').disabled = true;
+            });
+        }
+    });
+async function geocodeAddress() {
+    const address = document.getElementById("address").value;
+
+    if (!address) {
+        alert("Please enter an address");
+        return;
+    }
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+
+    try {
+        const response = await fetch(url, {
+            headers: {
+                "User-Agent": "BloodConnect (admin@bloodconnect.com)", // Nominatim requires identifying headers
+            }
+        });
+        const data = await response.json();
+
+        if (data.length > 0) {
+            const lat = data[0].lat;
+            const lon = data[0].lon;
+
+            const formatted = address + '|' + lat + '|' + lon;
+            document.getElementById('location').value = formatted;
+        } else {
+            alert('No results found.');
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Error fetching location data");
+    }
+}
+</script>
+@endpush
