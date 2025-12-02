@@ -29,7 +29,10 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     {
         $user = Auth::user();
         return User::with(['donations' => function ($query) {
-            $query->with(['hospital', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
+            $query->whereHas('hospital', function ($q) {
+                $q->whereNull('deleted_at');
+            })
+                ->with(['hospital', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
                 ->orderBy('id', 'asc');
         }])
             ->where('id', $user->id)
