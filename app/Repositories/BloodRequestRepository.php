@@ -17,9 +17,12 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
 {
     public function all()
     {
-        return BloodRequest::with(['hospital' => function ($query) {
-            $query->with(['user']);
-        }])
+        return BloodRequest::whereHas('hospital', function ($q) {
+            $q->whereNull('deleted_at');
+        })
+            ->with(['hospital' => function ($query) {
+                $query->with('user');
+            }])
             ->get();
     }
 
