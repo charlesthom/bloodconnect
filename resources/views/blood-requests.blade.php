@@ -2,7 +2,11 @@
 
 @section('content')
 
-<div>
+<div style="
+  background: linear-gradient(135deg, #fff5f5, #ffe3e3);
+  border-radius:20px;
+  padding:20px;
+">
     @if(session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
                 <span class="text-white">
@@ -41,19 +45,44 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4 mx-4">
+            <div class="card mb-4 mx-4" style="
+              background: rgba(255,255,255,0.85);
+              backdrop-filter: blur(8px);
+              -webkit-backdrop-filter: blur(8px);
+              border-radius:15px;
+              box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+              border: 1px solid rgba(255,255,255,0.3);
+            ">
                 {{-- new blood request modal --}}
                 <x-create-blood-request />
                 {{-- fulfill blood request modal --}}
                 <x-fulfill-blood-request />
+
                 <div class="card-header pb-0">
-                    <div class="d-flex flex-row justify-content-between">
+                    <div class="d-flex flex-row justify-content-between align-items-center">
                         <div>
                             <h5 class="mb-0">Blood Requests</h5>
+                            <p class="text-sm text-secondary mb-0">Manage blood requests</p>
                         </div>
-                        <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#createBloodRequestModal">+&nbsp; New</a>
+                        <a href="#"
+                           class="btn btn-sm mb-0"
+                           style="
+                             background: linear-gradient(135deg, #7b0000, #b30000);
+                             color:white;
+                             border:none;
+                             padding:6px 14px;
+                             font-size:12px;
+                             border-radius:8px;
+                             box-shadow: 0 3px 8px rgba(123,0,0,0.25);
+                           "
+                           type="button"
+                           data-bs-toggle="modal"
+                           data-bs-target="#createBloodRequestModal">
+                           + New
+                        </a>
                     </div>
                 </div>
+
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
                         <table class="table align-items-center mb-0">
@@ -157,26 +186,28 @@
     </div>
 </div>
 @endsection
+
 @push('styles')
 <style>
 .btn-close-white {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 a.disabled {
-    pointer-events: none;   /* disables clicking */
-    opacity: 0.5;           /* visual feedback */
-    cursor: not-allowed;    /* shows disabled cursor */
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
     text-decoration: none;
 }
 </style>
 @endpush
+
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const fulfillBloodRequestModal = document.getElementById('fulfillBloodRequestModal');
     const fulfillBloodRequestForm = document.getElementById('fulfillBloodRequestForm');
     fulfillBloodRequestModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget; // the clicked button
+        let button = event.relatedTarget;
         let id = button.getAttribute('data-id');
 
         fulfillBloodRequestForm.action = `/blood-requests/fulfill/${id}`;

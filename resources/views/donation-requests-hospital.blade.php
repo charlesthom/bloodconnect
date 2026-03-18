@@ -2,7 +2,12 @@
 
 @section('content')
 
-<div>
+<div style="
+  background: linear-gradient(135deg, #fff5f5, #ffe3e3);
+  border-radius:20px;
+  padding:20px;
+">
+
     @if(session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
                 <span class="text-white">
@@ -21,6 +26,7 @@
             </div>
         @endforeach
     @endif
+
     {{-- @if($errors->any())
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
             <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -41,19 +47,31 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4 mx-4">
+            <div class="card mb-4 mx-4" style="
+              background: rgba(255,255,255,0.85);
+              backdrop-filter: blur(8px);
+              -webkit-backdrop-filter: blur(8px);
+              border-radius:15px;
+              box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+              border: 1px solid rgba(255,255,255,0.3);
+            ">
+
                 {{-- approve donation request modal --}}
                 <x-approve-donation-request />
+
                 {{-- confirm cancellation of donation request modal --}}
                 <x-confirm-cancel-donation-request />
+
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
                             <h5 class="mb-0">Donation Requests</h5>
+                            <p class="text-sm text-secondary mb-0">Manage incoming donor requests</p>
                         </div>
                         {{-- <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#confirmCreateDonationRequestModal">+&nbsp; New</a> --}}
                     </div>
                 </div>
+
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
                         <table class="table align-items-center mb-0">
@@ -112,7 +130,6 @@
                                             data-bs-original-title="Edit user"
                                             data-id="{{ $dat->id }}"
                                         >
-                                            {{-- <i class="fas fa-user-edit text-secondary"></i> --}}
                                             <i class="fa-solid fa-thumbs-up"></i>
                                         </a>
                                         <span>
@@ -124,7 +141,6 @@
                                                 data-bs-original-title="Delete user"
                                                 data-id="{{ $dat->id }}"
                                             >
-                                                {{-- <i class="cursor-pointer fas fa-trash text-secondary"></i> --}}
                                                 <i class="fa-solid fa-thumbs-down"></i>
                                             </a>
                                         </span>
@@ -135,11 +151,16 @@
                         </table>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+
 </div>
+
 @endsection
+
+
 @push('styles')
 <style>
 .btn-close-white {
@@ -147,6 +168,8 @@
 }
 </style>
 @endpush
+
+
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -154,14 +177,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const approveForm = document.getElementById('approveDonationRequestForm');
     const deleteModal = document.getElementById('confirmCancelDonationRequestModal');
     const deleteForm = document.getElementById('confirmCancelDonationForm');
+
     approveModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget; // the clicked button
+        let button = event.relatedTarget;
         let id = button.getAttribute('data-id');
 
         approveForm.action = `/donation-requests/approve/${id}`;
     });
+
     deleteModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget; // the clicked button
+        let button = event.relatedTarget;
         let id = button.getAttribute('data-id');
 
         deleteForm.action = `/donation-requests/cancel/${id}`;

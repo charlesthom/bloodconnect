@@ -1,477 +1,633 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <!-- basic -->
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!-- mobile metas -->
-      <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="viewport" content="initial-scale=1, maximum-scale=1">
-      <!-- site metas -->
-      <title>Netic</title>
+      <title>BloodConnect</title>
       <meta name="keywords" content="">
       <meta name="description" content="">
       <meta name="author" content="">
-      <!-- bootstrap css -->
-      <link rel="stylesheet" type="text/css" href="{{asset('landing/css/bootstrap.min.css')}}">
-      <!-- style css -->
-      <link rel="stylesheet" type="text/css" href="{{asset('landing/css/style.css')}}">
-      <!-- Responsive-->
-      <link rel="stylesheet" href="{{asset('landing/css/responsive.css')}}">
-      <!-- fevicon -->
-      <link rel="icon" href="{{asset('landing/images/fevicon.png')}}" type="image/gif" />
-      <!-- fonts -->
+
+      <link rel="stylesheet" type="text/css" href="{{ asset('landing/css/bootstrap.min.css') }}">
+      <link rel="stylesheet" type="text/css" href="{{ asset('landing/css/style.css') }}">
+      <link rel="stylesheet" href="{{ asset('landing/css/responsive.css') }}">
+      <link rel="icon" href="{{ asset('landing/images/fevicon.png') }}" type="image/gif" />
       <link href="https://fonts.googleapis.com/css?family=Poppins:400,700|Sen:400,700,800&display=swap" rel="stylesheet">
-      <!-- Scrollbar Custom CSS -->
-      <link rel="stylesheet" href="{{asset('landing/css/jquery.mCustomScrollbar.min.css')}}">
-      <!-- Tweaks for older IEs-->
+      <link rel="stylesheet" href="{{ asset('landing/css/jquery.mCustomScrollbar.min.css') }}">
       <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+
       <style>
-        .login_button {
-            float: right;
-            font-size: 16px;
-            padding: 7px 20px 7px 20px;
+         body {
+            font-family: 'Poppins', sans-serif;
+            background: #fff8f8;
+            margin: 0;
+            padding: 0;
+         }
+
+         .header_section {
+            background: linear-gradient(135deg, #7a0f1d 0%, #b3172b 45%, #c92b3c 100%);
+            position: relative;
+            overflow: hidden;
+         }
+
+         .header_section::before {
+            content: "";
+            position: absolute;
+            top: -110px;
+            right: -90px;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            z-index: 1;
+         }
+
+         .header_section::after {
+            content: "";
+            position: absolute;
+            bottom: -130px;
+            left: -100px;
+            width: 260px;
+            height: 260px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+            z-index: 1;
+         }
+
+         .navbar {
+            background: transparent !important;
+            padding-top: 20px;
+            padding-bottom: 10px;
+            position: relative;
+            z-index: 9999;
+         }
+
+         .navbar-brand {
+            color: #fff !important;
+            font-weight: 700;
+            font-size: 30px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+         }
+
+         .navbar-brand span {
+            color: #fff !important;
+         }
+
+         .navbar-logo {
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+            object-fit: contain;
+         }
+
+         .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.85) !important;
+            font-size: 15px;
+            margin-left: 12px;
+         }
+
+         .navbar-nav .nav-link:hover {
+            color: #ffffff !important;
+         }
+
+         .top_action_buttons {
+            position: absolute;
+            top: 30px;
+            right: 15px;
+            display: flex;
+            gap: 12px;
+            z-index: 10000;
+         }
+
+         .top_btn_login,
+         .top_btn_register {
+            display: inline-block;
+            font-size: 14px;
+            padding: 12px 26px;
+            border-radius: 10px;
             text-transform: uppercase;
-            background-color: transparent;
-            margin: 0px 7px;
-            border-radius: 5px;
-            background-color: #ed1c24;
-        }
-        .login_button a {
+            font-weight: 700;
+            text-decoration: none !important;
+            position: relative;
+            z-index: 10001;
+            pointer-events: auto;
+            transition: 0.3s ease;
+         }
+
+         .top_btn_login:hover,
+         .top_btn_register:hover,
+         .hero_btn_primary:hover,
+         .hero_btn_secondary:hover,
+         .cta_btn:hover {
+            transform: translateY(-2px);
+            text-decoration: none !important;
+         }
+
+         .top_btn_login {
+            background: #ff1f2d;
+            color: #fff;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+         }
+
+         .top_btn_register {
+            background: #ffffff;
+            color: #7a0f1d;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+         }
+
+         .banner_section {
+            padding: 80px 0 100px 0;
+            position: relative;
+            z-index: 2;
+         }
+
+         .carousel,
+         .carousel-inner,
+         .carousel-item {
+            position: relative;
+            z-index: 2;
+         }
+
+         .hero_glass {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 20px;
+            padding: 55px 45px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.18);
+         }
+
+         .banner_taital {
+            font-size: 82px;
+            line-height: 92px;
+            font-weight: 700;
             color: #ffffff;
-        }
+            margin-bottom: 22px;
+            text-align: center;
+         }
+
+         .banner_subtext {
+            color: rgba(255,255,255,0.92);
+            font-size: 24px;
+            line-height: 38px;
+            max-width: 780px;
+            margin: 0 auto 35px auto;
+            text-align: center;
+         }
+
+         .hero_buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-top: 10px;
+            justify-content: center;
+         }
+
+         .hero_btn_primary,
+         .hero_btn_secondary {
+            display: inline-block;
+            padding: 16px 34px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 21px;
+            text-decoration: none !important;
+            transition: 0.3s ease;
+         }
+
+         .hero_btn_primary {
+            background: #ff1f2d;
+            color: #fff;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+         }
+
+         .hero_btn_secondary {
+            background: #ffffff;
+            color: #7a0f1d;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+         }
+
+         .carousel-control-prev,
+         .carousel-control-next {
+            width: 62px;
+            height: 62px;
+            background: #ffffff;
+            border-radius: 50%;
+            top: 45%;
+            opacity: 1;
+            z-index: 5;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+         }
+
+         .carousel-control-prev {
+            left: 20px;
+         }
+
+         .carousel-control-next {
+            right: 20px;
+         }
+
+         .carousel-control-prev i,
+         .carousel-control-next i {
+            color: #7a0f1d;
+            font-size: 32px;
+         }
+
+         .about_section {
+            background: #fff7f7;
+            padding-top: 90px;
+            padding-bottom: 90px;
+         }
+
+         .section_heading {
+            text-align: center;
+            margin-bottom: 50px;
+         }
+
+         .section_heading h2 {
+            font-size: 46px;
+            font-weight: 700;
+            color: #8c1022;
+            margin-bottom: 15px;
+         }
+
+         .section_heading p {
+            font-size: 20px;
+            color: #8a6a6f;
+            margin: 0 auto;
+            max-width: 850px;
+         }
+
+         .about_box {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 35px 28px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(122, 15, 29, 0.08);
+            height: 100%;
+            transition: 0.3s ease;
+         }
+
+         .about_box:hover {
+            transform: translateY(-5px);
+         }
+
+         .icon_circle {
+            width: 95px;
+            height: 95px;
+            border-radius: 50%;
+            background: #fdecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px auto;
+         }
+
+         .icon_circle i {
+            font-size: 40px;
+            color: #b02a37;
+         }
+
+         .faster_text {
+            font-size: 30px;
+            line-height: 38px;
+            color: #8c1022;
+            font-weight: 700;
+            margin-bottom: 15px;
+         }
+
+         .lorem_text {
+            font-size: 18px;
+            line-height: 32px;
+            color: #6f5a5d;
+            margin: 0;
+         }
+
+         .how_it_works_section {
+            background: #ffffff;
+            padding: 90px 0;
+         }
+
+         .step_box {
+            text-align: center;
+            padding: 25px 20px;
+         }
+
+         .step_number {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px auto;
+            border-radius: 50%;
+            background: #ed1c24;
+            color: #fff;
+            font-size: 28px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+         }
+
+         .step_title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #8c1022;
+            margin-bottom: 10px;
+         }
+
+         .step_desc {
+            font-size: 18px;
+            line-height: 30px;
+            color: #6f5a5d;
+         }
+
+         .cta_section {
+            background: linear-gradient(135deg, #7a0f1d 0%, #b3172b 45%, #c92b3c 100%);
+            padding: 70px 0;
+            text-align: center;
+         }
+
+         .cta_title {
+            color: #fff;
+            font-size: 46px;
+            font-weight: 700;
+            margin-bottom: 15px;
+         }
+
+         .cta_text {
+            color: rgba(255,255,255,0.9);
+            font-size: 20px;
+            margin-bottom: 30px;
+         }
+
+         .cta_btn {
+            display: inline-block;
+            padding: 16px 35px;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #8c1022;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none !important;
+            transition: 0.3s ease;
+         }
+
+         .footer_section {
+            background: #8c1022;
+         }
+
+         .footer_text,
+         .footer_menu ul li a,
+         .location_text ul li a,
+         .dummy_text,
+         .copyright_text {
+            color: #ffffff !important;
+         }
+
+         .social_icon ul li a {
+            background: rgba(255,255,255,0.14);
+            color: #ffffff;
+         }
+
+         .social_icon ul li a:hover {
+            background: #ffffff;
+            color: #8c1022;
+         }
+
+         @media (max-width: 991px) {
+            .top_action_buttons {
+               position: static;
+               justify-content: center;
+               margin-top: 10px;
+               margin-bottom: 10px;
+            }
+
+            .banner_taital {
+               font-size: 54px;
+               line-height: 64px;
+            }
+
+            .banner_subtext {
+               font-size: 18px;
+               line-height: 30px;
+            }
+
+            .section_heading h2,
+            .cta_title {
+               font-size: 34px;
+            }
+
+            .hero_glass {
+               padding: 35px 25px;
+            }
+         }
+
+         @media (max-width: 767px) {
+            .navbar-brand {
+               font-size: 24px;
+            }
+
+            .navbar-logo {
+               height: 34px;
+            }
+
+            .banner_taital {
+               font-size: 42px;
+               line-height: 52px;
+            }
+
+            .banner_subtext {
+               font-size: 17px;
+               line-height: 28px;
+            }
+
+            .hero_btn_primary,
+            .hero_btn_secondary {
+               width: 100%;
+               text-align: center;
+            }
+
+            .carousel-control-prev,
+            .carousel-control-next {
+               display: none;
+            }
+            
+
+            .hero_glass {
+               padding: 28px 18px;
+            }
+         }
       </style>
    </head>
    <body>
       <div class="header_section">
-         <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light bg-light">
-               <!-- <a class="navbar-brand"href="index.html"><img src="images/logo.png"></a> -->
-               <a class="navbar-brand"href="index.html" style="color: #fff; font-weight: 700; font-size: 32px; letter-spacing: 3px;">BloodConnect</a>
+         <div class="container" style="position: relative; z-index: 10;">
+            <nav class="navbar navbar-expand-lg navbar-light">
+               <a class="navbar-brand" href="/">
+                  <img src="{{ asset('landing/images/bloodconnect-logo.png') }}" alt="BloodConnect Logo" class="navbar-logo">
+                  <span>BloodConnect</span>
+               </a>
+
                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-               <span class="navbar-toggler-icon"></span>
+                  <span class="navbar-toggler-icon"></span>
                </button>
+
                <div class="collapse navbar-collapse" id="navbarSupportedContent">
                   <ul class="navbar-nav ml-auto">
                      <li class="nav-item active">
-                        <a class="nav-link" href="index.html">Home</a>
+                        <a class="nav-link" href="/">Home</a>
                      </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="about.html">About</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="hosting.html">Hosting</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="testimonial.html">Testimonial</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="domain.html">Domain</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="services.html">Services</a>
-                     </li>
-                     <li class="nav-item">
-                        <a class="nav-link" href="contact.html">Contact Us</a>
+                        <a class="nav-link" href="/hospital-list">Hospitals</a>
                      </li>
                   </ul>
-                  <form class="form-inline my-2 my-lg-0">
-                  </form>
                </div>
             </nav>
-            {{-- <div class="custom_bg">
-               <div class="custom_menu">
-                  <ul>
-                     <li class="active"><a href="index.html">Home</a></li>
-                     <li><a href="#">About</a></li>
-                     <li><a href="hosting.html">Hosting</a></li>
-                     <li><a href="testimonial.html">Testimonial</a></li>
-                     <li><a href="domain.html">Domain</a></li>
-                     <li><a href="services.html">Services</a></li>
-                     <li><a href="contact.html">Contact Us</a></li>
-                  </ul>
-               </div>
-               <form class="form-inline my-2 my-lg-0">
-                  <div class="search_btn">
-                     <li><a href="#"><i class="fa fa-search" aria-hidden="true"></i></a></li>
-                     <li><a href="#"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a></li>
-                  </div>
-               </form>
-            </div> --}}
-            <div class="login_button">
-                <a href="/login">Login</a>
+
+            <div class="top_action_buttons">
+               <a href="/login" class="top_btn_login">Login</a>
+               <a href="/register" class="top_btn_register">Register</a>
             </div>
          </div>
-         <!-- banner section start --> 
-         <div class="banner_section layout_padding">
-            <div id="my_slider" class="carousel slide" data-ride="carousel">
-               <div class="carousel-inner">
-                  <div class="carousel-item active">
+
+         <div class="banner_section">
+            <div class="banner_static">
+               
+                  
                      <div class="container">
-                        <div class="row">
-                           <div class="col-md-6">
-                              <h1 class="banner_taital">Connecting <br>Life Together</h1>
-                              <div class="read_bt"><a href="/hospital-list">See Hospital List</a></div>
-                           </div>
-                           <div class="col-md-6">
-                              <div class="banner_img"><img src="{{asset('landing/images/banner-img.png')}}"></div>
+                        <div class="row justify-content-center">
+                           <div class="col-md-10 col-lg-9">
+                              <div class="hero_glass">
+                                 <h1 class="banner_taital">Connecting Donors,<br>Saving Lives</h1>
+                                 <p class="banner_subtext">
+                                    BloodConnect helps hospitals, donors, and patients connect faster during urgent blood needs through a smart and reliable platform.
+                                 </p>
+
+                                 <div class="hero_buttons">
+                                    <a href="/hospital-list" class="hero_btn_primary">Find a Hospital</a>
+                                    <a href="/register" class="hero_btn_secondary">Register as Donor</a>
+                                 </div>
+                              </div>
                            </div>
                         </div>
                      </div>
                   </div>
-                  {{-- <div class="carousel-item">
-                     <div class="container">
-                        <div class="row">
-                           <div class="col-md-6">
-                              <h1 class="banner_taital">Hosting <br>And Domain</h1>
-                              <div class="read_bt"><a href="#">Read More</a></div>
-                           </div>
-                           <div class="col-md-6">
-                              <div class="banner_img"><img src="{{asset('landing/images/banner-img.png')}}"></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="carousel-item">
-                     <div class="container">
-                        <div class="row">
-                           <div class="col-md-6">
-                              <h1 class="banner_taital">Hosting <br>And Domain</h1>
-                              <div class="read_bt"><a href="#">Read More</a></div>
-                           </div>
-                           <div class="col-md-6">
-                              <div class="banner_img"><img src="{{asset('landing/images/banner-img.png')}}"></div>
-                           </div>
-                        </div>
-                     </div>
-                  </div> --}}
                </div>
-               <a class="carousel-control-prev" href="#my_slider" role="button" data-slide="prev">
-               <i class="fa fa-angle-left"></i>
-               </a>
-               <a class="carousel-control-next" href="#my_slider" role="button" data-slide="next">
-               <i class="fa fa-angle-right"></i>
-               </a>
+
+               
+               
+              
             </div>
          </div>
-         <!-- banner section end -->
       </div>
-      <!-- header section end -->
-      <!-- domain section start -->
-      {{-- <div class="domain_section">
+
+      <div class="about_section">
          <div class="container">
-            <div class="domain_box">
-               <div class="domain_rate">
-                  <ul>
-                     <li><a href="#"><span style="color: #8b2791;">.com</span> $11.25</a></li>
-                     <li><a href="#"><span style="color: #8b2791;">.org</span> $12.50</a></li>
-                     <li><a href="#"><span style="color: #8b2791;">.net</span> $14.50 </a></li>
-                     <li><a href="#"><span style="color: #8b2791;">.com</span> $11.50</a></li>
-                     <li><a href="#"><span style="color: #8b2791;">info</span> $9.00</a></li>
-                     <li><a href="#"><span style="color: #8b2791;">xyz</span> $0.99</a></li>
-                  </ul>
-               </div>
-               <div class="domain_main">
-                  <form class="example" action="#">
-                     <input type="text" placeholder="Search Domain.." name="Search Domain..">
-                     <button type="submit">Search Now</button>
-                  </form>
-               </div>
+            <div class="section_heading">
+               <h2>Why Choose BloodConnect?</h2>
+               <p>
+                  A smarter and faster way to connect blood donors, hospitals, and patients in times of urgent need.
+               </p>
             </div>
-         </div>
-      </div> --}}
-      <!-- domain section end -->
-      <!-- about section start -->
-      <div class="about_section layout_padding">
-         <div class="container">
+
             <div class="row">
-               <div class="col-md-4">
+               <div class="col-md-4 mb-4">
                   <div class="about_box">
-                     <div class="icon_1"><img src="{{asset('landing/images/icon-1.png')}}"></div>
-                     <h3 class="faster_text">Faster, Efficient Support</h3>
-                     <p class="lorem_text">Bridging the gap between blood donors and those in need. Our platform streamlines blood requests for hospitals and connects them with verified donors, ensuring faster and efficient support</p>
+                     <div class="icon_circle">
+                        <i class="fa fa-bolt"></i>
+                     </div>
+                     <h3 class="faster_text">Fast Matching</h3>
+                     <p class="lorem_text">
+                        AI-powered matching helps connect the right donor to urgent blood requests quickly and efficiently.
+                     </p>
                   </div>
                </div>
-               <div class="col-md-4">
+
+               <div class="col-md-4 mb-4">
                   <div class="about_box">
-                     <div class="icon_1"><img src="{{asset('landing/images/icon-2.png')}}"></div>
-                     <h3 class="faster_text">Trusted Connections</h3>
-                     <p class="lorem_text">We simplify the blood donation process, providing hospitals with critical resources and life-saving support, and donors with a direct way to make a significant impact</p>
+                     <div class="icon_circle">
+                        <i class="fa fa-hospital-o"></i>
+                     </div>
+                     <h3 class="faster_text">Verified Hospitals</h3>
+                     <p class="lorem_text">
+                        Trusted hospital partners can securely post blood requests and manage donor communication.
+                     </p>
                   </div>
                </div>
-               <div class="col-md-4">
+
+               <div class="col-md-4 mb-4">
                   <div class="about_box">
-                     <div class="icon_1"><img src="{{asset('landing/images/icon-3.png')}}"></div>
-                     <h3 class="faster_text">Empowering Communities</h3>
-                     <p class="lorem_text">Your central hub for blood donation and management. Facilitating seamless communication between healthcare providers and generous donors to save lives, one donation at a time</p>
+                     <div class="icon_circle">
+                        <i class="fa fa-bell"></i>
+                     </div>
+                     <h3 class="faster_text">Emergency Alerts</h3>
+                     <p class="lorem_text">
+                        Real-time notifications help donors respond immediately when patients urgently need blood.
+                     </p>
                   </div>
                </div>
             </div>
          </div>
       </div>
-      <!-- about section end -->
-      <!-- hosting section start -->
-      {{-- <div class="hosting_section layout_padding">
+
+      <div class="how_it_works_section">
          <div class="container">
+            <div class="section_heading">
+               <h2>How It Works</h2>
+               <p>
+                  A simple process designed to save time and help save lives.
+               </p>
+            </div>
+
             <div class="row">
-               <div class="col-md-6">
-                  <h1 class="hosting_taital">GRID WEB HOSTING OVERVIEW</h1>
-                  <p class="hosting_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud </p>
-                  <div class="click_bt"><a href="#">Click Here</a></div>
+               <div class="col-md-3 col-sm-6 mb-4">
+                  <div class="step_box">
+                     <div class="step_number">1</div>
+                     <h4 class="step_title">Register</h4>
+                     <p class="step_desc">Create an account as a donor or hospital partner.</p>
+                  </div>
                </div>
-               <div class="col-md-6">
-                  <div class="hosting_img"><img src="{{asset('landing/images/hosting-img.png')}}"></div>
+
+               <div class="col-md-3 col-sm-6 mb-4">
+                  <div class="step_box">
+                     <div class="step_number">2</div>
+                     <h4 class="step_title">Submit Request</h4>
+                     <p class="step_desc">Hospitals post blood needs for patients in urgent situations.</p>
+                  </div>
+               </div>
+
+               <div class="col-md-3 col-sm-6 mb-4">
+                  <div class="step_box">
+                     <div class="step_number">3</div>
+                     <h4 class="step_title">Get Matched</h4>
+                     <p class="step_desc">The system helps match qualified donors with the request.</p>
+                  </div>
+               </div>
+
+               <div class="col-md-3 col-sm-6 mb-4">
+                  <div class="step_box">
+                     <div class="step_number">4</div>
+                     <h4 class="step_title">Save Lives</h4>
+                     <p class="step_desc">Donors respond faster and patients receive help on time.</p>
+                  </div>
                </div>
             </div>
          </div>
       </div>
-      <!-- hosting section end -->
-      <!-- pricing section start -->
-      <div class="pricing_section layout_padding">
+
+      <div class="cta_section">
          <div class="container">
-            <div class="row">
-               <div class="col-md-12">
-                  <h1 class="pricing_taital">Our Pricing Plan</h1>
-                  <p class="pricing_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-               </div>
-            </div>
-            <div class="pricing_section_2">
-               <div class="row">
-                  <div class="col-md-4">
-                     <div class="pricing_box">
-                        <h3 class="number_text">1</h3>
-                        <h5 class="cloud_text">Cloud Hosting</h5>
-                        <h1 class="dolor_text">$19</h1>
-                        <h3 class="monthly_text">MONTHLY</h3>
-                        <p class="band_text">5GB bandwidth Free Email Addresses 24/7 security monitoring</p>
-                        <div class="signup_bt"><a href="#">Sign Up</a></div>
-                     </div>
-                  </div>
-                  <div class="col-md-4">
-                     <div class="pricing_box">
-                        <h3 class="number_text">2</h3>
-                        <h5 class="cloud_text">VPS Hosting</h5>
-                        <h1 class="dolor_text">$19</h1>
-                        <h3 class="monthly_text">MONTHLY</h3>
-                        <p class="band_text">5GB bandwidth Free Email Addresses 24/7 security monitoring</p>
-                        <div class="signup_bt"><a href="#">Sign Up</a></div>
-                     </div>
-                  </div>
-                  <div class="col-md-4">
-                     <div class="pricing_box">
-                        <h3 class="number_text">3</h3>
-                        <h5 class="cloud_text">Shared Hosting</h5>
-                        <h1 class="dolor_text">$19</h1>
-                        <h3 class="monthly_text">MONTHLY</h3>
-                        <p class="band_text">5GB bandwidth Free Email Addresses 24/7 security monitoring</p>
-                        <div class="signup_bt"><a href="#">Sign Up</a></div>
-                     </div>
-                  </div>
-               </div>
-            </div>
+            <h2 class="cta_title">Be a part of saving lives today</h2>
+            <p class="cta_text">
+               Join BloodConnect and help make blood donation faster, smarter, and more accessible.
+            </p>
+            <a href="/register" class="cta_btn">Get Started</a>
          </div>
-      </div> --}}
-      <!-- pricing section end -->
-      <!-- services section start -->
-      {{-- <div class="services_section layout_padding">
-         <div class="container">
-            <div class="row">
-               <div class="col-md-12">
-                  <h1 class="services_taital">Our Services</h1>
-                  <p class="services_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-               </div>
-            </div>
-            <div class="services_section_2">
-               <div id="main_slider"class="carousel slide" data-ride="carousel">
-                  <div class="carousel-inner">
-                     <div class="carousel-item active">
-                        <div class="row">
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-4.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-7.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">WordPress Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-5.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-5.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">Cloud Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-6.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-9.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">Dedicated Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="carousel-item">
-                        <div class="row">
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-4.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-7.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">WordPress Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-5.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-5.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">Cloud Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-6.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-9.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">Dedicated Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="carousel-item">
-                        <div class="row">
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-4.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-7.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">WordPress Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-5.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-5.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">Cloud Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                           <div class="col-md-4">
-                              <div class="service_box">
-                                 <div class="services_icon">
-                                    <img src="{{asset('landing/images/icon-6.png')}}" class="image_1">
-                                    <img src="{{asset('landing/images/icon-9.png')}}" class="image_2">
-                                 </div>
-                                 <h3 class="wordpress_text">Dedicated Hosting</h3>
-                                 <p class="opposed_text">opposed to using 'Content here, content here', making it look like readable</p>
-                              </div>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <a class="carousel-control-prev" href="#main_slider" role="button" data-slide="prev">
-                  <i class="fa fa-angle-left"></i>
-                  </a>
-                  <a class="carousel-control-next" href="#main_slider" role="button" data-slide="next">
-                  <i class="fa fa-angle-right"></i>
-                  </a>
-               </div>
-            </div>
-         </div>
-      </div> --}}
-      <!-- services section end -->
-      <!-- testimonial section start -->
-      {{-- <div class="testimonial_section layout_padding">
-         <div class="container">
-            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
-               <ol class="carousel-indicators">
-                  <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
-                  <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-               </ol>
-               <div class="carousel-inner">
-                  <div class="carousel-item active">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <h1 class="testimonial_taital">Testimonials</h1>
-                           <p class="testimonial_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-                           <div class="testimonial_section_2">
-                              <p class="ipsum_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit essLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit ess</p>
-                              <div class="quick_img"><img src="{{asset('landing/images/quick-icon.png')}}"></div>
-                           </div>
-                           <div class="client_img"><img src="{{asset('landing/images/client-img.png')}}"></div>
-                           <h4 class="client_name">Joy Mori</h4>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="carousel-item">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <h1 class="testimonial_taital">Testimonials</h1>
-                           <p class="testimonial_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-                           <div class="testimonial_section_2">
-                              <p class="ipsum_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit essLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit ess</p>
-                              <div class="quick_img"><img src="{{asset('landing/images/quick-icon.png')}}"></div>
-                           </div>
-                           <div class="client_img"><img src="{{asset('landing/images/client-img.png')}}"></div>
-                           <h4 class="client_name">Joy Mori</h4>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="carousel-item">
-                     <div class="row">
-                        <div class="col-md-12">
-                           <h1 class="testimonial_taital">Testimonials</h1>
-                           <p class="testimonial_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore </p>
-                           <div class="testimonial_section_2">
-                              <p class="ipsum_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit essLorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit ess</p>
-                              <div class="quick_img"><img src="{{asset('landing/images/quick-icon.png')}}"></div>
-                           </div>
-                           <div class="client_img"><img src="{{asset('landing/images/client-img.png')}}"></div>
-                           <h4 class="client_name">Joy Mori</h4>
-                        </div>
-                     </div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div> --}}
-      <!-- testimonial section end -->
-      <!-- newslatter section start -->
-      {{-- <div class="newslatter_section">
-         <div class="container">
-            <div class="row">
-               <div class="col-md-12">
-                  <h1 class="newslatter_taital">Subscribe Newsletter</h1>
-                  <form class="example" action="#">
-                     <input type="text" class="mail" placeholder="Enter Your email" name="Enter Your email">
-                     <button type="submit">Sbscribe</button>
-                  </form>
-               </div>
-            </div>
-         </div>
-      </div> --}}
-      <!-- newslatter section end -->
-      <!-- footer section start -->
+      </div>
+
       <div class="footer_section layout_padding">
          <div class="container">
             <div class="row">
@@ -479,40 +635,37 @@
                   <h3 class="footer_text">Useful links</h3>
                   <div class="footer_menu">
                      <ul>
-                        <li class="{{ request()->is('') ? 'active' : ''}}"><a href="/"><span class="angle_icon {{ request()->is('/') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Home</a></li>
-                        <li class="{{ request()->is('/login') ? 'active' : ''}}"><a href="/login"><span class="angle_icon {{ request()->is('login') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Login</a></li>
-                        <li class="{{ request()->is('/hospital-list') ? 'active' : ''}}"><a href="/hospital-list"><span class="angle_icon {{ request()->is('hospital-list') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Hospital List</a></li>
-                        {{-- <li><a href="domain.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Domain</a></li>
-                        <li><a href="testimonial.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Testimonial</a></li>
-                        <li><a href="contact.html"><span class="angle_icon"><i class="fa fa-arrow-right" aria-hidden="true"></i></span>  Contact Us</a></li> --}}
+                        <li class="{{ request()->is('') ? 'active' : ''}}">
+                           <a href="/"><span class="angle_icon {{ request()->is('/') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Home</a>
+                        </li>
+                        <li class="{{ request()->is('login') ? 'active' : ''}}">
+                           <a href="/login"><span class="angle_icon {{ request()->is('login') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Login</a>
+                        </li>
+                        <li class="{{ request()->is('register') ? 'active' : ''}}">
+                           <a href="/register"><span class="angle_icon {{ request()->is('register') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Register</a>
+                        </li>
+                        <li class="{{ request()->is('hospital-list') ? 'active' : ''}}">
+                           <a href="/hospital-list"><span class="angle_icon {{ request()->is('hospital-list') ? 'active' : ''}}"><i class="fa fa-arrow-right" aria-hidden="true"></i></span> Hospital List</a>
+                        </li>
                      </ul>
                   </div>
                </div>
+
                <div class="col-sm-4">
                   <h3 class="footer_text">Address</h3>
                   <div class="location_text">
                      <ul>
                         <li>
                            <a href="#">
-                           <span class="padding_left_10"><i class="fa fa-map-marker" aria-hidden="true"></i></span>Mandaue City</a>
-                        </li>
-                        {{-- <li>
-                           <a href="#">
-                           <span class="padding_left_10"><i class="fa fa-phone" aria-hidden="true"></i></span>(+71) 1234567890<br>(+71) 1234567890
+                              <span class="padding_left_10"><i class="fa fa-map-marker" aria-hidden="true"></i></span>Mandaue City
                            </a>
                         </li>
-                        <li>
-                           <a href="#">
-                           <span class="padding_left_10"><i class="fa fa-envelope" aria-hidden="true"></i></span>demo@gmail.com
-                           </a>
-                        </li> --}}
                      </ul>
                   </div>
                </div>
+
                <div class="col-sm-4">
                   <div class="footer_main">
-                     {{-- <h3 class="footer_text">Find Us</h3>
-                     <p class="dummy_text">more-or-less normal distribution </p> --}}
                      <div class="social_icon">
                         <ul>
                            <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
@@ -525,22 +678,19 @@
             </div>
          </div>
       </div>
-      <!-- footer section end -->
-      <!-- copyright section start -->
+
       <div class="copyright_section">
          <div class="container">
             <p class="copyright_text">© 2025 BloodConnect. All Rights Reserved.</p>
          </div>
       </div>
-      <!-- copyright section end -->
-      <!-- Javascript files-->
-      <script src="{{asset('landing/js/jquery.min.js')}}"></script>
-      <script src="{{asset('landing/js/popper.min.js')}}"></script>
-      <script src="{{asset('landing/js/bootstrap.bundle.min.js')}}"></script>
-      <script src="{{asset('landing/js/jquery-3.0.0.min.js')}}"></script>
-      <script src="{{asset('landing/js/plugin.js')}}"></script>
-      <!-- sidebar -->
-      <script src="{{asset('landing/js/jquery.mCustomScrollbar.concat.min.js')}}"></script>
-      <script src="{{asset('landing/js/custom.js')}}"></script>
+
+      <script src="{{ asset('landing/js/jquery.min.js') }}"></script>
+      <script src="{{ asset('landing/js/popper.min.js') }}"></script>
+      <script src="{{ asset('landing/js/bootstrap.bundle.min.js') }}"></script>
+      <script src="{{ asset('landing/js/jquery-3.0.0.min.js') }}"></script>
+      <script src="{{ asset('landing/js/plugin.js') }}"></script>
+      <script src="{{ asset('landing/js/jquery.mCustomScrollbar.concat.min.js') }}"></script>
+      <script src="{{ asset('landing/js/custom.js') }}"></script>
    </body>
 </html>
