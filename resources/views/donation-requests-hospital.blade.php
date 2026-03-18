@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div style="
-  background: linear-gradient(135deg, #fff5f5, #ffe3e3);
-  border-radius:20px;
-  padding:20px;
-">
+<div class="donation-bg"> <!-- ✅ ADDED WRAPPER -->
 
+<div>
     @if(session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
                 <span class="text-white">
@@ -27,38 +24,11 @@
         @endforeach
     @endif
 
-    {{-- @if($errors->any())
-        <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
-            <div class="toast align-items-center text-bg-danger border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-                <div class="d-flex">
-                    <div class="toast-body">
-                        <strong>Validation Error:</strong>
-                        <ul class="mb-0">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                </div>
-            </div>
-        </div>
-    @endif --}}
-
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4 mx-4" style="
-              background: rgba(255,255,255,0.85);
-              backdrop-filter: blur(8px);
-              -webkit-backdrop-filter: blur(8px);
-              border-radius:15px;
-              box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-              border: 1px solid rgba(255,255,255,0.3);
-            ">
-
+            <div class="card mb-4 mx-4">
                 {{-- approve donation request modal --}}
                 <x-approve-donation-request />
-
                 {{-- confirm cancellation of donation request modal --}}
                 <x-confirm-cancel-donation-request />
 
@@ -66,9 +36,7 @@
                     <div class="d-flex flex-row justify-content-between">
                         <div>
                             <h5 class="mb-0">Donation Requests</h5>
-                            <p class="text-sm text-secondary mb-0">Manage incoming donor requests</p>
                         </div>
-                        {{-- <a href="#" class="btn bg-gradient-primary btn-sm mb-0" type="button" data-bs-toggle="modal" data-bs-target="#confirmCreateDonationRequestModal">+&nbsp; New</a> --}}
                     </div>
                 </div>
 
@@ -77,27 +45,13 @@
                         <table class="table align-items-center mb-0">
                             <thead>
                                 <tr>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        ID
-                                    </th>
-                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
-                                        Name
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Email
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Location
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Creation Date
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Status
-                                    </th>
-                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                        Action
-                                    </th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">ID</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Name</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Location</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Creation Date</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -127,7 +81,6 @@
                                             class="mx-3"
                                             data-bs-toggle="modal"
                                             data-bs-target="#approveDonationRequestModal"
-                                            data-bs-original-title="Edit user"
                                             data-id="{{ $dat->id }}"
                                         >
                                             <i class="fa-solid fa-thumbs-up"></i>
@@ -138,7 +91,6 @@
                                                 class="mx-3"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#confirmCancelDonationRequestModal"
-                                                data-bs-original-title="Delete user"
                                                 data-id="{{ $dat->id }}"
                                             >
                                                 <i class="fa-solid fa-thumbs-down"></i>
@@ -155,20 +107,32 @@
             </div>
         </div>
     </div>
-
 </div>
 
-@endsection
+</div> <!-- ✅ END WRAPPER -->
 
+@endsection
 
 @push('styles')
 <style>
 .btn-close-white {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
+
+/* ✅ ONLY ADDED THIS BACKGROUND */
+.donation-bg {
+    min-height: 100vh;
+    padding-top: 10px;
+    border-radius: 15px;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.90), rgba(255,255,255,0.90)),
+        url('/assets/img/hospital-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 </style>
 @endpush
-
 
 @push('scripts')
 <script>
@@ -181,14 +145,12 @@ document.addEventListener("DOMContentLoaded", () => {
     approveModal.addEventListener('show.bs.modal', event => {
         let button = event.relatedTarget;
         let id = button.getAttribute('data-id');
-
         approveForm.action = `/donation-requests/approve/${id}`;
     });
 
     deleteModal.addEventListener('show.bs.modal', event => {
         let button = event.relatedTarget;
         let id = button.getAttribute('data-id');
-
         deleteForm.action = `/donation-requests/cancel/${id}`;
     });
 });

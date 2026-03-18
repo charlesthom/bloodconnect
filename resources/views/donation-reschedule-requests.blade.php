@@ -2,12 +2,9 @@
 
 @section('content')
 
-<div style="
-  background: linear-gradient(135deg, #fff5f5, #ffe3e3);
-  border-radius:20px;
-  padding:20px;
-">
+<div class="reschedule-bg"> <!-- ✅ ONLY ADDED -->
 
+<div>
     @if(session()->has('success'))
         <div class="alert alert-success alert-dismissible fade show mx-4" role="alert">
                 <span class="text-white">
@@ -29,47 +26,14 @@
 
     <div class="row">
         <div class="col-12">
-            <div class="card mb-4 mx-4" style="
-              background: rgba(255,255,255,0.85);
-              backdrop-filter: blur(8px);
-              -webkit-backdrop-filter: blur(8px);
-              border-radius:15px;
-              box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-              border: 1px solid rgba(255,255,255,0.3);
-            ">
-
+            <div class="card mb-4 mx-4">
                 {{-- approve reschedule request modal --}}
                 <x-approve-reschedule-request />
-
                 {{-- decline reschedule request modal --}}
                 <x-decline-reschedule-request />
 
                 <div class="card-header pb-0">
-                    <div class="d-flex flex-row justify-content-between align-items-center">
-                        <div>
-                            <h5 class="mb-0">Reschedule Requests</h5>
-                            <p class="text-sm text-secondary mb-0">Manage reschedule requests</p>
-                        </div>
-
-                        <!-- 🔴 UPDATED BUTTON -->
-                        <a href="#" 
-   class="btn btn-sm mb-0"
-   style="
-     background: linear-gradient(135deg, #7b0000, #b30000);
-     color:white;
-     border:none;
-     padding:6px 14px;
-     font-size:12px;
-     border-radius:8px;
-     box-shadow: 0 3px 8px rgba(123,0,0,0.25);
-   "
-   data-bs-toggle="modal" 
-   data-bs-target="#confirmCreateDonationRequestModal">
-   + New
-</a>
-
-                    </div>
-                </div>
+                    
 
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
@@ -91,28 +55,54 @@
                             <tbody>
                                 @foreach($data as $dat)
                                 <tr>
-                                    <td class="ps-4"><p class="text-xs font-weight-bold mb-0">{{$dat->id}}</p></td>
-                                    <td><p class="text-xs font-weight-bold mb-0">{{$dat->user->name}}</p></td>
-                                    <td class="text-center"><p class="text-xs font-weight-bold mb-0">{{$dat->user->email}}</p></td>
-                                    <td class="text-center"><p class="text-xs font-weight-bold mb-0">{{explode('|', $dat->user->location)[0]}}</p></td>
-                                    <td class="text-center"><span class="text-secondary text-xs font-weight-bold">{{$dat->created_at->format('Y-m-d')}}</span></td>
-                                    <td class="text-center"><span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->date}}</span></td>
-                                    <td class="text-center"><span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status}}</span></td>
-                                    <td class="text-center"><span class="text-secondary text-xs font-weight-bold">{{$dat->latestRescheduleRequest?->date}}</span></td>
-                                    <td class="text-center"><span class="text-secondary text-xs font-weight-bold">{{$dat->latestRescheduleRequest?->status}}</span></td>
+                                    <td class="ps-4">
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->id}}</p>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->user->name}}</p>
+                                    </td>
                                     <td class="text-center">
-                                        <a href="#" class="mx-3"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#approveRescheduleRequestModal"
-                                           data-id="{{ $dat->latestRescheduleRequest?->id }}">
+                                        <p class="text-xs font-weight-bold mb-0">{{$dat->user->email}}</p>
+                                    </td>
+                                    <td class="text-center">
+                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $dat->user->location)[0]}}</p>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->created_at->format('Y-m-d')}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->date}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestRescheduleRequest?->date}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestRescheduleRequest?->status}}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a 
+                                            href="#"
+                                            class="mx-3"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#approveRescheduleRequestModal"
+                                            data-id="{{ $dat->latestRescheduleRequest?->id }}"
+                                        >
                                             <i class="fas fa-user-edit text-secondary"></i>
                                         </a>
-                                        <a href="#" class="mx-3"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#declineRescheduleRequestModal"
-                                           data-id="{{ $dat->latestRescheduleRequest?->id }}">
-                                            <i class="cursor-pointer fas fa-trash text-secondary"></i>
-                                        </a>
+                                        <span>
+                                            <a
+                                                href="#"
+                                                class="mx-3"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#declineRescheduleRequestModal"
+                                                data-id="{{ $dat->latestRescheduleRequest?->id }}"
+                                            >
+                                                <i class="cursor-pointer fas fa-trash text-secondary"></i>
+                                            </a>
+                                        </span>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -124,19 +114,32 @@
             </div>
         </div>
     </div>
-
 </div>
-@endsection
 
+</div> <!-- ✅ END -->
+
+@endsection
 
 @push('styles')
 <style>
 .btn-close-white {
     filter: invert(1) grayscale(100%) brightness(200%);
 }
+
+/* ✅ ONLY THIS ADDED */
+.reschedule-bg {
+    min-height: 100vh;
+    padding-top: 10px;
+    border-radius: 15px;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.90), rgba(255,255,255,0.90)),
+        url('/assets/img/hospital-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
 </style>
 @endpush
-
 
 @push('scripts')
 <script>

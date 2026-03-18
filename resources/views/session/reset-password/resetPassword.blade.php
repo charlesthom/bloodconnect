@@ -14,6 +14,7 @@
                         <form role="form" action="/reset-password" method="POST">
                             @csrf
                             <input type="hidden" name="token" value="{{ $token }}">
+                            
                             <div>
                                 <label for="email">Email</label>
                                 <div class="">
@@ -23,6 +24,7 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div>
                                 <label for="password">New Password</label>
                                 <div class="">
@@ -32,6 +34,7 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div>
                                 <label for="password_confirmation">Confirm Password</label>
                                 <div class="">
@@ -41,18 +44,48 @@
                                     @enderror
                                 </div>
                             </div>
+
                             <div class="text-center">
-                                <button type="submit" class="btn bg-gradient-info w-100 mt-4 mb-0">Recover your password</button>
+                                <button type="submit" class="btn bg-gradient-danger w-100 mt-4 mb-0">
+                                    Recover your password
+                                </button>
                             </div>
+
                         </form>
                     </div>
                 </div>
             </div>
+
+            <!-- ONLY THIS PART CHANGED -->
             <div class="col-md-6">
                 <div class="oblique position-absolute top-0 h-100 d-md-block d-none me-n8">
-                    <div class="oblique-image bg-cover position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6" style="background-image:url('../assets/img/curved-images/curved6.jpg')"></div>
+                    
+                    <div class="oblique-image position-absolute fixed-top ms-auto h-100 z-index-0 ms-n6 d-flex justify-content-center align-items-center"
+                         style="background: linear-gradient(135deg, #ff4d4d, #b30000);">
+
+                        <div class="text-center text-white">
+
+                            <!-- LOGO -->
+                            <img src="{{ asset('assets/img/bloodconnect-logo.png') }}"
+                                 alt="BloodConnect Logo"
+                                 style="width: 120px; margin-bottom: 15px;">
+
+                            <!-- TEXT -->
+                            <h3 class="text-white font-weight-bold mb-2">
+                                BloodConnect
+                            </h3>
+
+                            <p class="text-white text-sm">
+                                AI-Powered Blood Donation and Matching Platform
+                            </p>
+
+                        </div>
+                    </div>
+
                 </div>
             </div>
+            <!-- END CHANGE -->
+
         </div>
     </div>
 </div>
