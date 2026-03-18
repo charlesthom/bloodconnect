@@ -119,22 +119,32 @@
 @endsection
 
 <style>
-.hospital-main-card {
-    backdrop-filter: blur(12px);
-    border-radius: 20px;
-    overflow: visible !important;
-}
-
 .hospital-new-btn {
-    background: red;
-    color: white;
-    border-radius: 10px;
-    transition: 0.3s;
+    background: linear-gradient(135deg, #dc2626, #7f1d1d) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 10px 20px !important;
+    font-weight: 600 !important;
+
+    box-shadow:
+        0 4px 12px rgba(127, 29, 29, 0.4),
+        0 0 0 rgba(220, 38, 38, 0);
+
+    transition: all 0.25s ease-in-out;
 }
 
 .hospital-new-btn:hover {
-    box-shadow: 0 0 10px red;
-    transform: scale(1.05);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow:
+        0 6px 18px rgba(127, 29, 29, 0.5),
+        0 0 12px rgba(220, 38, 38, 0.6);
+}
+
+.hospital-new-btn:active {
+    transform: scale(0.98);
+    box-shadow:
+        0 3px 8px rgba(127, 29, 29, 0.3);
 }
 </style>
 
