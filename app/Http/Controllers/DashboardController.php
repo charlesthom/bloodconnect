@@ -90,7 +90,7 @@ class DashboardController extends Controller
 
     public function exportDonationRequests()
     {
-        $donationRequests = $this->donationRequestService->getAllWithRelation();
+        $donationRequests = $this->donationRequestService->getAllWithRelationWithDeleted();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -107,10 +107,10 @@ class DashboardController extends Controller
         $row = 2;
         foreach ($donationRequests as $request) {
             $sheet->setCellValue("A{$row}", $request->id);
-            $sheet->setCellValue("B{$row}", $request->user->name);
-            $sheet->setCellValue("C{$row}", $request->user->email);
-            $sheet->setCellValue("D{$row}", $request->user->birth_date);
-            $sheet->setCellValue("E{$row}", $request->hospital->name);
+            $sheet->setCellValue("B{$row}", $request?->user->name);
+            $sheet->setCellValue("C{$row}", $request?->user->email);
+            $sheet->setCellValue("D{$row}", $request?->user->birth_date);
+            $sheet->setCellValue("E{$row}", $request?->hospital->name);
             $sheet->setCellValue("F{$row}", $request->created_at->format('Y-m-d H:i'));
             $row++;
         }

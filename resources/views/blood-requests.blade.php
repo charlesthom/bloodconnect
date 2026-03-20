@@ -88,6 +88,9 @@
                                             Status
                                         </th>
                                         <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                            Fulfilled By
+                                        </th>
+                                        <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Action
                                         </th>
                                     </tr>
@@ -121,6 +124,9 @@
                                         </td>
                                         <td class="text-center">
                                             <span class="text-secondary text-xs font-weight-bold">{{$dat->status}}</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="text-secondary text-xs font-weight-bold">{{$dat->confirmedBy ? $dat->confirmedBy->name : null }}</span>
                                         </td>
                                         <td class="text-center">
                                             <a 

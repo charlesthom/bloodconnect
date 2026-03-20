@@ -104,11 +104,6 @@
                 <h6 class="mb-0">{{ __('Profile Information') }}</h6>
             </div>
             <div class="card-body pt-4 p-3">
-                <div class="card-header pb-0 px-3 d-flex justify-content-end align-items-center">
-                    <button type="button" id="editProfileBtn" class="btn btn-dark btn-sm">
-                        <i class="fa fa-pen me-1"></i> Edit
-                    </button>
-                </div>
                 <div id="geocodeContainer"></div>
                 <form action="/user-profile" method="POST" role="form text-left">
                     @csrf

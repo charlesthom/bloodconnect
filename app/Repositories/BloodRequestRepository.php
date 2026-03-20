@@ -23,6 +23,7 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
             ->with(['hospital' => function ($query) {
                 $query->with('user');
             }])
+            ->with(['confirmedBy'])
             ->get();
     }
 

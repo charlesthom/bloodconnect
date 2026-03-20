@@ -25,6 +25,18 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
             ->get();
     }
 
+    public function allWithRelationWithDeleted()
+    {
+        return DonationRequest::with([
+            'user' => function ($query) {
+                $query->withTrashed();
+            },
+            'hospital' => function ($query) {
+                $query->withTrashed();
+            }
+        ])->get();
+    }
+
     public function allByDonor()
     {
         $user = Auth::user();
