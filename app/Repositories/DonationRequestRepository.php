@@ -157,6 +157,14 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
                         "You can only request again after {$allowDate}."
                     );
                 }
+                $latestPendingRequest = DonationRequest::where('user_id', $data['user_id'])
+    ->where('status', DonationRequestStatusEnum::Pending)
+    ->latest()
+    ->first();
+
+if ($latestPendingRequest) {
+    throw new \Exception("You already have a pending donation request.");
+}
             }
         }
         $donationRequest = DonationRequest::create($data);

@@ -37,18 +37,60 @@
                 <x-confirm-create-donation-request />
                 {{-- reschedule request modal --}}
                 <x-reschedule-request />
+@php
+    $latestPendingRequest = collect($data->donations)
+        ->where('status', 'Pending')
+        ->sortByDesc('created_at')
+        ->first();
 
+    $latestApprovedRequest = collect($data->donations)
+        ->where('status', 'Approved')
+        ->sortByDesc('created_at')
+        ->first();
+
+    $eligibleDate = null;
+    $blockMessage = null;
+
+    if ($latestPendingRequest) {
+        $blockMessage = 'You already have a pending donation request.';
+    } elseif ($latestApprovedRequest) {
+        $eligibleDate = strtoupper($data->gender) === 'MALE'
+            ? $latestApprovedRequest->created_at->copy()->addMonths(4)
+            : $latestApprovedRequest->created_at->copy()->addMonths(3);
+
+        if ($eligibleDate->isFuture()) {
+            $blockMessage = 'You can donate again on ' . $eligibleDate->format('F d, Y') . '.';
+        }
+    }
+
+    $hasBlockingRequest = $latestPendingRequest || ($eligibleDate && $eligibleDate->isFuture());
+@endphp
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
                             <h5 class="mb-0">Donation Requests</h5>
                         </div>
-                        <a href="#" class="btn btn-danger btn-sm mb-0"
-                           type="button"
-                           data-bs-toggle="modal"
-                           data-bs-target="#confirmCreateDonationRequestModal">
-                           +&nbsp; New
-                        </a>
+                        @if(!$hasBlockingRequest)
+    <a href="#" class="btn btn-danger btn-sm mb-0"
+       data-bs-toggle="modal"
+       data-bs-target="#confirmCreateDonationRequestModal">
+       +&nbsp; New
+    </a>
+@else
+    <div class="text-end">
+        <button class="btn btn-secondary btn-sm mb-0" disabled>
+            +&nbsp; New
+        </button>
+
+        @if(isset($blockMessage))
+            <div>
+                <small class="text-danger fw-bold">
+                    {{ $blockMessage }}
+                </small>
+            </div>
+        @endif
+    </div>
+@endif
                     </div>
                 </div>
 
