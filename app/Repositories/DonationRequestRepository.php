@@ -138,7 +138,10 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     public function create(array $data)
     {
         $user = Auth::user();
-        $latestDonationRequest = DonationRequest::where('user_id', $data['user_id'])->latest()->first();
+        $latestDonationRequest = DonationRequest::where('user_id', $data['user_id'])
+    ->where('status', DonationRequestStatusEnum::Approved)
+    ->latest()
+    ->first();
         if ($latestDonationRequest) {
             if (strtoupper($user->gender) == 'MALE') {
                 $allowDate = $latestDonationRequest->created_at->addMonths(4)->format('M d, Y');
