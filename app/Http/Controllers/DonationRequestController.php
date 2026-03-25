@@ -29,20 +29,49 @@ class DonationRequestController extends Controller
         ]);
     }
 
-    public function hospital()
-    {
-        return view('donation-requests-hospital')->with([
-            "data" => $this->service->getAllByHospital()
-        ]);
+    public function hospital(Request $request)
+{
+    $data = $this->service->getAllByHospital();
+
+    // SORTING (based on Creation Date)
+    if ($request->sort == 'newest') {
+        $data = collect($data)->sortByDesc(function ($item) {
+            return $item->created_at;
+        })->values();
     }
 
-    public function showReschedule()
-    {
-        // return $this->service->getAllRescheduleByHospital();
-        return view('donation-reschedule-requests')->with([
-            "data" => $this->service->getAllRescheduleByHospital()
-        ]);
+    if ($request->sort == 'oldest') {
+        $data = collect($data)->sortBy(function ($item) {
+            return $item->created_at;
+        })->values();
     }
+
+    return view('donation-requests-hospital')->with([
+        "data" => $data
+    ]);
+}
+
+   public function showReschedule(Request $request)
+{
+    $data = $this->service->getAllRescheduleByHospital();
+
+    // SORTING BASED ON REQUESTED DATE (RESCHEDULE DATE)
+    if ($request->sort == 'newest') {
+        $data = collect($data)->sortByDesc(function ($item) {
+            return optional($item->latestRescheduleRequest)->date;
+        })->values();
+    }
+
+    if ($request->sort == 'oldest') {
+        $data = collect($data)->sortBy(function ($item) {
+            return optional($item->latestRescheduleRequest)->date;
+        })->values();
+    }
+
+    return view('donation-reschedule-requests')->with([
+        "data" => $data
+    ]);
+}
 
     public function show($id)
     {

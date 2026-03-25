@@ -14,13 +14,26 @@ class BloodRequestController extends Controller
         $this->service = $service;
     }
 
-    public function index()
-    {
-        // return $this->service->getAll();
-        return view('blood-requests')->with([
-            "data" => $this->service->getAll()
-        ]);
+    public function index(Request $request)
+{
+    $data = $this->service->getAll();
+
+    if ($request->sort == 'newest') {
+        $data = collect($data)->sortByDesc(function ($item) {
+            return $item->request_date;
+        })->values();
     }
+
+    if ($request->sort == 'oldest') {
+        $data = collect($data)->sortBy(function ($item) {
+            return $item->request_date;
+        })->values();
+    }
+
+    return view('blood-requests')->with([
+        "data" => $data
+    ]);
+}
 
     public function show($id)
     {

@@ -33,12 +33,20 @@
                 <x-confirm-cancel-donation-request />
 
                 <div class="card-header pb-0">
-                    <div class="d-flex flex-row justify-content-between">
-                        <div>
-                            <h5 class="mb-0">Donation Requests</h5>
-                        </div>
-                    </div>
-                </div>
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+    <div>
+        <h5 class="mb-0">Donation Requests</h5>
+    </div>
+
+    <!-- ONLY DROPDOWN (NO BUTTON) -->
+    <form method="GET" action="{{ url('/donation-requests/hospital') }}">
+        <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">Sort</option>
+            <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest to Oldest</option>
+            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest to Newest</option>
+        </select>
+    </form>
+</div>
 
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">

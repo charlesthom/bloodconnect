@@ -48,13 +48,29 @@
                     {{-- fulfill blood request modal --}}
                     <x-fulfill-blood-request />
                     <div class="card-header pb-0">
-                        <div class="d-flex flex-row justify-content-between">
-                            <div>
-                                <h5 class="mb-0">Blood Requests</h5>
-                            </div>
-                            <a href="#" class="btn bg-gradient-danger btn-sm mb-0" ... type="button" data-bs-toggle="modal" data-bs-target="#createBloodRequestModal">+&nbsp; New</a>
-                        </div>
-                    </div>
+                        <div class="d-flex flex-row justify-content-between align-items-center">
+    <div>
+        <h5 class="mb-0">Blood Requests</h5>
+    </div>
+
+    <div class="d-flex gap-2">
+        <!-- SORT DROPDOWN -->
+        <form method="GET" action="{{ url('/blood-requests') }}">
+            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                <option value="">Sort</option>
+                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest to Oldest</option>
+                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest to Newest</option>
+            </select>
+        </form>
+
+        <!-- ONLY ONE NEW BUTTON -->
+        <a href="#" class="btn bg-gradient-danger btn-sm mb-0"
+           data-bs-toggle="modal"
+           data-bs-target="#createBloodRequestModal">
+            + New
+        </a>
+    </div>
+</div>
                     <div class="card-body px-0 pt-0 pb-2">
                         <div class="table-responsive p-0">
                             <table class="table align-items-center mb-0">
