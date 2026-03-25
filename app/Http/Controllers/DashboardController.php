@@ -2,13 +2,17 @@
 
 namespace App\Http\Controllers;
 
+
 use App\Models\Hospital;
 use App\Models\User;
+use App\Models\DonationRequest;
+use App\Models\BloodRequest;
 use App\Services\BloodRequestService;
 use App\Services\DashboardService;
 use App\Services\DonationRequestService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -262,5 +266,111 @@ class DashboardController extends Controller
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="users.xlsx"',
         ]);
+        
     }
+    public function exportUsersPdf()
+{
+    $users = User::get();
+
+    $pdf = Pdf::loadView('reports.users-pdf', compact('users'))
+        ->setPaper('a4', 'landscape');
+
+    return $pdf->download('users-report.pdf');
+}
+public function exportHospitalsPdf()
+{
+    $hospitals = Hospital::with(['user'])->get();
+
+    $pdf = Pdf::loadView('reports.hospitals-pdf', compact('hospitals'))
+        ->setPaper('a4', 'landscape');
+
+    return $pdf->download('hospitals-report.pdf');
+}
+public function exportDonationRequestsPdf()
+{
+    $donationRequests = $this->donationRequestService->getAllWithRelationWithDeleted();
+
+    $pdf = Pdf::loadView('reports.donation-requests', compact('donationRequests'))
+        ->setPaper('a4', 'landscape');
+
+    return $pdf->download('donation-requests-report.pdf');
+}
+public function exportBloodRequestsPdf()
+{
+    $bloodRequests = $this->bloodRequestService->getAll();
+
+    $pdf = Pdf::loadView('reports.blood-requests-pdf', compact('bloodRequests'))
+        ->setPaper('a4', 'landscape');
+
+    return $pdf->download('blood-requests-report.pdf');
+}
+public function exportFilteredPdf(Request $request)
+{
+    $from = $request->from;
+    $to = $request->to;
+    $report = $request->report;
+
+    if ($report === 'users') {
+        $users = User::when($from, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('reports.users-pdf', compact('users', 'from', 'to'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('users-report.pdf');
+    }
+
+    if ($report === 'hospitals') {
+        $hospitals = Hospital::when($from, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('reports.hospitals-pdf', compact('hospitals', 'from', 'to'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('hospitals-report.pdf');
+    }
+
+    if ($report === 'donation') {
+        $donationRequests = \App\Models\DonationRequest::when($from, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('reports.donation-requests', compact('donationRequests', 'from', 'to'))
+    ->setPaper('a4', 'landscape');
+            
+
+        return $pdf->download('donation-requests-report.pdf');
+    }
+
+    if ($report === 'blood') {
+        $bloodRequests = \App\Models\BloodRequest::when($from, function ($query) use ($from) {
+                return $query->whereDate('created_at', '>=', $from);
+            })
+            ->when($to, function ($query) use ($to) {
+                return $query->whereDate('created_at', '<=', $to);
+            })
+            ->get();
+
+        $pdf = Pdf::loadView('reports.blood-requests-pdf', compact('bloodRequests', 'from', 'to'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('blood-requests-report.pdf');
+    }
+
+    return back()->with('error', 'Invalid report type selected.');
+}
 }

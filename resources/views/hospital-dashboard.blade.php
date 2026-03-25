@@ -31,8 +31,7 @@
                 </div>
               </div>
               <div class="col-4 text-end">
-                <div class="icon icon-shape bg-gradient-warning shadow text-center border-radius-md">
-                  <i class="ni ni-time-alarm text-lg opacity-10" aria-hidden="true"></i>
+<div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md">                  <i class="ni ni-time-alarm text-lg opacity-10" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -53,8 +52,7 @@
                 </div>
               </div>
               <div class="col-4 text-end">
-                <div class="icon icon-shape bg-gradient-info shadow text-center border-radius-md">
-                  <i class="ni ni-curved-next text-lg opacity-10" aria-hidden="true"></i>
+<div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md">                  <i class="ni ni-curved-next text-lg opacity-10" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -97,8 +95,7 @@
                 </div>
               </div>
               <div class="col-4 text-end">
-                <div class="icon icon-shape bg-gradient-success shadow text-center border-radius-md">
-                  <i class="ni ni-chart-pie-35 text-lg opacity-10" aria-hidden="true"></i>
+<div class="icon icon-shape bg-gradient-danger shadow text-center border-radius-md">                  <i class="ni ni-chart-pie-35 text-lg opacity-10" aria-hidden="true"></i>
                 </div>
               </div>
             </div>
@@ -649,7 +646,7 @@
       var ctx2 = document.getElementById("chart-line").getContext("2d");
 
       var gradientStroke1 = ctx2.createLinearGradient(0, 230, 0, 50);
-      gradientStroke1.addColorStop(1, 'rgba(203,12,159,0.2)');
+      gradientStroke1.addColorStop(1, 'rgba(203, 12, 12, 0.2)');
       gradientStroke1.addColorStop(0.2, 'rgba(72,72,176,0.0)');
       gradientStroke1.addColorStop(0, 'rgba(203,12,159,0)');
 
@@ -667,7 +664,7 @@
               tension: 0.4,
               borderWidth: 0,
               pointRadius: 0,
-              borderColor: "#cb0c9f",
+              borderColor: "#b60505",
               borderWidth: 3,
               backgroundColor: gradientStroke1,
               fill: true,
