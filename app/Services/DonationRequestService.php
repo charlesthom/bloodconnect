@@ -94,22 +94,33 @@ class DonationRequestService
         return $this->repository->find($id);
     }
 
-    public function create()
-    {
-        $data = [];
-        $user = Auth::user();
-        $location = explode('|', $user->location);
+   public function create($requestData = [])
+{
+    $data = [];
+    $user = Auth::user();
+
+    $location = explode('|', $user->location);
+
+    // 👉 If user selected hospital, use it
+    if (isset($requestData['hospital_id']) && $requestData['hospital_id']) {
+        $data['hospital_id'] = $requestData['hospital_id'];
+    } else {
+        // 👉 fallback to nearest hospital (original logic)
         $nearestHospital = $this->hospitalRepository->findNearestHospital($location[1], $location[2]);
-        $data['user_id'] = $user->id;
         $data['hospital_id'] = $nearestHospital->id;
-        $data['date'] = now();
-        $data['status'] = DonationRequestStatusEnum::Pending;
-        $donationRequest = $this->repository->create($data);
-        Mail::to($donationRequest->user->email)->queue(new DonationRequestMail($donationRequest));
-        Mail::to($donationRequest->hospital->user->email)->queue(new DonationRequestAdminMail($donationRequest));
-        return $donationRequest;
     }
 
+    $data['user_id'] = $user->id;
+    $data['date'] = now();
+    $data['status'] = DonationRequestStatusEnum::Pending;
+
+    $donationRequest = $this->repository->create($data);
+
+    Mail::to($donationRequest->user->email)->queue(new DonationRequestMail($donationRequest));
+    Mail::to($donationRequest->hospital->user->email)->queue(new DonationRequestAdminMail($donationRequest));
+
+    return $donationRequest;
+}
     public function update(int $id, array $data)
     {
         return $this->repository->update($id, $data);

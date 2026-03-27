@@ -31,16 +31,14 @@ class HospitalController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'hospital_name' => 'required|string|max:255',
-            'hospital_location' => 'required|string|max:255',
+    'hospital_name' => 'required|string|max:255',
+    'hospital_location' => 'required|string|max:255',
 
-            'user_name' => 'required|string|max:255',
-            'user_email' => 'required|email|unique:users,email',
-            'user_password' => 'required|string|min:6',
-            'user_birth_date' => 'required|date',
-            'user_gender' => 'required|string',
-            'user_phone' => 'required|string',
-        ]);
+    'user_name' => 'required|string|max:255',
+    'user_email' => 'required|email|unique:users,email',
+    'user_password' => 'required|string|min:6',
+    'user_phone' => 'required|string',
+]);
 
         if ($validator->fails()) {
             return redirect()->back()
@@ -61,10 +59,10 @@ class HospitalController extends Controller
             'hospital_location' => 'required|string|max:255',
 
             'user_name' => 'required|string|max:255',
-            'user_email' => 'required|email|unique:users,email',
+            'user_email' => 'required|email|unique:users,email,' . $request->user_id . ',id',
             'user_password' => 'nullable|string|min:6',
-            'user_birth_date' => 'required|date',
-            'user_gender' => 'required|string',
+            'user_birth_date' => 'nullable|date',
+'user_gender' => 'nullable|string',
             'user_phone' => 'required|string',
             'user_status' => 'required|string',
             'user_id' => 'required|string',

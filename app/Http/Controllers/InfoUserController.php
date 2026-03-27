@@ -23,8 +23,8 @@ class InfoUserController extends Controller
             'name' => ['required', 'max:50'],
             'phone'     => ['max:50'],
             'location' => ['required'],
-            'birth_date' => ['required'],
-            'gender' => ['required'],
+            'birth_date' => ['nullable'],
+'gender' => ['nullable'],
         ]);
         if ($request->get('email') != Auth::user()->email) {
             if (env('IS_DEMO') && Auth::user()->id == 1) {

@@ -34,7 +34,7 @@
         <div class="col-12">
             <div class="card mb-4 mx-4">
                 {{-- confirm creation of new donation request modal --}}
-                <x-confirm-create-donation-request />
+                <x-confirm-create-donation-request :nearbyHospitals="$nearbyHospitals" />
                 {{-- reschedule request modal --}}
                 <x-reschedule-request />
 @php

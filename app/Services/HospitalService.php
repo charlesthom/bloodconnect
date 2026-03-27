@@ -31,8 +31,8 @@ class HospitalService
             'password' => Hash::make($data['user_password']),
             'role' => UserRoleEnum::HospitalAdmin,
             'location' => $data['user_location'] ?? null,
-            'birth_date' => $data['user_birth_date'],
-            'gender' => $data['user_gender'],
+            'birth_date' => '2000-01-01',
+'gender' => 'other',
             'phone' => $data['user_phone'] ?? null,
             'status' => UserStatusEnum::Active,
         ]);
@@ -48,28 +48,30 @@ class HospitalService
     }
 
     public function updateHospitalWithUser(array $data)
-    {
-        // Step 1: update user
-        $this->userRepository->update([
-            'user_id' => $data['user_id'],
-            'name' => $data['user_name'],
-            'email' => $data['user_email'],
-            'password' => $data['user_password'] ? Hash::make($data['user_password']) : null,
-            'birth_date' => $data['user_birth_date'],
-            'gender' => $data['user_gender'],
-            'phone' => $data['user_phone'],
-            'status' => $data['user_status'],
-        ]);
+{
+    $existingUser = $this->userRepository->findById($data['user_id']);
 
-        // Step 2: update hospital linked to user
-        $hospital = $this->hospitalRepository->update([
-            'hospital_id' => $data['hospital_id'],
-            'name' => $data['hospital_name'],
-            'location' => $data['hospital_location'],
-        ]);
+    // Step 1: update user
+    $this->userRepository->update([
+        'user_id' => $data['user_id'],
+        'name' => $data['user_name'],
+        'email' => $data['user_email'],
+        'password' => $data['user_password'] ? Hash::make($data['user_password']) : null,
+        'birth_date' => $data['user_birth_date'] ?? $existingUser->birth_date,
+        'gender' => $data['user_gender'] ?? $existingUser->gender,
+        'phone' => $data['user_phone'],
+        'status' => $data['user_status'],
+    ]);
 
-        return $hospital;
-    }
+    // Step 2: update hospital linked to user
+    $hospital = $this->hospitalRepository->update([
+        'hospital_id' => $data['hospital_id'],
+        'name' => $data['hospital_name'],
+        'location' => $data['hospital_location'],
+    ]);
+
+    return $hospital;
+}
 
     public function delete(int $id)
     {

@@ -19,11 +19,11 @@
                 <label for="address" class="form-label">Enter Address</label>
                 <input type="text" class="form-control" id="update_address" name="address" placeholder="e.g. Cebu City, Philippines">
                 <button 
-                onclick="geocodeAddress('update')"
-                type="button" 
-                class="btn btn-primary">
-                    Find Address
-                </button>
+    onclick="geocodeAddress('update')"
+    type="button" 
+    class="btn text-white" style="background-color:#800000;">
+    Find Address
+</button>
             </div>
             <div id="update_result" class="mt-3"></div>
             <!-- Hospital Info -->
@@ -64,21 +64,7 @@
                 @error('user_password') <p class="text-danger text-xs mt-1">{{ $message }}</p> @enderror
             </div>
 
-            <div class="col-md-6">
-                <label for="user_birth_date" class="form-label">Birth Date</label>
-                <input type="date" class="form-control" id="update_user_birth_date" name="user_birth_date" value="{{ old('user_birth_date') }}" required>
-                @error('user_birth_date') <p class="text-danger text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
-
-            <div class="col-md-6">
-                <label for="user_gender" class="form-label">Gender</label>
-                <select class="form-control" id="update_user_gender" name="user_gender" required>
-                <option value="" disabled selected>-- Select Gender --</option>
-                <option value="Male" {{ old('user_gender')=='Male'?'selected':'' }}>Male</option>
-                <option value="Female" {{ old('user_gender')=='Female'?'selected':'' }}>Female</option>
-                </select>
-                @error('user_gender') <p class="text-danger text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
+            
 
             <div class="col-md-6">
                 <label for="user_phone" class="form-label">Phone</label>
@@ -100,7 +86,7 @@
 
             <div class="modal-footer">
             <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn bg-gradient-primary">Save Hospital</button>
+            <button type="submit" class="btn text-white" style="background-color:#800000;">SAVE HOSPITAL</button>
             </div>
         </form>
         <!-- End Form -->

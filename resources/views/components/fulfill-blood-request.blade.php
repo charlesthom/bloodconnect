@@ -22,7 +22,7 @@
             </div> --}}
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn bg-gradient-primary">Yes</button>
+               <button type="submit" class="btn text-white" style="background-color:#800000;">Yes</button>
             </div>
         </form>
         <!-- End Form -->

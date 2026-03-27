@@ -54,4 +54,35 @@ class HospitalRepository implements HospitalRepositoryInterface
             ->orderBy('distance', 'asc')
             ->first();
     }
+    public function findNearbyHospitals($userLat, $userLng, $userArea = null)
+{
+    $query = Hospital::selectRaw("
+        *,
+        (
+            6371 * acos(
+                cos(radians(?)) *
+                cos(radians(SUBSTRING_INDEX(SUBSTRING_INDEX(location, '|', -2), '|', 1))) *
+                cos(radians(SUBSTRING_INDEX(location, '|', -1)) - radians(?)) +
+                sin(radians(?)) *
+                sin(radians(SUBSTRING_INDEX(SUBSTRING_INDEX(location, '|', -2), '|', 1)))
+            )
+        ) AS distance
+    ", [$userLat, $userLng, $userLat]);
+
+    if ($userArea) {
+        $sameAreaHospitals = (clone $query)
+            ->whereRaw("LOWER(SUBSTRING_INDEX(location, '|', 1)) = ?", [strtolower($userArea)])
+            ->orderBy('distance', 'asc')
+            ->get();
+
+        if ($sameAreaHospitals->count() > 0) {
+            return $sameAreaHospitals;
+        }
+    }
+
+    return $query
+        ->having('distance', '<=', 3)
+        ->orderBy('distance', 'asc')
+        ->get();
+}
 }

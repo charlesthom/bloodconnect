@@ -170,32 +170,34 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="user.birthdate" class="form-control-label">{{ __('Birthdate') }}</label>
-                                <div class="@error('user.Birthdate') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="date" placeholder="Birth Date" id="name" name="birth_date" value="{{ auth()->user()->birth_date }}" readonly>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="user.gender" class="form-control-label">{{ __('Gender') }}</label>
-                                <div class="@error('user.gender')border border-danger rounded-3 @enderror">
-                                    <select class="form-control" name="gender" id="gender" aria-label="gender" aria-describedby="gender" disabled>
-                                        <option value="">-- Select Gender --</option>
-                                        <option value="Male" {{ auth()->user()->gender == 'Male' ? 'selected' : '' }}>Male</option>
-                                        <option value="Female" {{ auth()->user()->gender == 'Female' ? 'selected' : '' }}>Female</option>
-                                        <option value="Other" {{ auth()->user()->gender == 'Other' ? 'selected' : '' }}>Other</option>
-                                    </select>
-                                    @error('gender')
-                                        <p class="text-danger text-xs mt-2">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                  @if(auth()->user()->role->value == 'donor')
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="user.birthdate" class="form-control-label">{{ __('Birthdate') }}</label>
+            <div class="@error('user.Birthdate') border border-danger rounded-3 @enderror">
+                <input class="form-control" type="date" placeholder="Birth Date" id="name" name="birth_date" value="{{ auth()->user()->birth_date }}" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="user.gender" class="form-control-label">{{ __('Gender') }}</label>
+            <div class="@error('user.gender')border border-danger rounded-3 @enderror">
+                <select class="form-control" name="gender" id="gender" aria-label="gender" aria-describedby="gender" disabled>
+                    <option value="">-- Select Gender --</option>
+                    <option value="Male" {{ auth()->user()->gender == 'Male' ? 'selected' : '' }}>Male</option>
+                    <option value="Female" {{ auth()->user()->gender == 'Female' ? 'selected' : '' }}>Female</option>
+                    <option value="Other" {{ auth()->user()->gender == 'Other' ? 'selected' : '' }}>Other</option>
+                </select>
+                @error('gender')
+                    <p class="text-danger text-xs mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+    </div>
+</div>
+@endif
                     {{-- <div class="form-group">
                         <label for="about">{{ 'About Me' }}</label>
                         <div class="@error('user.about')border border-danger rounded-3 @enderror">
@@ -227,7 +229,10 @@
             }
         });
         document.getElementById('editProfileBtn').classList.add("disabled")
-        document.getElementById('gender').disabled = false;
+        const genderField = document.getElementById('gender');
+if (genderField) {
+    genderField.disabled = false;
+}
 
         if (!document.getElementById('saveChangesBtn')) {
             let saveBtn = document.createElement('button');
@@ -269,7 +274,10 @@
 
                 document.getElementById('editProfileBtn').classList.remove("disabled");
                 document.getElementById('geocodeContainer').innerHTML = ``;
-                document.getElementById('gender').disabled = true;
+                const genderFieldCancel = document.getElementById('gender');
+if (genderFieldCancel) {
+    genderFieldCancel.disabled = true;
+}
             });
         }
     });

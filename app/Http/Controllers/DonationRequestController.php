@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Services\DonationRequestService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Repositories\Contracts\HospitalRepositoryInterface;
 
 class DonationRequestController extends Controller
 {
@@ -22,12 +24,18 @@ class DonationRequestController extends Controller
         ]);
     }
 
-    public function donor()
-    {
-        return view('donation-requests')->with([
-            "data" => $this->service->getAllByDonor()
-        ]);
-    }
+    public function donor(HospitalRepositoryInterface $hospitalRepository)
+{
+    $user = Auth::user();
+    $location = explode('|', $user->location);
+
+    $nearbyHospitals = $hospitalRepository->findNearbyHospitals($location[1], $location[2], $location[0]);
+
+    return view('donation-requests')->with([
+        "data" => $this->service->getAllByDonor(),
+        "nearbyHospitals" => $nearbyHospitals
+    ]);
+}
 
     public function hospital(Request $request)
 {
@@ -82,7 +90,7 @@ class DonationRequestController extends Controller
     public function store(Request $request)
     {
         try {
-            $this->service->create();
+           $this->service->create($request->all());
             return redirect()->back()->with('success', 'Request Created Successfully!');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());

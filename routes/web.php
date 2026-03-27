@@ -81,6 +81,8 @@ Route::get('/export/users/pdf', [DashboardController::class, 'exportUsersPdf'])-
 	Route::middleware(['role:admin'])->group(function () {
 		Route::post('/hospitals/store', [HospitalController::class, 'store'])->name('hospitals.store');
 		Route::get('/hospitals', [HospitalController::class, 'index'])->name('hospitals.index');
+		Route::get('/hospitals', [HospitalController::class, 'index'])->name('hospitals.index');
+Route::patch('/hospitals', [HospitalController::class, 'update'])->name('hospitals.update');
 		Route::get('/hospitals/{id}', [HospitalController::class, 'show'])->name('hospitals.byId');
 		Route::patch('/hospitals/{id}', [HospitalController::class, 'update'])->name('hospitals.update');
 		Route::delete('/hospitals/{id}', [HospitalController::class, 'delete'])->name('hospitals.delete');
