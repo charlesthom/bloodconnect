@@ -21,7 +21,7 @@
             box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
         }
         .header {
-            background: linear-gradient(90deg, #ff1493, #ff66b2);
+            background: linear-gradient(90deg, #800000, #b30000);
             color: #fff;
             text-align: center;
             padding: 20px 10px;
@@ -34,7 +34,7 @@
             line-height: 1.6;
         }
         .content h2 {
-            color: #ff69b4;
+             color: #800000;
             margin-bottom: 10px;
         }
         .content p {
@@ -69,18 +69,18 @@
             text-align: center;
         }
         th {
-            background-color: #ff1493;
+           background-color: #800000;
             color: #fff;
             padding: 12px;
             font-weight: bold;
         }
         td {
-            border: 1px solid #ffb6c1;
+            border: 1px solid #d9a3a3;
             padding: 10px;
             color: #333;
         }
         tr:nth-child(even) {
-            background-color: #ffe6f0;
+            background-color: #fbeaea;
         }
         tr:nth-child(odd) {
             background-color: #fff;

@@ -127,9 +127,17 @@ class DonationRequestService
     }
 
     public function approve(int $id, array $data)
-    {
-        return $this->repository->approve($id, $data);
-    }
+{
+    $donationRequest = $this->repository->approve($id, $data);
+
+    Mail::to($donationRequest->user->email)
+        ->send(new ApproveRequestMail($donationRequest));
+
+    Mail::to($donationRequest->hospital->user->email)
+        ->send(new ApproveRequestAdminMail($donationRequest));
+
+    return $donationRequest;
+}
 
     public function reschedule(int $id, array $data)
     {

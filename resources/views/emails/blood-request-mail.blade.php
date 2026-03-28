@@ -20,11 +20,11 @@
             background-color: #f8f8f8;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+            box-shadow: 0 0 20px rgba(128, 0, 0, 0.25);
         }
 
         .header {
-            background: linear-gradient(90deg, #ff1493, #ff66b2);
+            background: linear-gradient(90deg, #800000, #b30000);
             color: #fff;
             text-align: center;
             padding: 20px 10px;
@@ -39,7 +39,7 @@
         }
 
         .content h2 {
-            color: #ff69b4;
+            color: #800000;
             margin-bottom: 10px;
         }
 
@@ -50,7 +50,7 @@
 
         .btn {
             display: inline-block;
-            background: linear-gradient(90deg, #ff1493, #ff66b2);
+            background: linear-gradient(90deg, #800000, #b30000);
             color: #f8f8f8 !important;
             padding: 12px 20px;
             text-decoration: none;
@@ -61,7 +61,7 @@
         }
 
         .btn:hover {
-            background-color: #ff85c1;
+            background-color: #a00000;
         }
 
         .footer {
@@ -80,20 +80,20 @@
         }
 
         th {
-            background-color: #ff1493;
+            background-color: #800000;
             color: #fff;
             padding: 12px;
             font-weight: bold;
         }
 
         td {
-            border: 1px solid #ffb6c1;
+            border: 1px solid #d9a3a3;
             padding: 10px;
             color: #333;
         }
 
         tr:nth-child(even) {
-            background-color: #ffe6f0;
+            background-color: #fbeaea;
         }
 
         tr:nth-child(odd) {
@@ -114,12 +114,12 @@
                 </p>
 
                 <p>
-                    They are seeking available blood units to help support a patient in urgent need of treatment. 
+                    They are seeking available blood units to help support a patient in urgent need of treatment.
                     Your hospital may be able to assist in fulfilling this request and providing the necessary support.
                 </p>
 
                 <p>
-                    Please review the details of the request as soon as possible and respond accordingly. 
+                    Please review the details of the request as soon as possible and respond accordingly.
                     Your quick action could play a critical role in saving a life and providing essential care.
                 </p>
 
@@ -127,7 +127,6 @@
                     Thank you for your continued collaboration and dedication to our shared mission of saving lives within our healthcare community. ❤️
                 </p>
 
-            {{-- Example 3-column table --}}
             <table>
                 <thead>
                     <tr>
@@ -139,10 +138,10 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>{{$bloodRequest->hospital->name}}</td>
-                        <td>{{$bloodRequest->blood_type}}</td>
-                        <td>{{$bloodRequest->quantity ?? now()->format('Y-m-d')}}</td>
-                        <td>{{$bloodRequest->urgency_lvl ?? 'Pending'}}</td>
+                        <td>{{ $bloodRequest->hospital->name }}</td>
+                        <td>{{ $bloodRequest->blood_type }}</td>
+                        <td>{{ $bloodRequest->quantity ?? now()->format('Y-m-d') }}</td>
+                        <td>{{ $bloodRequest->urgency_lvl ?? 'Pending' }}</td>
                     </tr>
                 </tbody>
             </table>

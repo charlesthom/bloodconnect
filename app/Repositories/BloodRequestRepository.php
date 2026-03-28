@@ -6,6 +6,8 @@ use App\Enums\BloodRequestStatusEnum;
 use App\Mail\BloodRequestMail;
 use App\Mail\BloodRequestOwnerMail;
 use App\Models\BloodRequest;
+use App\Mail\BloodRequestFulfilledMail;
+use App\Mail\BloodRequestFulfilledOwnerMail;
 use App\Models\DonationRequest;
 use App\Models\Hospital;
 use App\Repositories\Contracts\BloodRequestRepositoryInterface;
@@ -61,16 +63,34 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
     }
 
     public function fulfill(int $id)
-    {
-        $user = Auth::user();
-        $hospital = Hospital::where('user_id', $user->id)->first();
-        $blood_request = BloodRequest::find($id);
-        $blood_request->update([
-            'status' => BloodRequestStatusEnum::Fulfilled,
-            'confirmed_by' => $hospital->id,
-        ]);
-        return $blood_request;
+{
+    $user = Auth::user();
+    $hospital = Hospital::where('user_id', $user->id)->first();
+
+    $bloodRequest = BloodRequest::findOrFail($id);
+
+    $bloodRequest->update([
+        'status' => BloodRequestStatusEnum::Fulfilled,
+        'confirmed_by' => $hospital->id,
+    ]);
+
+    // 👉 ADD THIS LINE (reload with relation)
+    $bloodRequest->load(['hospital', 'hospital.user', 'confirmedBy']);
+
+    // 👉 ADD EMAIL (owner)
+    if (!empty($bloodRequest->hospital->user->email)) {
+        Mail::to($bloodRequest->hospital->user->email)
+            ->queue(new \App\Mail\BloodRequestFulfilledOwnerMail($bloodRequest));
     }
+
+    // 👉 ADD EMAIL (fulfilling hospital)
+    if (!empty($hospital->user->email)) {
+        Mail::to($hospital->user->email)
+            ->queue(new \App\Mail\BloodRequestFulfilledMail($bloodRequest));
+    }
+
+    return $bloodRequest;
+}
 
     public function update(int $id, array $data)
     {

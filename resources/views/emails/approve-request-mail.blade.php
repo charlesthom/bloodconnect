@@ -21,7 +21,7 @@
             box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
         }
         .header {
-            background: linear-gradient(90deg, #ff1493, #ff66b2);
+            background: linear-gradient(90deg, #800000, #b30000);
             color: #fff;
             text-align: center;
             padding: 20px 10px;
@@ -34,7 +34,7 @@
             line-height: 1.6;
         }
         .content h2 {
-            color: #ff69b4;
+            color: #800000;
             margin-bottom: 10px;
         }
         .content p {
@@ -69,18 +69,18 @@
             text-align: center;
         }
         th {
-            background-color: #ff1493;
+           background-color: #800000;
             color: #fff;
             padding: 12px;
             font-weight: bold;
         }
         td {
-            border: 1px solid #ffb6c1;
+            border: 1px solid #d9a3a3;
             padding: 10px;
             color: #333;
         }
         tr:nth-child(even) {
-            background-color: #ffe6f0;
+            background-color: #fbeaea;
         }
         tr:nth-child(odd) {
             background-color: #fff;
@@ -93,38 +93,37 @@
             {{ $header ?? 'BloodConnect Notification' }}
         </div>
         <div class="content">
-            <h2>Hello, {{ $donationRequest->name ?? 'User' }}!</h2>
-            <p>
-                Great news! Your <strong>Blood Donation Reschedule Request</strong> has been <strong>approved</strong>.
-            </p>
-            <p>
-                The hospital or blood bank has confirmed your new donation schedule as requested. Please make sure to attend on your updated appointment date and time.
-            </p>
-            <p>
-                Thank you for your continued commitment to saving lives. Your willingness to donate is truly appreciated and can make a life-changing difference for patients in need.
-            </p>
+    <h2>Hello, {{ $donationRequest->name ?? 'User' }}!</h2>
 
-            {{-- Example 3-column table --}}
-            <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Approved Date</td>
-                        <td>{{$donationRequest->donations[0]->latestActiveSchedule?->date ?? now()->format('Y-m-d')}}</td>
-                        <td>{{$donationRequest->donations[0]->latestActiveSchedule?->status ?? 'Pending'}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="footer">
-            &copy; {{ date('Y') }} BloodConnect. All rights reserved.
-        </div>
-    </div>
+    <p>
+        Great news! Your <strong>Blood Donation Request</strong> has been <strong>approved</strong>.
+    </p>
+
+    <p>
+        The hospital or blood bank has accepted your donation request. Please make sure to attend on your scheduled donation date.
+    </p>
+
+    <p>
+        Thank you for your willingness to donate and help save lives. Your support is truly appreciated and can make a life-changing difference.
+    </p>
+
+    {{-- Donation Details --}}
+    <table>
+        <thead>
+            <tr>
+                <th>Details</th>
+                <th>Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+    <td>Donation Schedule</td>
+    <td>{{ $donationRequest->latestActiveSchedule?->date ?? now()->format('Y-m-d') }}</td>
+    <td>{{ $donationRequest->latestActiveSchedule?->status ?? 'Approved' }}</td>
+</tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

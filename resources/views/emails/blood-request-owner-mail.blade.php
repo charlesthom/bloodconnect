@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $subject ?? 'Notification' }}</title>
+
     <style>
         body {
             margin: 0;
@@ -17,14 +18,14 @@
         .email-container {
             max-width: 600px;
             margin: 40px auto;
-            background-color: #f8f8f8;
+            background-color: #ffffff;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 105, 180, 0.3);
+            box-shadow: 0 0 20px rgba(128, 0, 0, 0.25);
         }
 
         .header {
-            background: linear-gradient(90deg, #ff1493, #ff66b2);
+            background: linear-gradient(90deg, #800000, #b30000);
             color: #fff;
             text-align: center;
             padding: 20px 10px;
@@ -39,7 +40,7 @@
         }
 
         .content h2 {
-            color: #ff69b4;
+            color: #800000;
             margin-bottom: 10px;
         }
 
@@ -50,25 +51,24 @@
 
         .btn {
             display: inline-block;
-            background: linear-gradient(90deg, #ff1493, #ff66b2);
-            color: #f8f8f8 !important;
+            background: linear-gradient(90deg, #800000, #b30000);
+            color: #ffffff !important;
             padding: 12px 20px;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
             margin-top: 20px;
-            transition: background-color 0.2s ease-in-out;
         }
 
         .btn:hover {
-            background-color: #ff85c1;
+            background-color: #a00000;
         }
 
         .footer {
             text-align: center;
             padding: 15px;
             background-color: #f8f8f8;
-            color: #0f0f0f;
+            color: #555;
             font-size: 0.9rem;
         }
 
@@ -80,20 +80,20 @@
         }
 
         th {
-            background-color: #ff1493;
+            background-color: #800000;
             color: #fff;
             padding: 12px;
             font-weight: bold;
         }
 
         td {
-            border: 1px solid #ffb6c1;
+            border: 1px solid #d9a3a3;
             padding: 10px;
             color: #333;
         }
 
         tr:nth-child(even) {
-            background-color: #ffe6f0;
+            background-color: #fbeaea;
         }
 
         tr:nth-child(odd) {
@@ -104,22 +104,26 @@
 
 <body>
     <div class="email-container">
+
         <div class="header">
             {{ $header ?? 'BloodConnect Notification' }}
         </div>
+
         <div class="content">
+
             <h2>Hello, {{ $bloodRequest->hospital->user->name ?? 'User' }}!</h2>
+
             <p>
                 Great news! Your <strong>Blood Request</strong> has been successfully submitted to our hospital network.
             </p>
 
             <p>
-                Our system has forwarded your request to all available hospitals that may be able to supply the needed blood units. 
+                Our system has forwarded your request to all available hospitals that may be able to supply the needed blood units.
                 You will be notified as soon as any hospital responds or commits to fulfilling your request.
             </p>
 
             <p>
-                Thank you for acting promptly to support patients in critical need. 
+                Thank you for acting promptly to support patients in critical need.
                 Your commitment to providing immediate care plays a vital role in saving lives and strengthening our healthcare community.
             </p>
 
@@ -127,7 +131,6 @@
                 We appreciate your continued collaboration and trust in our system. ❤️
             </p>
 
-            {{-- Example 3-column table --}}
             <table>
                 <thead>
                     <tr>
@@ -136,18 +139,22 @@
                         <th>Urgency Level</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     <tr>
-                        <td>{{$bloodRequest->blood_type}}</td>
-                        <td>{{$bloodRequest->quantity ?? now()->format('Y-m-d')}}</td>
-                        <td>{{$bloodRequest->urgency_lvl ?? 'Pending'}}</td>
+                        <td>{{ $bloodRequest->blood_type }}</td>
+                        <td>{{ $bloodRequest->quantity ?? now()->format('Y-m-d') }}</td>
+                        <td>{{ $bloodRequest->urgency_lvl ?? 'Pending' }}</td>
                     </tr>
                 </tbody>
             </table>
+
         </div>
+
         <div class="footer">
             &copy; {{ date('Y') }} BloodConnect. All rights reserved.
         </div>
+
     </div>
 </body>
 

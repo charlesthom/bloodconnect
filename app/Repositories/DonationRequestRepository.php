@@ -179,19 +179,24 @@ if ($latestPendingRequest) {
     }
 
     public function approve(int $id, array $data)
-    {
-        $donationRequest = DonationRequest::findOrFail($id);
-        $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
-        DonationRequestSchedule::where('donation_request_id', $donationRequest->id)
-            ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
-        DonationRequestSchedule::create([
-            'donation_request_id' => $donationRequest->id,
-            'date' => $data['date'],
-            'notes' => $data['notes'],
-            'status' => DonationRequestScheduleStatusEnum::Active
-        ]);
-        return $donationRequest;
-    }
+{
+    $donationRequest = DonationRequest::findOrFail($id);
+    $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
+
+    DonationRequestSchedule::where('donation_request_id', $donationRequest->id)
+        ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
+
+    DonationRequestSchedule::create([
+        'donation_request_id' => $donationRequest->id,
+        'date' => $data['date'],
+        'notes' => $data['notes'],
+        'status' => DonationRequestScheduleStatusEnum::Active
+    ]);
+
+    return DonationRequest::with(['user', 'hospital', 'hospital.user', 'latestActiveSchedule'])
+        ->where('id', $donationRequest->id)
+        ->first();
+}
 
     public function reschedule(int $id, array $data)
     {

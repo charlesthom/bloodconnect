@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class ApproveRequestMail extends Mailable implements ShouldQueue
+class ApproveRescheduleMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -23,7 +23,7 @@ class ApproveRequestMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject('Blood Donation Request Approved')
-            ->view('emails.approve-request-mail');
+        return $this->subject('Blood Donation Reschedule Approved')
+            ->view('emails.approve-reschedule-mail');
     }
 }
