@@ -32,16 +32,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::get('/', [HomeController::class, 'home']);
 	Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
-	Route::get('export/donation-requests', [DashboardController::class, 'exportDonationRequests'])->name('export.donation-requests');
-	Route::get('/export/donation-requests/pdf', [DashboardController::class, 'exportDonationRequestsPdf'])->name('export.donation.pdf');
-	Route::get('export/blood-requests', [DashboardController::class, 'exportBloodRequests'])->name('export.blood-requests');
-	Route::get('/export/blood-requests/pdf', [DashboardController::class, 'exportBloodRequestsPdf'])->name('export.blood.pdf');
-	Route::get('export/hospitals', [DashboardController::class, 'exportHospitals'])->name('export.hospitals');
-	Route::get('/export/hospitals/pdf', [DashboardController::class, 'exportHospitalsPdf'])->name('export.hospitals.pdf');
-	Route::get('export/users', [DashboardController::class, 'exportUsers'])->name('export.users');
-Route::get('/export/users/pdf', [DashboardController::class, 'exportUsersPdf'])->name('export.users.pdf');
 	Route::get('/api/hospital-data', [DashboardController::class, 'hospitalData']);
-	Route::get('/export/filter/pdf', [App\Http\Controllers\DashboardController::class, 'exportFilteredPdf'])->name('export.filtered.pdf');
 
 	Route::get('billing', function () {
 		return view('billing');
@@ -82,10 +73,20 @@ Route::get('/export/users/pdf', [DashboardController::class, 'exportUsersPdf'])-
 		Route::post('/hospitals/store', [HospitalController::class, 'store'])->name('hospitals.store');
 		Route::get('/hospitals', [HospitalController::class, 'index'])->name('hospitals.index');
 		Route::get('/hospitals', [HospitalController::class, 'index'])->name('hospitals.index');
-Route::patch('/hospitals', [HospitalController::class, 'update'])->name('hospitals.update');
+		Route::patch('/hospitals', [HospitalController::class, 'update'])->name('hospitals.update');
 		Route::get('/hospitals/{id}', [HospitalController::class, 'show'])->name('hospitals.byId');
 		Route::patch('/hospitals/{id}', [HospitalController::class, 'update'])->name('hospitals.update');
 		Route::delete('/hospitals/{id}', [HospitalController::class, 'delete'])->name('hospitals.delete');
+
+		Route::get('export/donation-requests', [DashboardController::class, 'exportDonationRequests'])->name('export.donation-requests');
+		Route::get('/export/donation-requests/pdf', [DashboardController::class, 'exportDonationRequestsPdf'])->name('export.donation.pdf');
+		Route::get('export/blood-requests', [DashboardController::class, 'exportBloodRequests'])->name('export.blood-requests');
+		Route::get('/export/blood-requests/pdf', [DashboardController::class, 'exportBloodRequestsPdf'])->name('export.blood.pdf');
+		Route::get('export/hospitals', [DashboardController::class, 'exportHospitals'])->name('export.hospitals');
+		Route::get('/export/hospitals/pdf', [DashboardController::class, 'exportHospitalsPdf'])->name('export.hospitals.pdf');
+		Route::get('export/users', [DashboardController::class, 'exportUsers'])->name('export.users');
+		Route::get('/export/users/pdf', [DashboardController::class, 'exportUsersPdf'])->name('export.users.pdf');
+		Route::get('/export/filter/pdf', [App\Http\Controllers\DashboardController::class, 'exportFilteredPdf'])->name('export.filtered.pdf');
 	});
 
 	Route::middleware(['role:hospital'])->group(function () {});

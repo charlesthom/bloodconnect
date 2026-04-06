@@ -3,33 +3,32 @@
 namespace Database\Factories;
 
 use App\Enums\UserRoleEnum;
+use App\Enums\UserStatusEnum;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
 class UserFactory extends Factory
 {
     public function definition()
-    {
-        return [
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'email_verified_at' => now(),
+{
+    return [
+        'name' => $this->faker->name(),
+        'email' => $this->faker->unique()->safeEmail(),
+        'email_verified_at' => now(),
 
-            // You can keep this hashed password (Laravel default = "password")
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
-            'remember_token' => Str::random(10),
+        'password' => bcrypt('password'),
+        'remember_token' => \Illuminate\Support\Str::random(10),
 
-            // ✅ REQUIRED FIELDS (based on your DB constraints)
-            'role' => UserRoleEnum::Donor->value,
-            'gender' => 'male',
-            'birth_date' => '2000-01-01',
-            'status' => 'active',
+        'role' => 'donor',
+        'gender' => 'male',
+        'birth_date' => '2000-01-01',
+        'status' => 'Active',
 
-            // Optional (only if your users table has otp column)
-            // 'otp' => null,
-            // 'otp_expires_at' => null,
-        ];
-    }
+        // ✅ FIXED VALUES
+        'location' => 'Philippines|Cebu|Mandaue City',
+        'phone' => '09123456789', // 🔥 THIS FIXES EVERYTHING
+    ];
+}
 
     public function unverified()
     {

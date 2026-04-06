@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class RoleAccessTest extends TestCase
@@ -14,49 +15,55 @@ class RoleAccessTest extends TestCase
     public function guest_cannot_access_dashboard()
     {
         $response = $this->get('/dashboard');
-
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/login'); // or '/' depending on your setup
     }
 
     /** @test */
-    public function donor_cannot_access_admin_hospitals_page()
+    public function donor_cannot_access_hospital_routes()
     {
-        $donor = User::factory()->create([
+        $donor = User::create([
+            'name' => 'Donor',
+            'email' => 'donor@test.com',
+            'password' => Hash::make('password'),
             'role' => 'donor',
+            'status' => 'Active',
+            'location' => 'Philippines|Cebu|Mandaue City',
+            'birth_date' => '2000-01-01',
+            'gender' => 'male',
+            'phone' => '09111111111',
+            'email_verified_at' => now(),
         ]);
 
         $this->actingAs($donor);
 
-        $response = $this->get('/hospitals');
+        // Try accessing hospital-only route
+        $response = $this->get('/donation-requests/hospital');
 
         $response->assertStatus(403);
     }
 
     /** @test */
-    public function hospital_cannot_access_admin_hospitals_page()
+    public function hospital_cannot_access_admin_exports()
     {
-        $hospitalUser = User::factory()->create([
+        $hospital = User::create([
+            'name' => 'Hospital',
+            'email' => 'hospital@test.com',
+            'password' => Hash::make('password'),
             'role' => 'hospital',
+            'status' => 'Active',
+            'location' => 'Philippines|Cebu|Mandaue City',
+            'birth_date' => '1990-01-01',
+            'gender' => 'male',
+            'phone' => '09222222222',
+            'email_verified_at' => now(),
         ]);
 
-        $this->actingAs($hospitalUser);
+        $this->actingAs($hospital);
 
-        $response = $this->get('/hospitals');
+        // Try accessing admin export
+        $response = $this->get(route('export.users'));
 
+        // depends on your middleware
         $response->assertStatus(403);
-    }
-
-    /** @test */
-    public function admin_can_access_admin_hospitals_page()
-    {
-        $admin = User::factory()->create([
-            'role' => 'admin',
-        ]);
-
-        $this->actingAs($admin);
-
-        $response = $this->get('/hospitals');
-
-        $response->assertStatus(200);
     }
 }

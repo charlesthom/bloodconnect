@@ -55,7 +55,7 @@ class BloodRequestController extends Controller
     public function fulfill($id)
     {
         $this->service->fulfill($id);
-        return redirect()->back()->with('success', 'Fulfileld Blood Request Successfully!');
+        return redirect()->back()->with('success', 'Fulfilled Blood Request Successfully!');
     }
 
     public function update(Request $request, $id)

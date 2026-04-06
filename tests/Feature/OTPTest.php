@@ -21,14 +21,17 @@ class OTPTest extends TestCase
 
         $response = $this->post('/verify-otp', [
             'email' => $user->email,
-            'otp' => '123456'
+            'otp' => '123456',
         ]);
 
         $response->assertStatus(302);
+        $response->assertSessionHasNoErrors();
 
-        // optional but recommended: confirm verified + otp cleared (if your controller does this)
-        // $this->assertNotNull($user->fresh()->email_verified_at);
-        // $this->assertNull($user->fresh()->otp);
+        $user = $user->fresh();
+
+        $this->assertNotNull($user->email_verified_at);
+        $this->assertNull($user->otp);
+        $this->assertNull($user->otp_expires_at);
     }
 
     /** @test */
@@ -40,13 +43,19 @@ class OTPTest extends TestCase
             'otp_expires_at' => now()->addMinutes(10),
         ]);
 
-        $response = $this->from('/otp?email='.$user->email)->post('/verify-otp', [
+        $response = $this->from('/otp?email=' . $user->email)->post('/verify-otp', [
             'email' => $user->email,
-            'otp' => '999999'
+            'otp' => '999999',
         ]);
 
-        $response->assertRedirect('/otp?email='.$user->email);
-        $response->assertSessionHasErrors(); // or assertSessionHasErrors(['otp']) if your controller uses 'otp'
+        $response->assertRedirect('/otp?email=' . $user->email);
+        $response->assertSessionHasErrors();
+
+        $user = $user->fresh();
+
+        $this->assertNull($user->email_verified_at);
+        $this->assertEquals('123456', $user->otp);
+        $this->assertNotNull($user->otp_expires_at);
     }
 
     /** @test */
@@ -58,12 +67,17 @@ class OTPTest extends TestCase
             'otp_expires_at' => now()->subMinutes(5),
         ]);
 
-        $response = $this->from('/otp?email='.$user->email)->post('/verify-otp', [
+        $response = $this->from('/otp?email=' . $user->email)->post('/verify-otp', [
             'email' => $user->email,
-            'otp' => '123456'
+            'otp' => '123456',
         ]);
 
-        $response->assertRedirect('/otp?email='.$user->email);
-        $response->assertSessionHasErrors(); // or assertSessionHasErrors(['otp'])
+        $response->assertRedirect('/otp?email=' . $user->email);
+        $response->assertSessionHasErrors();
+
+        $user = $user->fresh();
+
+        $this->assertNull($user->email_verified_at);
+        $this->assertEquals('123456', $user->otp);
     }
 }
