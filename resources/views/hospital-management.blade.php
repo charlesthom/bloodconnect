@@ -72,30 +72,38 @@
                                     <td class="text-center">{{$dat->created_at->format('Y-m-d')}}</td>
 
                                     <td class="text-center">
-                                        <a href="#"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#updateHospitalModal"
-                                           data-id="{{ $dat->id }}"
-                                           data-hospital-name="{{ $dat->name }}"
-                                           data-location="{{ $dat->location }}"
-                                           data-user-id="{{ $dat->user->id }}"
-                                           data-user-name="{{ $dat->user->name }}"
-                                           data-user-email="{{ $dat->user->email }}"
-                                           data-user-birth-date="{{ $dat->user->birth_date }}"
-                                           data-user-gender="{{ $dat->user->gender }}"
-                                           data-user-phone="{{ $dat->user->phone }}"
-                                           data-user-status="{{ $dat->user->status }}">
-                                           ✏️
-                                        </a>
+    <div class="d-flex justify-content-center gap-2">
 
-                                        <a href="#"
-                                           data-bs-toggle="modal"
-                                           data-bs-target="#deleteHospitalModal"
-                                           data-id="{{ $dat->id }}"
-                                           data-name="{{ $dat->name }}">
-                                           🗑️
-                                        </a>
-                                    </td>
+        <!-- EDIT BUTTON -->
+        <button type="button"
+            class="btn btn-sm bg-gradient-warning"
+            data-bs-toggle="modal"
+            data-bs-target="#updateHospitalModal"
+            data-id="{{ $dat->id }}"
+            data-hospital-name="{{ $dat->name }}"
+            data-location="{{ $dat->location }}"
+            data-user-id="{{ $dat->user->id }}"
+            data-user-name="{{ $dat->user->name }}"
+            data-user-email="{{ $dat->user->email }}"
+            data-user-birth-date="{{ $dat->user->birth_date }}"
+            data-user-gender="{{ $dat->user->gender }}"
+            data-user-phone="{{ $dat->user->phone }}"
+            data-user-status="{{ $dat->user->status }}">
+            Edit
+        </button>
+
+        <!-- DELETE BUTTON -->
+        <button type="button"
+            class="btn btn-sm bg-gradient-danger"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteHospitalModal"
+            data-id="{{ $dat->id }}"
+            data-name="{{ $dat->name }}">
+            Delete
+        </button>
+
+    </div>
+</td>
                                 </tr>
                                 @endforeach
                             </tbody>

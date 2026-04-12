@@ -131,7 +131,7 @@
                 <th>Birth Date</th>
                 <th>Gender</th>
                 <th>Phone Number</th>
-                <th>Status</th>
+                
             </tr>
         </thead>
         <tbody>
@@ -144,7 +144,7 @@
                     <td class="text-center">{{ $user->birth_date }}</td>
                     <td class="text-center">{{ $user->gender }}</td>
                     <td class="text-center">{{ $user->phone }}</td>
-                    <td class="text-center">{{ $user->status }}</td>
+                    
                 </tr>
             @empty
                 <tr>

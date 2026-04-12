@@ -100,9 +100,15 @@
     </div>
     <div class="container-fluid py-4">
         <div class="card">
-            <div class="card-header pb-0 px-3">
-                <h6 class="mb-0">{{ __('Profile Information') }}</h6>
-            </div>
+            <div class="card-header pb-0 px-3 d-flex justify-content-between align-items-center">
+    <h6 class="mb-0">{{ __('Profile Information') }}</h6>
+
+    @if(auth()->user()->role->value == 'donor')
+        <button type="button" class="btn bg-gradient-danger btn-sm mb-0" id="editProfileBtn">
+            Edit Profile
+        </button>
+    @endif
+</div>
             <div class="card-body pt-4 p-3">
                 <div id="geocodeContainer"></div>
                 <form action="/user-profile" method="POST" role="form text-left">
@@ -216,7 +222,10 @@
 @endsection
 @push('scripts')
 <script>
-    document.getElementById('editProfileBtn').addEventListener('click', function () {
+    const editProfileBtn = document.getElementById('editProfileBtn');
+
+if (editProfileBtn) {
+    editProfileBtn.addEventListener('click', function () {
         const inputs = document.querySelectorAll('input[readonly], select');
         inputs.forEach(el => {
             el.dataset.originalValue = el.value;
@@ -281,6 +290,7 @@ if (genderFieldCancel) {
             });
         }
     });
+}
 async function geocodeAddress() {
     const address = document.getElementById("address").value;
 
