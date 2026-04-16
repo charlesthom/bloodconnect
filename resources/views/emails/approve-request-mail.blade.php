@@ -119,8 +119,8 @@
         <tbody>
             <tr>
     <td>Donation Schedule</td>
-    <td>{{ $donationRequest->latestActiveSchedule?->date ?? now()->format('Y-m-d') }}</td>
-    <td>{{ $donationRequest->latestActiveSchedule?->status ?? 'Approved' }}</td>
+    <td>{{ $donationRequest->donations->first()?->latestActiveSchedule?->date ?? now()->format('Y-m-d') }}</td>
+<td>{{ $donationRequest->donations->first()?->latestActiveSchedule?->status ?? 'Approved' }}</td>
 </tr>
         </tbody>
     </table>

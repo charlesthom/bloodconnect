@@ -171,7 +171,7 @@
                             <div class="form-group">
                                 <label for="user.location" class="form-control-label">{{ __('Location') }}</label>
                                 <div class="@error('user.location') border border-danger rounded-3 @enderror">
-                                    <input class="form-control" type="text" placeholder="Location" id="location" name="location" value="{{ auth()->user()->location }}" readonly>
+                                   <input class="form-control" type="text" placeholder="Location" id="location" name="location" value="{{ auth()->user()->role->value == 'hospital' ? (auth()->user()->hospital->location ?? '') : auth()->user()->location }}" readonly>
                                 </div>
                             </div>
                         </div>
