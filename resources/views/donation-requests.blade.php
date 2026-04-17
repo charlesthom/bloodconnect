@@ -33,19 +33,30 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
-                {{-- confirm creation of new donation request modal --}}
                 <x-confirm-create-donation-request :nearbyHospitals="$nearbyHospitals" />
-                {{-- reschedule request modal --}}
                 <x-reschedule-request />
+
 @php
     $latestPendingRequest = collect($data->donations)
         ->where('status', 'Pending')
         ->sortByDesc('created_at')
         ->first();
 
-    $latestApprovedRequest = collect($data->donations)
-        ->where('status', 'Approved')
+    $latestPendingRescheduleRequest = collect($data->donations)
+        ->filter(function ($donation) {
+            return $donation->latestRescheduleRequest
+                && $donation->latestRescheduleRequest->status === 'Pending';
+        })
         ->sortByDesc('created_at')
+        ->first();
+
+    $latestApprovedRequest = collect($data->donations)
+        ->filter(function ($donation) {
+            return $donation->status === 'Approved' && $donation->latestActiveSchedule;
+        })
+        ->sortByDesc(function ($donation) {
+            return $donation->latestActiveSchedule?->date;
+        })
         ->first();
 
     $eligibleDate = null;
@@ -53,44 +64,52 @@
 
     if ($latestPendingRequest) {
         $blockMessage = 'You already have a pending donation request.';
-    } elseif ($latestApprovedRequest) {
+    } elseif ($latestPendingRescheduleRequest) {
+        $blockMessage = 'You already have a pending reschedule request.';
+    } elseif ($latestApprovedRequest && $latestApprovedRequest->latestActiveSchedule?->date) {
+        $scheduleDate = \Carbon\Carbon::parse($latestApprovedRequest->latestActiveSchedule->date);
+
         $eligibleDate = strtoupper($data->gender) === 'MALE'
-            ? $latestApprovedRequest->created_at->copy()->addMonths(4)
-            : $latestApprovedRequest->created_at->copy()->addMonths(3);
+            ? $scheduleDate->copy()->addMonths(4)
+            : $scheduleDate->copy()->addMonths(3);
 
         if ($eligibleDate->isFuture()) {
             $blockMessage = 'You can donate again on ' . $eligibleDate->format('F d, Y') . '.';
         }
     }
 
-    $hasBlockingRequest = $latestPendingRequest || ($eligibleDate && $eligibleDate->isFuture());
+    $hasBlockingRequest = $latestPendingRequest
+        || $latestPendingRescheduleRequest
+        || ($eligibleDate && $eligibleDate->isFuture());
 @endphp
+
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between">
                         <div>
                             <h5 class="mb-0">Donation Requests</h5>
                         </div>
-                        @if(!$hasBlockingRequest)
-    <a href="#" class="btn btn-danger btn-sm mb-0"
-       data-bs-toggle="modal"
-       data-bs-target="#confirmCreateDonationRequestModal">
-       +&nbsp; New
-    </a>
-@else
-    <div class="text-end">
-        <button class="btn btn-secondary btn-sm mb-0" disabled>
-            +&nbsp; New
-        </button>
 
-        @if(isset($blockMessage))
-            <div>
-                <small class="text-danger fw-bold">
-                    {{ $blockMessage }}
-                </small>
-            </div>
-        @endif
-    </div>
-@endif
+                        @if(!$hasBlockingRequest)
+                            <a href="#" class="btn btn-danger btn-sm mb-0"
+                               data-bs-toggle="modal"
+                               data-bs-target="#confirmCreateDonationRequestModal">
+                               +&nbsp; New
+                            </a>
+                        @else
+                            <div class="text-end">
+                                <button class="btn btn-secondary btn-sm mb-0" disabled>
+                                    +&nbsp; New
+                                </button>
+
+                                @if(isset($blockMessage))
+                                    <div>
+                                        <small class="text-danger fw-bold">
+                                            {{ $blockMessage }}
+                                        </small>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
 
@@ -115,48 +134,51 @@
                             </thead>
                             <tbody>
                                 @foreach($data->donations as $dat)
+                                @php
+                                    $requestedSchedule = $dat->latestRescheduleRequest ?? $dat->latestDeclinedRescheduleRequest;
+                                @endphp
                                 <tr>
                                     <td class="ps-4">
-                                        <p class="text-xs font-weight-bold mb-0">{{$dat->id}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{ $dat->id }}</p>
                                     </td>
                                     <td>
-                                        <p class="text-xs font-weight-bold mb-0">{{$data->name}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{ $data->name }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{$data->email}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{ $data->email }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $data->location)[0]}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{ explode('|', $data->location)[0] }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{$dat->hospital->name}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{ $dat->hospital->name }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <p class="text-xs font-weight-bold mb-0">{{explode('|', $dat->hospital->location)[0]}}</p>
+                                        <p class="text-xs font-weight-bold mb-0">{{ explode('|', $dat->hospital->location)[0] }}</p>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->created_at->format('Y-m-d')}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->created_at->format('Y-m-d') }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->date}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestActiveSchedule?->date }}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="text-secondary text-xs font-weight-bold">{{$dat->latestActiveSchedule?->status ?? $dat->status}}</span>
+                                        <span class="text-secondary text-xs font-weight-bold">{{ $dat->latestActiveSchedule?->status ?? $dat->status }}</span>
                                     </td>
                                     <td class="text-center">
                                         <span class="text-secondary text-xs font-weight-bold">
-                                            {{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->date :  $dat->latestDeclinedRescheduleRequest?->date}}
+                                            {{ $requestedSchedule?->date }}
                                         </span>
                                     </td>
                                     <td class="text-center">
                                         <span class="text-secondary text-xs font-weight-bold">
-                                            {{ $dat->latestRescheduleRequest ? $dat->latestRescheduleRequest?->status :  $dat->latestDeclinedRescheduleRequest?->status}}
+                                            {{ $requestedSchedule?->status }}
                                         </span>
                                     </td>
                                     <td class="text-center">
                                         <a 
                                             href="#"
-                                            class="mx-3 {{!$dat->latestActiveSchedule?->date ? 'disabled': ''}}"
+                                            class="mx-3 {{ !$dat->latestActiveSchedule?->date ? 'disabled': '' }}"
                                             data-bs-toggle="modal"
                                             data-bs-target="#rescheduleRequestModal"
                                             data-id="{{ $dat->id }}"
@@ -203,7 +225,6 @@ a.disabled {
     background-repeat: no-repeat;
 }
 
-/* ✅ TABLE FIX ONLY */
 .table th,
 .table td {
     white-space: nowrap;

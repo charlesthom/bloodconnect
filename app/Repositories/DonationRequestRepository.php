@@ -218,18 +218,21 @@ if ($latestPendingRequest) {
     }
 
     public function approveReschedule(int $id)
-    {
-        $donationRequestSchedule = DonationRequestSchedule::findOrFail($id);
-        DonationRequestSchedule::where('donation_request_id', $donationRequestSchedule->donation_request_id)
-            ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
-        $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Active]);
-        $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
-        $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
-        return User::with(['donations' => function ($query) use ($donationRequest) {
-            $query->with(['hospital', 'hospital.user', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
-                ->where('id', $donationRequest->id);
-        }])->find($donationRequest->user_id);
-    }
+{
+    $donationRequestSchedule = DonationRequestSchedule::findOrFail($id);
+
+    DonationRequestSchedule::where('donation_request_id', $donationRequestSchedule->donation_request_id)
+        ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
+
+    $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Active]);
+
+    $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
+    $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
+
+    return DonationRequest::with(['user', 'hospital', 'hospital.user', 'latestActiveSchedule', 'latestRescheduleRequest', 'latestDeclinedRescheduleRequest'])
+        ->where('id', $donationRequest->id)
+        ->first();
+}
 
     public function declineReschedule(int $id)
     {

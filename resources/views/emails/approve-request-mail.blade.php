@@ -93,7 +93,7 @@
             {{ $header ?? 'BloodConnect Notification' }}
         </div>
         <div class="content">
-    <h2>Hello, {{ $donationRequest->name ?? 'User' }}!</h2>
+    <h2>Hello, {{ $donationRequest->user->name ?? 'User' }}!</h2>
 
     <p>
         Great news! Your <strong>Blood Donation Request</strong> has been <strong>approved</strong>.
@@ -119,8 +119,8 @@
         <tbody>
             <tr>
     <td>Donation Schedule</td>
-    <td>{{ $donationRequest->donations->first()?->latestActiveSchedule?->date ?? now()->format('Y-m-d') }}</td>
-<td>{{ $donationRequest->donations->first()?->latestActiveSchedule?->status ?? 'Approved' }}</td>
+    <td>{{ $donationRequest->latestActiveSchedule?->date ?? now()->format('Y-m-d') }}</td>
+<td>{{ $donationRequest->latestActiveSchedule?->status ?? 'Approved' }}</td>
 </tr>
         </tbody>
     </table>

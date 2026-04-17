@@ -147,13 +147,18 @@ class DonationRequestService
         return $donationRequest;
     }
 
-    public function approveReschedule(int $id)
-    {
-        $donationRequest = $this->repository->approveReschedule($id);
-        Mail::to($donationRequest->email)->queue(new ApproveRequestMail($donationRequest));
-        Mail::to($donationRequest->donations[0]->hospital->user->email)->queue(new ApproveRequestAdminMail($donationRequest));
-        return $donationRequest;
-    }
+   public function approveReschedule(int $id)
+{
+    $donationRequest = $this->repository->approveReschedule($id);
+
+    Mail::to($donationRequest->user->email)
+        ->queue(new ApproveRequestMail($donationRequest));
+
+    Mail::to($donationRequest->hospital->user->email)
+        ->queue(new ApproveRequestAdminMail($donationRequest));
+
+    return $donationRequest;
+}
 
     public function declineReschedule(int $id)
     {

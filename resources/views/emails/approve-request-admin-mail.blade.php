@@ -93,9 +93,9 @@
             {{ $header ?? 'BloodConnect Notification' }}
         </div>
         <div class="content">
-            <h2>Hello, {{ $donationRequest->donations[0]->hospital->user->name ?? 'User' }}!</h2>
+            <h2>Hello, {{ $donationRequest->hospital->name ?? 'Hospital' }}!</h2>
             <p>
-                A <strong>Blood Donation Reschedule Request</strong> has been successfully <strong>approved</strong>.
+                A <strong>Blood Donation Schedule Request</strong> has been successfully <strong>approved</strong>.
             </p>
             <p>
                 The donor has been notified and their schedule has been updated accordingly in the system. No further action is required at this time.
@@ -110,21 +110,21 @@
 
             {{-- Example 3-column table --}}
             <table>
-                <thead>
-                    <tr>
-                        <th></th>
-                        <th>Date</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Approved Date</td>
-                        <td>{{$donationRequest->donations[0]->latestActiveSchedule?->date ?? now()->format('Y-m-d')}}</td>
-                        <td>{{$donationRequest->donations[0]->latestActiveSchedule?->status ?? 'Pending'}}</td>
-                    </tr>
-                </tbody>
-            </table>
+    <thead>
+        <tr>
+            <th>Details</th>
+            <th>Date</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Approved Date</td>
+            <td>{{ $donationRequest->latestActiveSchedule?->date ?? now()->format('Y-m-d') }}</td>
+            <td>Approved</td>
+        </tr>
+    </tbody>
+</table>
         </div>
         <div class="footer">
             &copy; {{ date('Y') }} BloodConnect. All rights reserved.
