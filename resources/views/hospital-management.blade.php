@@ -66,7 +66,7 @@
                                 <tr>
                                     <td>{{$dat->id}}</td>
                                     <td>{{$dat->name}}</td>
-                                    <td class="text-center">{{ explode('|',$dat->location)[0] }}</td>
+                                    <td class="text-center">{{ explode('|', $dat->location)[0] }}</td>
                                     <td class="text-center">{{$dat->user->name}}</td>
                                     <td class="text-center">{{$dat->user->email}}</td>
                                     <td class="text-center">{{$dat->created_at->format('Y-m-d')}}</td>
@@ -157,83 +157,202 @@
 </style>
 
 <script>
-async function geocodeAddress(method) {
-    let address = method === 'create'
-        ? document.getElementById("address").value
-        : document.getElementById("update_address").value;
-
-    if (!address) {
-        alert("Please enter an address");
-        return;
-    }
-
-    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(address)}&limit=1`;
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-
-        if (data.length > 0) {
-            const lat = data[0].lat;
-            const lon = data[0].lon;
-            const formatted = address + '|' + lat + '|' + lon;
-
-            if (method === 'create') {
-                document.getElementById('hospital_location').value = formatted;
-                document.getElementById("result").innerHTML =
-                    `<p><b>Lat:</b> ${lat}</p><p><b>Lng:</b> ${lon}</p>`;
-            } else {
-                document.getElementById('update_hospital_location').value = formatted;
-                document.getElementById("update_result").innerHTML =
-                    `<p><b>Lat:</b> ${lat}</p><p><b>Lng:</b> ${lon}</p>`;
-            }
-        } else {
-            alert("No results found");
-        }
-    } catch (error) {
-        console.error(error);
-        alert("Error fetching location");
-    }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
 
+    async function loadCebuCities(citySelectId, barangaySelectId) {
+        const citySelect = document.getElementById(citySelectId);
+        const barangaySelect = document.getElementById(barangaySelectId);
+
+        if (!citySelect || !barangaySelect) return;
+
+        citySelect.innerHTML = '<option value="">Select City / Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+        try {
+            const provinceResponse = await fetch("https://psgc.gitlab.io/api/provinces/");
+            const provinces = await provinceResponse.json();
+            const cebu = provinces.find(province => province.name.toLowerCase() === "cebu");
+
+            if (!cebu) {
+                alert("Cebu province not found.");
+                return;
+            }
+
+            const citiesResponse = await fetch(`https://psgc.gitlab.io/api/provinces/${cebu.code}/cities-municipalities/`);
+            const cities = await citiesResponse.json();
+
+            cities.sort((a, b) => a.name.localeCompare(b.name));
+
+            cities.forEach(city => {
+                const option = new Option(city.name, city.name);
+                option.setAttribute("data-code", city.code);
+                citySelect.add(option);
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert("Unable to load Cebu cities/municipalities.");
+        }
+    }
+
+    async function loadBarangays(citySelectId, barangaySelectId, locationInputId) {
+        const citySelect = document.getElementById(citySelectId);
+        const barangaySelect = document.getElementById(barangaySelectId);
+        const locationInput = document.getElementById(locationInputId);
+
+        if (!citySelect || !barangaySelect || !locationInput) return;
+
+        const selectedOption = citySelect.options[citySelect.selectedIndex];
+        const cityCode = selectedOption?.getAttribute("data-code");
+
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        locationInput.value = "";
+
+        if (!cityCode) return;
+
+        try {
+            const response = await fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`);
+            const barangays = await response.json();
+
+            barangays.sort((a, b) => a.name.localeCompare(b.name));
+
+            barangays.forEach(barangay => {
+                barangaySelect.add(new Option(barangay.name, barangay.name));
+            });
+
+        } catch (error) {
+            console.error(error);
+            alert("Unable to load barangays.");
+        }
+    }
+
+    function setHospitalLocation(citySelectId, barangaySelectId, locationInputId) {
+        const citySelect = document.getElementById(citySelectId);
+        const barangaySelect = document.getElementById(barangaySelectId);
+        const locationInput = document.getElementById(locationInputId);
+
+        if (!citySelect || !barangaySelect || !locationInput) return;
+
+        const city = citySelect.value;
+        const barangay = barangaySelect.value;
+
+        if (!city || !barangay) {
+            locationInput.value = "";
+            return;
+        }
+
+        locationInput.value = `${barangay}, ${city}, Cebu`;
+    }
+
+    // CREATE MODAL DROPDOWNS
+    loadCebuCities("hospital_city", "hospital_barangay");
+
+    const createCity = document.getElementById("hospital_city");
+    const createBarangay = document.getElementById("hospital_barangay");
+
+    if (createCity) {
+        createCity.addEventListener("change", () => {
+            loadBarangays("hospital_city", "hospital_barangay", "hospital_location");
+        });
+    }
+
+    if (createBarangay) {
+        createBarangay.addEventListener("change", () => {
+            setHospitalLocation("hospital_city", "hospital_barangay", "hospital_location");
+        });
+    }
+
+    // UPDATE MODAL DROPDOWNS
+    loadCebuCities("update_hospital_city", "update_hospital_barangay");
+
+    const updateCity = document.getElementById("update_hospital_city");
+    const updateBarangay = document.getElementById("update_hospital_barangay");
+
+    if (updateCity) {
+        updateCity.addEventListener("change", () => {
+            loadBarangays("update_hospital_city", "update_hospital_barangay", "update_hospital_location");
+        });
+    }
+
+    if (updateBarangay) {
+        updateBarangay.addEventListener("change", () => {
+            setHospitalLocation("update_hospital_city", "update_hospital_barangay", "update_hospital_location");
+        });
+    }
+
+    // UPDATE MODAL DATA
     const updateModal = document.getElementById('updateHospitalModal');
     const updateForm = document.getElementById('updateHospitalForm');
 
-    updateModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget;
+    if (updateModal && updateForm) {
+        updateModal.addEventListener('show.bs.modal', event => {
+            let button = event.relatedTarget;
+            let location = button.getAttribute('data-location') || "";
 
-        let id = button.getAttribute('data-id');
+if (location) {
+    let clean = location.split('|')[0]; // support old data
+    let parts = clean.split(',');
 
-        document.getElementById('update_hospital_id').value = id;
-        document.getElementById('update_hospital_name').value = button.getAttribute('data-hospital-name');
-        document.getElementById('update_hospital_location').value = button.getAttribute('data-location');
-        document.getElementById('update_user_id').value = button.getAttribute('data-user-id');
-        document.getElementById('update_user_name').value = button.getAttribute('data-user-name');
-        document.getElementById('update_user_email').value = button.getAttribute('data-user-email');
-        document.getElementById('update_user_birth_date').value = button.getAttribute('data-user-birth-date');
-        document.getElementById('update_user_gender').value = button.getAttribute('data-user-gender');
-        document.getElementById('update_user_phone').value = button.getAttribute('data-user-phone');
-        document.getElementById('update_user_status').value = button.getAttribute('data-user-status');
+    let barangay = parts[0]?.trim();
+    let city = parts[1]?.trim();
 
-        updateForm.action = `/hospitals/${id}`;
-    });
+    let citySelect = document.getElementById('update_hospital_city');
+    let brgySelect = document.getElementById('update_hospital_barangay');
 
+    setTimeout(() => {
+        for (let option of citySelect.options) {
+            if (option.value === city) {
+                citySelect.value = city;
+
+                citySelect.dispatchEvent(new Event('change'));
+
+                setTimeout(() => {
+                    for (let opt of brgySelect.options) {
+                        if (opt.value === barangay) {
+                            brgySelect.value = barangay;
+                        }
+                    }
+                }, 500);
+
+                break;
+            }
+        }
+    }, 500);
+}
+            let id = button.getAttribute('data-id');
+
+            document.getElementById('update_hospital_id').value = id;
+            document.getElementById('update_hospital_name').value = button.getAttribute('data-hospital-name');
+            document.getElementById('update_hospital_location').value = button.getAttribute('data-location');
+            document.getElementById('update_user_id').value = button.getAttribute('data-user-id');
+            document.getElementById('update_user_name').value = button.getAttribute('data-user-name');
+            document.getElementById('update_user_email').value = button.getAttribute('data-user-email');
+            document.getElementById('update_user_birth_date').value = button.getAttribute('data-user-birth-date');
+            document.getElementById('update_user_gender').value = button.getAttribute('data-user-gender');
+            document.getElementById('update_user_phone').value = button.getAttribute('data-user-phone');
+            document.getElementById('update_user_status').value = button.getAttribute('data-user-status');
+
+            updateForm.action = `/hospitals/${id}`;
+        });
+    }
+
+    // DELETE MODAL DATA
     const deleteModal = document.getElementById('deleteHospitalModal');
     const deleteForm = document.getElementById('deleteHospitalForm');
 
-    deleteModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget;
+    if (deleteModal && deleteForm) {
+        deleteModal.addEventListener('show.bs.modal', event => {
+            let button = event.relatedTarget;
 
-        let id = button.getAttribute('data-id');
-        let name = button.getAttribute('data-name');
+            let id = button.getAttribute('data-id');
+            let name = button.getAttribute('data-name');
 
-        document.getElementById('delete_hospital_name').innerHTML =
-            "Are you sure you want to delete <b>" + name + "</b>?";
+            document.getElementById('delete_hospital_name').innerHTML =
+                "Are you sure you want to delete <b>" + name + "</b>?";
 
-        deleteForm.action = `/hospitals/${id}`;
-    });
+            deleteForm.action = `/hospitals/${id}`;
+        });
+    }
 
 });
 </script>

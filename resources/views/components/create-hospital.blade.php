@@ -32,10 +32,18 @@
             </div>
 
             <div class="col-md-6">
-                <label for="hospital_location" class="form-label">Hospital Location</label>
-                <input type="text" class="form-control" id="hospital_location" name="hospital_location" value="{{ old('hospital_location') }}" required readonly>
-                @error('hospital_location') <p class="text-danger text-xs mt-1">{{ $message }}</p> @enderror
-            </div>
+    <label for="hospital_city" class="form-label">City / Municipality</label>
+    <select class="form-control" id="hospital_city" required>
+        <option value="">Select City / Municipality</option>
+    </select>
+</div>
+
+<div class="col-md-6">
+    <label for="hospital_barangay" class="form-label">Barangay</label>
+    <select class="form-control" id="hospital_barangay" required>
+        <option value="">Select Barangay</option>
+    </select>
+</div>
 
             <hr class="mt-4">
 

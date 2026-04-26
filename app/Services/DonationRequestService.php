@@ -106,7 +106,7 @@ class DonationRequestService
         $data['hospital_id'] = $requestData['hospital_id'];
     } else {
         // 👉 fallback to nearest hospital (original logic)
-        $nearestHospital = $this->hospitalRepository->findNearestHospital($location[1], $location[2]);
+        $nearestHospital = $this->hospitalRepository->findNearestHospital($user->location);
         $data['hospital_id'] = $nearestHospital->id;
     }
 

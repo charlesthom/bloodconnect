@@ -44,25 +44,17 @@
             <form method="POST" action="/register">
               @csrf
 
-              <!-- ADDRESS -->
-              <div class="mb-3">
-                <input type="text"
-                       id="address"
-                       class="form-control"
-                       placeholder="Barangay, City/Municipality">
-              </div>
+              <select id="province" class="form-control" required>
+  <option value="">Select Province</option>
+</select>
 
-              <!-- FIND ADDRESS -->
-              <div class="text-center">
-                <button type="button"
-                        onclick="geocodeAddress()"
-                        class="btn bg-gradient-dark w-100 mb-3"
-                        style="background: linear-gradient(135deg,#7b0f1a,#a31521,#c1121f); color:white; border:none;">
-                  Find Address
-                </button>
-              </div>
+<select id="city" class="form-control mt-2" required>
+  <option value="">Select City / Municipality</option>
+</select>
 
-              <div id="result" class="mb-3"></div>
+<select id="barangay" class="form-control mt-2" required>
+  <option value="">Select Barangay</option>
+</select>
 
               <!-- NAME -->
               <div class="mb-3">
@@ -191,44 +183,94 @@
 
 <!-- SCRIPT -->
 <script>
-async function geocodeAddress() {
-    const address = document.getElementById("address").value;
-    const resultBox = document.getElementById("result");
-    const locationInput = document.getElementById("location");
+const provinceSelect = document.getElementById("province");
+const citySelect = document.getElementById("city");
+const brgySelect = document.getElementById("barangay");
+const locationInput = document.getElementById("location");
 
-    if (!address) {
-        alert("Please enter an address");
-        return;
+provinceSelect.innerHTML = '<option value="">Select Province</option>';
+citySelect.innerHTML = '<option value="">Select City / Municipality</option>';
+brgySelect.innerHTML = '<option value="">Select Barangay</option>';
+locationInput.value = "";
+
+// Load Cebu Province only
+fetch("https://psgc.gitlab.io/api/provinces/")
+  .then(response => response.json())
+  .then(provinces => {
+    const cebu = provinces.find(province => province.name.toLowerCase() === "cebu");
+
+    if (!cebu) {
+      alert("Cebu province not found.");
+      return;
     }
 
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
+    provinceSelect.add(new Option(cebu.name, cebu.code));
+    provinceSelect.value = cebu.code;
 
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
+    loadCities(cebu.code);
+  })
+  .catch(() => {
+    alert("Unable to load provinces. Please check your internet connection.");
+  });
 
-        if (data.length > 0) {
-            const lat = data[0].lat;
-            const lon = data[0].lon;
+// Load Cebu cities/municipalities
+function loadCities(provinceCode) {
+  citySelect.innerHTML = '<option value="">Select City / Municipality</option>';
+  brgySelect.innerHTML = '<option value="">Select Barangay</option>';
+  locationInput.value = "";
 
-            locationInput.value = address + '|' + lat + '|' + lon;
+  fetch(`https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`)
+    .then(response => response.json())
+    .then(cities => {
+      cities.sort((a, b) => a.name.localeCompare(b.name));
 
-            resultBox.innerHTML = `
-                <div class="alert alert-light">
-                    <strong>Location found:</strong><br>
-                    Lat: ${lat}<br>
-                    Lon: ${lon}
-                </div>
-            `;
-        } else {
-            resultBox.innerHTML = `<div class="alert alert-warning">No results found</div>`;
-            locationInput.value = '';
-        }
-    } catch (error) {
-        console.error(error);
-        alert("Error fetching location");
-    }
+      cities.forEach(city => {
+  let option = new Option(city.name, city.name);
+  option.setAttribute("data-code", city.code);
+  citySelect.add(option);
+});
+    })
+    .catch(() => {
+      alert("Unable to load cities/municipalities.");
+    });
 }
+
+// Load barangays when city changes
+citySelect.addEventListener("change", function () {
+  const selectedOption = citySelect.options[citySelect.selectedIndex];
+  const cityCode = selectedOption.getAttribute("data-code");
+
+  brgySelect.innerHTML = '<option value="">Select Barangay</option>';
+  locationInput.value = "";
+
+  if (!cityCode) return;
+
+  fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`)
+    .then(response => response.json())
+    .then(barangays => {
+      barangays.sort((a, b) => a.name.localeCompare(b.name));
+
+      barangays.forEach(barangay => {
+        brgySelect.add(new Option(barangay.name, barangay.name));
+      });
+    })
+    .catch(() => {
+      alert("Unable to load barangays.");
+    });
+});
+
+// Set location when barangay changes
+brgySelect.addEventListener("change", function () {
+  const brgy = this.value;
+  const cityName = citySelect.value;
+
+  if (!brgy || !cityName) {
+    locationInput.value = "";
+    return;
+  }
+
+  locationInput.value = `${brgy}, ${cityName}, Cebu`;
+});
 </script>
 
 @endsection

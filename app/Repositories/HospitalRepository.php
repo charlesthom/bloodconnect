@@ -37,52 +37,64 @@ class HospitalRepository implements HospitalRepositoryInterface
         return Hospital::with('user')->findOrFail($id);
     }
 
-    public function findNearestHospital($userLat, $userLng)
-    {
-        return Hospital::selectRaw("
-            *,
-            (
-                6371 * acos(
-                    cos(radians(?)) *
-                    cos(radians(SUBSTRING_INDEX(SUBSTRING_INDEX(location, '|', -2), '|', 1))) *
-                    cos(radians(SUBSTRING_INDEX(location, '|', -1)) - radians(?)) +
-                    sin(radians(?)) *
-                    sin(radians(SUBSTRING_INDEX(SUBSTRING_INDEX(location, '|', -2), '|', 1)))
-                )
-            ) AS distance
-            ", [$userLat, $userLng, $userLat])
-            ->orderBy('distance', 'asc')
-            ->first();
-    }
-    public function findNearbyHospitals($userLat, $userLng, $userArea = null)
+   private function getBarangayAndCity(string $location): array
 {
-    $query = Hospital::selectRaw("
-        *,
-        (
-            6371 * acos(
-                cos(radians(?)) *
-                cos(radians(SUBSTRING_INDEX(SUBSTRING_INDEX(location, '|', -2), '|', 1))) *
-                cos(radians(SUBSTRING_INDEX(location, '|', -1)) - radians(?)) +
-                sin(radians(?)) *
-                sin(radians(SUBSTRING_INDEX(SUBSTRING_INDEX(location, '|', -2), '|', 1)))
-            )
-        ) AS distance
-    ", [$userLat, $userLng, $userLat]);
+    $cleanLocation = strtolower(explode('|', $location)[0]);
+    $parts = array_map('trim', explode(',', $cleanLocation));
 
-    if ($userArea) {
-        $sameAreaHospitals = (clone $query)
-            ->whereRaw("LOWER(SUBSTRING_INDEX(location, '|', 1)) = ?", [strtolower($userArea)])
-            ->orderBy('distance', 'asc')
-            ->get();
+    return [
+        'barangay' => $parts[0] ?? '',
+        'city' => $this->normalizeCity($parts[1] ?? ''),
+    ];
+}
 
-        if ($sameAreaHospitals->count() > 0) {
-            return $sameAreaHospitals;
-        }
+private function normalizeCity(string $city): string
+{
+    $city = strtolower(trim($city));
+
+    if (str_contains($city, 'mandaue')) return 'mandaue city';
+    if (str_contains($city, 'danao')) return 'danao city';
+    if (str_contains($city, 'lapu')) return 'lapu-lapu city';
+    if (str_contains($city, 'toledo')) return 'toledo city';
+    if (str_contains($city, 'bogo')) return 'bogo city';
+    if (str_contains($city, 'talisay')) return 'talisay city';
+    if (str_contains($city, 'cebu')) return 'cebu city';
+
+    return $city;
+}
+
+public function findNearestHospital($location)
+{
+    $hospitals = $this->findNearbyHospitals($location);
+
+    return $hospitals->first();
+}
+
+public function findNearbyHospitals($location)
+{
+    $userLocation = $this->getBarangayAndCity($location);
+
+    $sameBarangayHospitals = Hospital::get()->filter(function ($hospital) use ($userLocation) {
+        $hospitalLocation = $this->getBarangayAndCity($hospital->location);
+
+        return $hospitalLocation['barangay'] === $userLocation['barangay']
+            && $hospitalLocation['city'] === $userLocation['city'];
+    });
+
+    if ($sameBarangayHospitals->count() > 0) {
+        return $sameBarangayHospitals->values();
     }
 
-    return $query
-        ->having('distance', '<=', 3)
-        ->orderBy('distance', 'asc')
-        ->get();
+    $sameCityHospitals = Hospital::get()->filter(function ($hospital) use ($userLocation) {
+        $hospitalLocation = $this->getBarangayAndCity($hospital->location);
+
+        return $hospitalLocation['city'] === $userLocation['city'];
+    });
+
+    if ($sameCityHospitals->count() > 0) {
+        return $sameCityHospitals->values();
+    }
+
+   return Hospital::get();
 }
 }

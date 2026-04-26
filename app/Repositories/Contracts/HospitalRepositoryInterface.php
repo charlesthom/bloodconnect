@@ -11,6 +11,6 @@ interface HospitalRepositoryInterface
     public function delete(int $id): int;
     public function getAll();
     public function findById(int $id);
-    public function findNearestHospital(string $lat, string $long);
-    public function findNearbyHospitals(string $lat, string $long);
+    public function findNearestHospital(string $location);
+public function findNearbyHospitals(string $location);
 }

@@ -16,14 +16,18 @@
             <div class="modal-body row g-3">
 
             <div class="col-md-6">
-                <label for="address" class="form-label">Enter Address</label>
-                <input type="text" class="form-control" id="update_address" name="address" placeholder="e.g. Cebu City, Philippines">
-                <button 
-    onclick="geocodeAddress('update')"
-    type="button" 
-    class="btn text-white" style="background-color:#800000;">
-    Find Address
-</button>
+    <label for="update_hospital_city" class="form-label">City / Municipality</label>
+    <select class="form-control" id="update_hospital_city" required>
+        <option value="">Select City / Municipality</option>
+    </select>
+</div>
+
+<div class="col-md-6">
+    <label for="update_hospital_barangay" class="form-label">Barangay</label>
+    <select class="form-control" id="update_hospital_barangay" required>
+        <option value="">Select Barangay</option>
+    </select>
+</div>
             </div>
             <div id="update_result" class="mt-3"></div>
             <!-- Hospital Info -->

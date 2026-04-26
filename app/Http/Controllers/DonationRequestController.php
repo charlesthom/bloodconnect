@@ -29,7 +29,7 @@ class DonationRequestController extends Controller
     $user = Auth::user();
     $location = explode('|', $user->location);
 
-    $nearbyHospitals = $hospitalRepository->findNearbyHospitals($location[1], $location[2], $location[0]);
+    $nearbyHospitals = $hospitalRepository->findNearbyHospitals($user->location);
 
     return view('donation-requests')->with([
         "data" => $this->service->getAllByDonor(),

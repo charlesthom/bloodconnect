@@ -222,26 +222,30 @@
 @endsection
 @push('scripts')
 <script>
-    const editProfileBtn = document.getElementById('editProfileBtn');
+const editProfileBtn = document.getElementById('editProfileBtn');
 
 if (editProfileBtn) {
     editProfileBtn.addEventListener('click', function () {
         const inputs = document.querySelectorAll('input[readonly], select');
+
         inputs.forEach(el => {
             el.dataset.originalValue = el.value;
         });
 
         const exclude = ["location", "email"];
+
         inputs.forEach(el => {
             if (!exclude.includes(el.id)) {
                 el.removeAttribute('readonly');
             }
         });
-        document.getElementById('editProfileBtn').classList.add("disabled")
+
+        editProfileBtn.classList.add("disabled");
+
         const genderField = document.getElementById('gender');
-if (genderField) {
-    genderField.disabled = false;
-}
+        if (genderField) {
+            genderField.disabled = false;
+        }
 
         if (!document.getElementById('saveChangesBtn')) {
             let saveBtn = document.createElement('button');
@@ -258,20 +262,84 @@ if (genderField) {
 
             document.querySelector('form').appendChild(cancelBtn);
             document.querySelector('form').appendChild(saveBtn);
+
             document.getElementById('geocodeContainer').innerHTML = `
-                <div class="mb-3">
-                  <input type="text" class="form-control" placeholder="Barangay, City/Municipality" name="address" id="address" aria-label="address" aria-describedby="address">
-                  <div class="text-center">
-                    <button type="button" class="btn bg-gradient-dark w-100 my-4 mb-2" onclick="geocodeAddress()">Find Address</button>
-                  </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-control-label">City / Municipality</label>
+                        <select class="form-control" id="city">
+                            <option value="">-- Select City / Municipality --</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-control-label">Barangay</label>
+                        <select class="form-control" id="barangay">
+                            <option value="">-- Select Barangay --</option>
+                        </select>
+                    </div>
                 </div>
             `;
 
+            const citySelect = document.getElementById('city');
+            const barangaySelect = document.getElementById('barangay');
+            const locationInput = document.getElementById('location');
+            // 👇 ADD THIS HERE
+const validateLocation = () => {
+    const city = citySelect?.value;
+    const barangay = barangaySelect?.value;
+
+    saveBtn.disabled = !(city && barangay);
+};
+
+// attach listeners
+citySelect.addEventListener('change', validateLocation);
+barangaySelect.addEventListener('change', validateLocation);
+
+// disable initially
+saveBtn.disabled = true;
+
+            loadCebuCities(citySelect);
+
+            citySelect.addEventListener('change', function () {
+                const selectedOption = citySelect.options[citySelect.selectedIndex];
+                const cityCode = selectedOption.getAttribute('data-code');
+
+                barangaySelect.innerHTML = '<option value="">-- Select Barangay --</option>';
+                locationInput.value = "";
+
+                if (!cityCode) return;
+
+                fetch(`https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays/`)
+                    .then(response => response.json())
+                    .then(barangays => {
+                        barangays.sort((a, b) => a.name.localeCompare(b.name));
+
+                        barangays.forEach(barangay => {
+                            barangaySelect.add(new Option(barangay.name, barangay.name));
+                        });
+                    })
+                    .catch(() => {
+                        alert("Unable to load barangays.");
+                    });
+            });
+
+            barangaySelect.addEventListener('change', function () {
+                const city = citySelect.value;
+                const barangay = barangaySelect.value;
+
+                if (city && barangay) {
+                    locationInput.value = `${barangay}, ${city}, Cebu`;
+                } else {
+                    locationInput.value = "";
+                }
+            });
+
             cancelBtn.addEventListener('click', function () {
                 inputs.forEach(el => {
-                if (el.dataset.originalValue !== undefined) {
-                    el.value = el.dataset.originalValue;
-                }
+                    if (el.dataset.originalValue !== undefined) {
+                        el.value = el.dataset.originalValue;
+                    }
                 });
 
                 inputs.forEach(el => {
@@ -281,47 +349,45 @@ if (genderField) {
                 saveBtn.remove();
                 cancelBtn.remove();
 
-                document.getElementById('editProfileBtn').classList.remove("disabled");
+                editProfileBtn.classList.remove("disabled");
                 document.getElementById('geocodeContainer').innerHTML = ``;
+
                 const genderFieldCancel = document.getElementById('gender');
-if (genderFieldCancel) {
-    genderFieldCancel.disabled = true;
-}
+                if (genderFieldCancel) {
+                    genderFieldCancel.disabled = true;
+                }
+                
             });
         }
     });
 }
-async function geocodeAddress() {
-    const address = document.getElementById("address").value;
 
-    if (!address) {
-        alert("Please enter an address");
-        return;
-    }
+function loadCebuCities(citySelect) {
+    fetch("https://psgc.gitlab.io/api/provinces/")
+        .then(response => response.json())
+        .then(provinces => {
+            const cebu = provinces.find(province => province.name.toLowerCase() === "cebu");
 
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`;
-
-    try {
-        const response = await fetch(url, {
-            headers: {
-                "User-Agent": "BloodConnect (admin@bloodconnect.com)", // Nominatim requires identifying headers
+            if (!cebu) {
+                alert("Cebu province not found.");
+                return;
             }
+
+            return fetch(`https://psgc.gitlab.io/api/provinces/${cebu.code}/cities-municipalities/`);
+        })
+        .then(response => response.json())
+        .then(cities => {
+            cities.sort((a, b) => a.name.localeCompare(b.name));
+
+            cities.forEach(city => {
+                let option = new Option(city.name, city.name);
+                option.setAttribute("data-code", city.code);
+                citySelect.add(option);
+            });
+        })
+        .catch(() => {
+            alert("Unable to load Cebu cities/municipalities.");
         });
-        const data = await response.json();
-
-        if (data.length > 0) {
-            const lat = data[0].lat;
-            const lon = data[0].lon;
-
-            const formatted = address + '|' + lat + '|' + lon;
-            document.getElementById('location').value = formatted;
-        } else {
-            alert('No results found.');
-        }
-    } catch (error) {
-        console.error(error);
-        alert("Error fetching location data");
-    }
 }
 </script>
 @endpush

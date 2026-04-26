@@ -20,7 +20,7 @@
                                 <option value="">-- Choose Hospital --</option>
                                 @foreach($nearbyHospitals as $hospital)
                                     <option value="{{ $hospital->id }}">
-                                        {{ $hospital->name }} ({{ round($hospital->distance, 2) }} km)
+                                        {{ $hospital->name }} 
                                     </option>
                                 @endforeach
                             </select>
