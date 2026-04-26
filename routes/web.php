@@ -91,7 +91,8 @@ Route::group(['middleware' => 'auth'], function () {
 
 	Route::middleware(['role:hospital'])->group(function () {});
 
-
+Route::get('/export/hospital/filter/pdf', [DashboardController::class, 'exportHospitalFilteredPdf'])
+        ->name('hospital.export.filtered.pdf');
 	Route::get('/donation-requests', [DonationRequestController::class, 'index'])->name('donation-requests.index');
 	Route::get('/donation-requests/donor', [DonationRequestController::class, 'donor'])->name('donation-requests.donor');
 	Route::get('/donation-requests/hospital', [DonationRequestController::class, 'hospital'])->name('donation-requests.hospital');

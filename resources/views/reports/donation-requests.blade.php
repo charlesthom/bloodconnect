@@ -117,7 +117,7 @@
     </div>
 
     <div class="report-title">Donation Requests Report</div>
-    <div class="report-date">Date Generated: {{ date('F d, Y') }}</div>
+    <div class="report-date">Date Generated: {{ now()->format('F d, Y') }}</div>
 
     <table class="data-table">
         <thead>

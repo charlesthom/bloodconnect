@@ -48,17 +48,28 @@ class DashboardController extends Controller
                 ]);
                 break;
             case 'hospital':
-                $donationRequests = $this->donationRequestService->getAllByHospital();
-                $rescheduleRequests = $this->donationRequestService->getAllRescheduleByHospital();
-                $allBloodRequests = $this->bloodRequestService->getAll();
-                $bloodRequests = $this->bloodRequestService->getAllByHospital();
-                return view('hospital-dashboard')->with([
-                    'pending_count' => $donationRequests->count(),
-                    'reschedule_count' => $rescheduleRequests->count(),
-                    'blood_request_count' => $bloodRequests->count(),
-                    'all_blood_request_count' => $allBloodRequests->count(),
-                ]);
-                break;
+    $donationRequests = $this->donationRequestService->getAllByHospital();
+    $rescheduleRequests = $this->donationRequestService->getAllRescheduleByHospital();
+    $allBloodRequests = $this->bloodRequestService->getAll();
+    $bloodRequests = $this->bloodRequestService->getAllByHospital();
+
+    $hospitalId = \App\Models\Hospital::where('user_id', Auth::id())->value('id');
+    $totalDonationRequests = DonationRequest::where('hospital_id', $hospitalId)->count();
+    $totalDonors = User::where('role', 'donor')
+    ->whereHas('donations', function ($query) use ($hospitalId) {
+        $query->where('hospital_id', $hospitalId);
+    })
+    ->count();
+
+    return view('hospital-dashboard')->with([
+        'pending_count' => $donationRequests->count(),
+        'reschedule_count' => $rescheduleRequests->count(),
+        'blood_request_count' => $bloodRequests->count(),
+        'all_blood_request_count' => $allBloodRequests->count(),
+        'total_donation_request_count' => $totalDonationRequests,
+        'total_donor_count' => $totalDonors,
+    ]);
+    break;
             default:
                 $allBloodRequests = $this->bloodRequestService->getAll();
                 $donationRequests = $this->donationRequestService->getAll();
@@ -372,5 +383,65 @@ public function exportFilteredPdf(Request $request)
     }
 
     return back()->with('error', 'Invalid report type selected.');
+}
+public function exportHospitalFilteredPdf(Request $request)
+{
+    $from = $request->from;
+    $to = $request->to;
+    $report = $request->report;
+    if ($from && $to && $from > $to) {
+    return back()->with('error', 'Invalid date range. From Date cannot be later than To Date.');
+}
+    $hospitalId = \App\Models\Hospital::where('user_id', Auth::id())->value('id');
+
+    if ($report === 'donors') {
+
+    $users = User::where('role', 'donor')
+        ->whereHas('donations', function ($query) use ($hospitalId, $from, $to) {
+
+            $query->where('hospital_id', $hospitalId)
+
+                ->when($from, function ($q) use ($from) {
+                    $q->whereDate('created_at', '>=', $from);
+                })
+
+                ->when($to, function ($q) use ($to) {
+                    $q->whereDate('created_at', '<=', $to);
+                });
+
+        })
+        ->get();
+
+    $pdf = Pdf::loadView('reports.users-pdf', compact('users'))
+        ->setPaper('a4', 'landscape');
+
+    return $pdf->download('donors-report.pdf');
+}
+
+    if ($report === 'donation') {
+        $donationRequests = DonationRequest::where('hospital_id', $hospitalId)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->get();
+
+        $pdf = Pdf::loadView('reports.donation-requests', compact('donationRequests'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('donation-requests-report.pdf');
+    }
+
+    if ($report === 'blood') {
+        $bloodRequests = BloodRequest::where('hospital_id', $hospitalId)
+            ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
+            ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
+            ->get();
+
+        $pdf = Pdf::loadView('reports.blood-requests-pdf', compact('bloodRequests'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('blood-requests-report.pdf');
+    }
+
+    return back()->with('error', 'Invalid report.');
 }
 }
