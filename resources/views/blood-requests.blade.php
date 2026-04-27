@@ -48,27 +48,94 @@
                     {{-- fulfill blood request modal --}}
                     <x-fulfill-blood-request />
                     <div class="card-header pb-0">
-                        <div class="d-flex flex-row justify-content-between align-items-center">
-    <div>
-        <h5 class="mb-0">Blood Requests</h5>
-    </div>
+    <div class="d-flex flex-row justify-content-between align-items-center flex-wrap gap-2">
 
-    <div class="d-flex gap-2">
-        <!-- SORT DROPDOWN -->
-        <form method="GET" action="{{ url('/blood-requests') }}">
-            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
-                <option value="">Sort</option>
-                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest to Oldest</option>
-                <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest to Newest</option>
-            </select>
-        </form>
+        <!-- LEFT: TITLE -->
+        <div>
+            <h5 class="mb-0">Blood Requests</h5>
+        </div>
 
-        <!-- ONLY ONE NEW BUTTON -->
-        <a href="#" class="btn bg-gradient-danger btn-sm mb-0"
-           data-bs-toggle="modal"
-           data-bs-target="#createBloodRequestModal">
-            + New
-        </a>
+        @php
+            $notifications = collect($data)
+                ->sortByDesc('created_at')
+                ->values();
+        @endphp
+
+        <!-- RIGHT: BELL + SORT + NEW -->
+        <div class="d-flex gap-2 align-items-center ms-auto">
+
+            <!-- 🔔 Bell -->
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm position-relative shadow-sm" type="button" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-bell"></i>
+
+                    @if($notifications->count() > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ $notifications->count() }}
+                        </span>
+                    @endif
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 320px;">
+                    <li class="dropdown-header fw-bold text-dark">Blood Request Notifications</li>
+
+                    @forelse($notifications as $notification)
+                        <li>
+                            <div class="dropdown-item-text border-bottom py-2">
+
+                                <strong class="text-danger">Blood Request</strong><br>
+
+                                <small>
+                                    {{ $notification->hospital->name }} needs 
+                                    <strong>{{ $notification->blood_type }}</strong> 
+                                    ({{ $notification->quantity }})
+                                </small>
+
+                                <br>
+
+                                <small>
+                                    Urgency Level: {{ $notification->urgency_lvl }}
+                                </small>
+                                @if($notification->notes)
+    <br>
+    <small class="text-dark">
+        <strong>Reason:</strong> {{ $notification->notes }}
+    </small>
+@endif
+
+                                <br>
+
+                                <small class="text-muted">
+                                    {{ $notification->created_at->diffForHumans() }}
+                                </small>
+
+                            </div>
+                        </li>
+                    @empty
+                        <li>
+                            <div class="dropdown-item-text text-muted">No notifications yet.</div>
+                        </li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <!-- SORT -->
+            <form method="GET" action="{{ url('/blood-requests') }}">
+                <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
+                    <option value="">Sort</option>
+                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Newest to Oldest</option>
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest to Newest</option>
+                </select>
+            </form>
+
+            <!-- NEW BUTTON -->
+            <a href="#" class="btn bg-gradient-danger btn-sm mb-0"
+               data-bs-toggle="modal"
+               data-bs-target="#createBloodRequestModal">
+                + New
+            </a>
+
+        </div>
     </div>
 </div>
                     <div class="card-body px-0 pt-0 pb-2">

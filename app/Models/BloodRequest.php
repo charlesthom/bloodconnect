@@ -19,6 +19,7 @@ class BloodRequest extends Model
         'request_date',
         'confirmed_by',
         'status',
+        'notes',
     ];
 
     protected $casts = [

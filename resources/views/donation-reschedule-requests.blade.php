@@ -34,11 +34,72 @@
 
                 <div class="card-header pb-0">
     <div class="d-flex flex-row justify-content-between align-items-center">
-        <div>
-            <h5 class="mb-0">Reschedule Requests</h5>
+
+    <div>
+        <h5 class="mb-0">Reschedule Requests</h5>
+    </div>
+
+    @php
+        $notifications = collect($data)
+            ->filter(fn($item) => $item->latestRescheduleRequest)
+            ->sortByDesc(fn($item) => $item->latestRescheduleRequest->created_at ?? $item->created_at)
+            ->values();
+    @endphp
+
+    <div class="d-flex align-items-center">
+
+        <!-- 🔔 Bell -->
+        <div class="dropdown me-2">
+            <button class="btn btn-light btn-sm position-relative shadow-sm" type="button" data-bs-toggle="dropdown">
+                <i class="fa-solid fa-bell"></i>
+
+                @if($notifications->count() > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        {{ $notifications->count() }}
+                    </span>
+                @endif
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
+                <li class="dropdown-header fw-bold text-dark">Reschedule Notifications</li>
+
+                @forelse($notifications as $notification)
+                    <li>
+                        <div class="dropdown-item-text border-bottom py-2">
+
+                            <strong class="text-warning">Reschedule Request</strong><br>
+                            <small>
+                                {{ $notification->user->name }} requested to reschedule.
+                            </small>
+
+                            <br>
+                            <small>
+                                Requested Date: {{ $notification->latestRescheduleRequest?->date }}
+                            </small>
+
+                            @if($notification->latestRescheduleRequest?->notes)
+                                <br>
+                                <small class="text-dark">
+                                    <strong>Note:</strong> {{ $notification->latestRescheduleRequest->notes }}
+                                </small>
+                            @endif
+
+                            <br>
+                            <small class="text-muted">
+                                {{ $notification->updated_at->diffForHumans() }}
+                            </small>
+
+                        </div>
+                    </li>
+                @empty
+                    <li>
+                        <div class="dropdown-item-text text-muted">No notifications yet.</div>
+                    </li>
+                @endforelse
+            </ul>
         </div>
 
-        <!-- DROPDOWN ONLY -->
+        <!-- Sort -->
         <form method="GET" action="{{ url('/donation-requests/reschedule') }}">
             <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
                 <option value="">Sort</option>
@@ -46,6 +107,7 @@
                 <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Oldest to Newest</option>
             </select>
         </form>
+
     </div>
 </div>
                     

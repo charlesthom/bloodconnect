@@ -37,7 +37,19 @@
                     <input type="number" class="form-control" id="urgency_lvl" name="urgency_lvl" required autocomplete="off" value="1" min="1" max="5">
                     @error('urgency_lvl') <p class="text-danger text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                <div class="col-12">
+    <label for="notes" class="form-label">Reason / Purpose</label>
+    <textarea 
+        class="form-control" 
+        id="notes" 
+        name="notes" 
+        rows="3"
+        placeholder="e.g. Emergency surgery, low blood supply, urgent case">
+    </textarea>
+    @error('notes') <p class="text-danger text-xs mt-1">{{ $message }}</p> @enderror
+</div>
             </div>
+            
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn text-white" style="background-color:#800000;">Confirm</button>

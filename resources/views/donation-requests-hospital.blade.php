@@ -74,7 +74,47 @@
     <div>
         <h5 class="mb-0">Donation Requests</h5>
     </div>
+@php
+    $notifications = collect($data)
+        ->sortByDesc('created_at')
+        ->values();
+@endphp
 
+<div class="dropdown ms-auto me-2">
+    <button class="btn btn-light btn-sm position-relative shadow-sm" type="button" data-bs-toggle="dropdown">
+        <i class="fa-solid fa-bell"></i>
+
+        @if($notifications->count() > 0)
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                {{ $notifications->count() }}
+            </span>
+        @endif
+    </button>
+
+    <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 360px;">
+        <li class="dropdown-header fw-bold text-dark">Hospital Notifications</li>
+
+        @forelse($notifications as $notification)
+            <li>
+                <div class="dropdown-item-text border-bottom py-2">
+                    <strong class="text-danger">New Donation Request</strong><br>
+                    <small>
+                        {{ $notification->user->name }} requested a blood donation schedule.
+                    </small>
+
+                    <br>
+                    <small class="text-muted">
+                        {{ $notification->created_at->diffForHumans() }}
+                    </small>
+                </div>
+            </li>
+        @empty
+            <li>
+                <div class="dropdown-item-text text-muted">No notifications yet.</div>
+            </li>
+        @endforelse
+    </ul>
+</div>
     <!-- ONLY DROPDOWN (NO BUTTON) -->
     <form method="GET" action="{{ url('/donation-requests/hospital') }}">
         <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()">
