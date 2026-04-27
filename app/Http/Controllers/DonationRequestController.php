@@ -17,12 +17,15 @@ class DonationRequestController extends Controller
     }
 
     public function index()
-    {
+{
+    $data = collect($this->service->getAll())
+        ->sortBy('created_at')
+        ->values();
 
-        return view('donation-requests')->with([
-            "data" => $this->service->getAll()
-        ]);
-    }
+    return view('donation-requests')->with([
+        "data" => $data
+    ]);
+}
 
     public function donor(HospitalRepositoryInterface $hospitalRepository)
 {
@@ -31,8 +34,14 @@ class DonationRequestController extends Controller
 
     $nearbyHospitals = $hospitalRepository->findNearbyHospitals($user->location);
 
+    $data = $this->service->getAllByDonor();
+
+    $data->donations = collect($data->donations)
+        ->sortBy('created_at')
+        ->values();
+
     return view('donation-requests')->with([
-        "data" => $this->service->getAllByDonor(),
+        "data" => $data,
         "nearbyHospitals" => $nearbyHospitals
     ]);
 }
@@ -62,6 +71,9 @@ class DonationRequestController extends Controller
    public function showReschedule(Request $request)
 {
     $data = $this->service->getAllRescheduleByHospital();
+    $data = collect($data)->sortBy(function ($item) {
+    return optional($item->latestRescheduleRequest)->date;
+})->values();
 
     // SORTING BASED ON REQUESTED DATE (RESCHEDULE DATE)
     if ($request->sort == 'newest') {

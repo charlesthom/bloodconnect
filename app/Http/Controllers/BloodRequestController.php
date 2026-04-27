@@ -16,7 +16,9 @@ class BloodRequestController extends Controller
 
     public function index(Request $request)
 {
-    $data = $this->service->getAll();
+    $data = collect($this->service->getAll())
+    ->sortBy('request_date') // oldest first
+    ->values();
 
     if ($request->sort == 'newest') {
         $data = collect($data)->sortByDesc(function ($item) {
