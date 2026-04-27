@@ -139,17 +139,31 @@ class DonationRequestController extends Controller
         return redirect()->back()->with('success', 'Approved Reschedule Request Successfully!');
     }
 
-    public function declineReschedule($id)
-    {
-        $this->service->declineReschedule($id);
-        return redirect()->back()->with('success', 'Declined Reschedule Request Successfully!');
-    }
+   public function declineReschedule(Request $request, $id)
+{
+    $data = $request->validate([
+        'notes' => 'required|string',
+    ]);
 
+    $this->service->declineReschedule($id, $data);
+
+    return redirect()->back()->with('success', 'Declined Reschedule Request Successfully!');
+}
     public function cancel($id)
     {
         $this->service->cancel($id);
         return redirect()->back()->with('success', 'Request Cancelled Successfully!');
     }
+    public function decline(Request $request, $id)
+{
+    $data = $request->validate([
+        'notes' => 'required|string',
+    ]);
+
+    $this->service->decline($id, $data);
+
+    return redirect()->back()->with('success', 'Request Declined Successfully!');
+}
 
     public function destroy($id)
     {

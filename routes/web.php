@@ -110,6 +110,8 @@ Route::get('/export/hospital/filter/pdf', [DashboardController::class, 'exportHo
 	Route::get('/blood-requests', [BloodRequestController::class, 'index'])->name('blood-requests.index');
 	Route::post('/blood-requests', [BloodRequestController::class, 'store'])->name('blood-requests.store');
 	Route::patch('/blood-requests/fulfill/{id}', [BloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
+	Route::patch('/donation-requests/decline/{id}', [DonationRequestController::class, 'decline'])
+    ->name('donation-requests.decline');
 });
 
 

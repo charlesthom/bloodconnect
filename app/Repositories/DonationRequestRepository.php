@@ -142,7 +142,8 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     ->where('status', DonationRequestStatusEnum::Approved)
     ->latest()
     ->first();
-        if ($latestDonationRequest) {
+      //
+      /*  if ($latestDonationRequest) {
             if (strtoupper($user->gender) == 'MALE') {
                 $allowDate = $latestDonationRequest->created_at->addMonths(4)->format('M d, Y');
                 if ($latestDonationRequest->created_at->gt(now()->subMonths(4))) {
@@ -157,6 +158,7 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
                         "You can only request again after {$allowDate}."
                     );
                 }
+                    
                 $latestPendingRequest = DonationRequest::where('user_id', $data['user_id'])
     ->where('status', DonationRequestStatusEnum::Pending)
     ->latest()
@@ -166,7 +168,7 @@ if ($latestPendingRequest) {
     throw new \Exception("You already have a pending donation request.");
 }
             }
-        }
+        } */
         $donationRequest = DonationRequest::create($data);
         return DonationRequest::with(['user', 'hospital', 'hospital.user'])->where('id', $donationRequest->id)->first();
     }
@@ -178,10 +180,14 @@ if ($latestPendingRequest) {
         return $donationRequest;
     }
 
-    public function approve(int $id, array $data)
+   public function approve(int $id, array $data)
 {
     $donationRequest = DonationRequest::findOrFail($id);
-    $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
+
+    $donationRequest->update([
+        'status' => DonationRequestStatusEnum::Approved,
+        'notes' => $data['notes'] ?? null,
+    ]);
 
     DonationRequestSchedule::where('donation_request_id', $donationRequest->id)
         ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
@@ -189,9 +195,10 @@ if ($latestPendingRequest) {
     DonationRequestSchedule::create([
         'donation_request_id' => $donationRequest->id,
         'date' => $data['date'],
-        'notes' => $data['notes'],
+        'notes' => $data['notes'] ?? null,
         'status' => DonationRequestScheduleStatusEnum::Active
     ]);
+
 
     return DonationRequest::with(['user', 'hospital', 'hospital.user', 'latestActiveSchedule'])
         ->where('id', $donationRequest->id)
@@ -224,7 +231,10 @@ if ($latestPendingRequest) {
     DonationRequestSchedule::where('donation_request_id', $donationRequestSchedule->donation_request_id)
         ->update(['status' => DonationRequestScheduleStatusEnum::Inactive]);
 
-    $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Active]);
+   $donationRequestSchedule->update([
+    'status' => DonationRequestScheduleStatusEnum::Active,
+    'notes' => request('notes') ?? null
+]);
 
     $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
     $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
@@ -234,14 +244,20 @@ if ($latestPendingRequest) {
         ->first();
 }
 
-    public function declineReschedule(int $id)
-    {
-        $donationRequestSchedule = DonationRequestSchedule::findOrFail($id);
-        $donationRequestSchedule->update(['status' => DonationRequestScheduleStatusEnum::Declined]);
-        $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
-        $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
-        return $donationRequest;
-    }
+    public function declineReschedule(int $id, array $data)
+{
+    $donationRequestSchedule = DonationRequestSchedule::findOrFail($id);
+
+    $donationRequestSchedule->update([
+        'status' => DonationRequestScheduleStatusEnum::Declined,
+        'notes' => $data['notes'] ?? null,
+    ]);
+
+    $donationRequest = DonationRequest::findOrFail($donationRequestSchedule->donation_request_id);
+    $donationRequest->update(['status' => DonationRequestStatusEnum::Approved]);
+
+    return $donationRequest;
+}
 
     public function cancel(int $id)
     {

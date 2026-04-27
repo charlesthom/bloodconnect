@@ -10,6 +10,16 @@
         <form id="approveRescheduleRequestForm" method="POST">
             @csrf
             @method('PATCH')
+            <div class="modal-body">
+    <label for="notes" class="form-label">Notes / Message</label>
+    <textarea 
+        class="form-control" 
+        name="notes" 
+        id="notes" 
+        rows="3"
+        placeholder="Enter message for donor (optional)">
+    </textarea>
+</div>
             {{-- <div class="modal-body row g-1">
                 <div class="col-md-8">
                     <label for="date" class="form-label">Date</label>

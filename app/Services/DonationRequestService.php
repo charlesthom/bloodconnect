@@ -16,6 +16,7 @@ use App\Repositories\Contracts\UserRepositoryInterface;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\DeclineRequestMail;
 
 class DonationRequestService
 {
@@ -160,10 +161,10 @@ class DonationRequestService
     return $donationRequest;
 }
 
-    public function declineReschedule(int $id)
-    {
-        return $this->repository->declineReschedule($id);
-    }
+    public function declineReschedule(int $id, array $data)
+{
+    return $this->repository->declineReschedule($id, $data);
+}
 
     public function cancel(int $id)
     {
@@ -174,4 +175,17 @@ class DonationRequestService
     {
         return $this->repository->delete($id);
     }
+    public function decline(int $id, array $data)
+{
+    $donationRequest = $this->repository->update($id, [
+        'status' => DonationRequestStatusEnum::Cancelled, // or Declined if you have it
+        'notes' => $data['notes'] ?? null
+    ]);
+
+    // send email to donor
+    Mail::to($donationRequest->user->email)
+        ->queue(new DeclineRequestMail($donationRequest));
+
+    return $donationRequest;
+}
 }

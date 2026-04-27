@@ -23,12 +23,16 @@
     @endif
     @if(session()->has('error'))
         <div class="alert alert-danger alert-dismissible fade show mx-4" role="alert">
+            
                 <span class="text-white">
                     {{ session('error') }}
                 </span>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close">x</button>
             </div>
     @endif
+@if(session()->has('error'))
+@endif
+
 
     <div class="row">
         <div class="col-12">
@@ -84,12 +88,91 @@
 @endphp
 
                 <div class="card-header pb-0">
-                    <div class="d-flex flex-row justify-content-between">
-                        <div>
-                            <h5 class="mb-0">Donation Requests</h5>
-                        </div>
+    <div class="d-flex flex-row justify-content-between align-items-start">
+        <div>
+            <h5 class="mb-0">Donation Requests</h5>
+        </div>
 
-                        @if(!$hasBlockingRequest)
+        @php
+            $notifications = collect($data->donations)
+                ->filter(function ($donation) {
+                    return in_array($donation->status, ['Approved', 'Cancelled'])
+                        || ($donation->latestRescheduleRequest && in_array($donation->latestRescheduleRequest->status, ['Approved', 'Declined']));
+                })
+                ->sortByDesc('updated_at')
+                ->values();
+        @endphp
+
+        <div class="d-flex align-items-start gap-2">
+            <div class="dropdown">
+                <button class="btn btn-light btn-sm position-relative shadow-sm" type="button" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-bell"></i>
+
+                    @if($notifications->count() > 0)
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ $notifications->count() }}
+                        </span>
+                    @endif
+                </button>
+
+                <ul class="dropdown-menu dropdown-menu-end shadow" style="width: 350px;">
+                    <li class="dropdown-header fw-bold text-dark">Notifications</li>
+
+                    @forelse($notifications as $notification)
+    <li>
+        <div class="dropdown-item-text border-bottom py-2">
+
+            @if($notification->latestDeclinedRescheduleRequest && $notification->latestDeclinedRescheduleRequest->status == 'Declined')
+                <strong class="text-danger">Reschedule Declined</strong><br>
+                <small>Your reschedule request was declined.</small>
+
+                @if($notification->latestDeclinedRescheduleRequest?->notes)
+                    <br>
+                    <small class="text-dark">
+                        <strong>Reason:</strong> {{ $notification->latestDeclinedRescheduleRequest->notes }}
+                    </small>
+                @endif
+
+            @elseif($notification->latestRescheduleRequest && $notification->latestRescheduleRequest->status == 'Approved')
+                <strong class="text-info">Reschedule Approved</strong><br>
+                <small>Your reschedule request was approved.</small>
+
+                @if($notification->latestRescheduleRequest?->notes)
+                    <br>
+                    <small class="text-dark">
+                        <strong>Note:</strong> {{ $notification->latestRescheduleRequest->notes }}
+                    </small>
+                @endif
+
+            @elseif($notification->status == 'Cancelled')
+                <strong class="text-danger">Cancelled</strong><br>
+                <small>Reason: {{ $notification->notes ?? 'No reason provided' }}</small>
+
+            @elseif($notification->status == 'Approved')
+                <strong class="text-success">Approved</strong><br>
+                <small>Your request to {{ $notification->hospital->name }} was approved.</small>
+
+                @if($notification->latestActiveSchedule?->notes)
+                    <br>
+                    <small class="text-dark">
+                        <strong>Note:</strong> {{ $notification->latestActiveSchedule->notes }}
+                    </small>
+                @endif
+            @endif
+
+            <br>
+            <small class="text-muted">{{ $notification->updated_at->diffForHumans() }}</small>
+        </div>
+    </li>
+@empty
+    <li>
+        <div class="dropdown-item-text text-muted">No notifications yet.</div>
+    </li>
+@endforelse
+                </ul>
+            </div>
+
+                       {{-- @if(!$hasBlockingRequest)
                             <a href="#" class="btn btn-danger btn-sm mb-0"
                                data-bs-toggle="modal"
                                data-bs-target="#confirmCreateDonationRequestModal">
@@ -109,7 +192,12 @@
                                     </div>
                                 @endif
                             </div>
-                        @endif
+                        @endif --}}
+                        <a href="#" class="btn btn-danger btn-sm mb-0"
+   data-bs-toggle="modal"
+   data-bs-target="#confirmCreateDonationRequestModal">
+    + New (TEST)
+</a>
                     </div>
                 </div>
 

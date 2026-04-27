@@ -16,7 +16,7 @@ interface DonationRequestRepositoryInterface
     public function approve(int $id, array $data);
     public function reschedule(int $id, array $data);
     public function approveReschedule(int $id);
-    public function declineReschedule(int $id);
+    public function declineReschedule(int $id, array $data);
     public function cancel(int $id);
     public function delete(int $id);
     public function findLatestActiveDonation();

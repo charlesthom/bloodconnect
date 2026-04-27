@@ -31,6 +31,43 @@
                 <x-approve-donation-request />
                 {{-- confirm cancellation of donation request modal --}}
                 <x-confirm-cancel-donation-request />
+                {{-- decline donation request modal --}}
+<div class="modal fade" id="declineDonationRequestModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg border-radius-xl">
+
+            <div class="modal-header">
+                <h5 class="modal-title font-weight-bold">Decline Donation Request</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <form id="declineDonationRequestForm" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <div class="modal-body">
+                    <label class="form-label">Reason</label>
+                    <textarea 
+                        name="notes" 
+                        class="form-control" 
+                        rows="3" 
+                        required></textarea>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn text-white" style="background-color:#800000;">
+                        Decline
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
 
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between align-items-center">
@@ -94,15 +131,12 @@
                                             <i class="fa-solid fa-thumbs-up"></i>
                                         </a>
                                         <span>
-                                            <a
-                                                href="#"
-                                                class="mx-3"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#confirmCancelDonationRequestModal"
-                                                data-id="{{ $dat->id }}"
-                                            >
-                                                <i class="fa-solid fa-thumbs-down"></i>
-                                            </a>
+                                            <a href="#"
+   data-bs-toggle="modal"
+   data-bs-target="#declineDonationRequestModal"
+   data-id="{{ $dat->id }}">
+    <i class="fas fa-thumbs-down text-danger"></i>
+</a>
                                         </span>
                                     </td>
                                 </tr>
@@ -147,20 +181,27 @@
 document.addEventListener("DOMContentLoaded", () => {
     const approveModal = document.getElementById('approveDonationRequestModal');
     const approveForm = document.getElementById('approveDonationRequestForm');
-    const deleteModal = document.getElementById('confirmCancelDonationRequestModal');
-    const deleteForm = document.getElementById('confirmCancelDonationForm');
 
-    approveModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget;
-        let id = button.getAttribute('data-id');
-        approveForm.action = `/donation-requests/approve/${id}`;
-    });
+    const declineModal = document.getElementById('declineDonationRequestModal');
+    const declineForm = document.getElementById('declineDonationRequestForm');
 
-    deleteModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget;
-        let id = button.getAttribute('data-id');
-        deleteForm.action = `/donation-requests/cancel/${id}`;
-    });
+    if (approveModal && approveForm) {
+        approveModal.addEventListener('show.bs.modal', event => {
+            let button = event.relatedTarget;
+            let id = button.getAttribute('data-id');
+
+            approveForm.action = `/donation-requests/approve/${id}`;
+        });
+    }
+
+    if (declineModal && declineForm) {
+        declineModal.addEventListener('show.bs.modal', event => {
+            let button = event.relatedTarget;
+            let id = button.getAttribute('data-id');
+
+            declineForm.action = `/donation-requests/decline/${id}`;
+        });
+    }
 });
 </script>
 @endpush

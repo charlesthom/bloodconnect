@@ -10,16 +10,22 @@
         <form id="declineRescheduleRequestForm" method="POST">
             @csrf
             @method('PATCH')
-            {{-- <div class="modal-body row g-1">
-                <div class="col-md-8">
-                    <label for="date" class="form-label">Date</label>
-                    <input type="date" class="form-control" id="date" name="date" required>
-                </div>
-                <div class="col-md-8">
-                    <label for="notes" class="form-label">Notes</label>
-                    <input type="text" class="form-control" id="notes" name="notes" required>
-                </div>
-            </div> --}}
+            <form id="declineRescheduleRequestForm" method="POST">
+    @csrf
+    @method('PATCH')
+
+    <div class="modal-body row g-1">
+        <div class="col-md-12">
+            <label for="decline_reschedule_notes" class="form-label">Reason / Notes</label>
+            <textarea
+                class="form-control"
+                id="decline_reschedule_notes"
+                name="notes"
+                rows="3"
+                placeholder="Enter reason for declining the reschedule request"
+                required></textarea>
+        </div>
+    </div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
                 <button type="submit" class="btn text-white" style="background-color:#800000;">Yes</button>
