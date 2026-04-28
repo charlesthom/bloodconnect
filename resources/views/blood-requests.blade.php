@@ -104,13 +104,29 @@
                                 <td class="text-center">{{ ucfirst($availability->status) }}</td>
                                 <td class="text-center">{{ $availability->created_at->format('Y-m-d') }}</td>
                                 <td class="text-center">
-    <form action="{{ route('blood.availability.destroy', $availability->id) }}" method="POST" onsubmit="return confirm('Delete this availability?')">
+
+    <!-- EDIT BUTTON -->
+    <button 
+        class="btn btn-sm bg-gradient-info mb-0 editAvailabilityBtn"
+        data-id="{{ $availability->id }}"
+        data-blood="{{ $availability->blood_type }}"
+        data-quantity="{{ $availability->quantity }}"
+        data-status="{{ $availability->status }}"
+        data-bs-toggle="modal"
+        data-bs-target="#editAvailabilityModal"
+    >
+        Edit
+    </button>
+
+    <!-- DELETE BUTTON -->
+    <form action="{{ route('blood.availability.destroy', $availability->id) }}" method="POST" style="display:inline;">
         @csrf
         @method('DELETE')
         <button type="submit" class="btn btn-sm bg-gradient-danger mb-0">
             Delete
         </button>
     </form>
+
 </td>
                             </tr>
                         @endforeach
@@ -295,18 +311,28 @@
                                         <td class="text-center">
                                              @if(in_array($dat->id, $matchedIds ?? []) && $dat->status !== 'Fulfilled')
                                             <a 
-            href="#"
-            class="mx-3"
-            data-bs-toggle="modal"
-            data-bs-target="#fulfillBloodRequestModal"
-            data-id="{{ $dat->id }}"
-            data-hospital="{{ $matchedDetails[$dat->id]['hospital_name'] ?? '' }}"
-            data-blood="{{ $matchedDetails[$dat->id]['blood_type'] ?? '' }}"
-            data-quantity="{{ $matchedDetails[$dat->id]['quantity'] ?? '' }}"
-        >
-            <button class="btn btn-sm bg-gradient-success mb-0">
-                Accept / Fulfill
-            </button>
+    href="#"
+    class="mx-3"
+    data-bs-toggle="modal"
+    data-bs-target="#fulfillBloodRequestModal"
+
+    data-id="{{ $dat->id }}"
+
+
+    data-request-hospital="{{ $dat->hospital->name }}"
+    data-blood-type="{{ $dat->blood_type }}"
+    data-quantity-requested="{{ $dat->quantity }}"
+    data-urgency="{{ $dat->urgency_lvl }}"
+    data-notes="{{ $dat->notes ?? 'No notes provided' }}"
+
+    
+    data-hospital="{{ $matchedDetails[$dat->id]['hospital_name'] ?? '' }}"
+    data-blood="{{ $matchedDetails[$dat->id]['blood_type'] ?? '' }}"
+    data-quantity="{{ $matchedDetails[$dat->id]['quantity'] ?? '' }}"
+>
+           <button class="btn btn-sm bg-gradient-danger mb-0">
+    View Match
+</button>
         </a>
 
     @elseif($dat->status === 'Fulfilled')
@@ -352,6 +378,50 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="editAvailabilityModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5>Edit Blood Availability</h5>
+            </div>
+
+            <form id="editAvailabilityForm" method="POST">
+                @csrf
+                @method('PATCH')
+
+                <div class="modal-body">
+
+                    <div class="mb-2">
+                        <label>Blood Type</label>
+                        <input type="text" id="editBlood" name="blood_type" class="form-control" readonly>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Quantity</label>
+                        <input type="number" id="editQuantity" name="quantity" class="form-control" min="1" required>
+                    </div>
+
+                    <div class="mb-2">
+                        <label>Status</label>
+                        <select id="editStatus" name="status" class="form-control">
+                            <option value="available">Available</option>
+                            <option value="reserved">Reserved</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn bg-gradient-primary">Update</button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('styles')
@@ -382,22 +452,55 @@ a.disabled {
 @push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", () => {
+
+    // ✅ FULFILL MODAL
     const fulfillBloodRequestModal = document.getElementById('fulfillBloodRequestModal');
     const fulfillBloodRequestForm = document.getElementById('fulfillBloodRequestForm');
 
-    fulfillBloodRequestModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget;
+    if (fulfillBloodRequestModal) {
+        fulfillBloodRequestModal.addEventListener('show.bs.modal', event => {
 
-        let id = button.getAttribute('data-id');
-        let hospital = button.getAttribute('data-hospital');
-        let blood = button.getAttribute('data-blood');
-        let quantity = button.getAttribute('data-quantity');
+            let button = event.relatedTarget;
 
-        fulfillBloodRequestForm.action = `/blood-requests/fulfill/${id}`;
+            let id = button.getAttribute('data-id');
+            let hospital = button.getAttribute('data-hospital');
+            let blood = button.getAttribute('data-blood');
+            let quantity = button.getAttribute('data-quantity');
+            let requestHospital = button.getAttribute('data-request-hospital');
+let bloodType = button.getAttribute('data-blood-type');
+let quantityRequested = button.getAttribute('data-quantity-requested');
+let urgency = button.getAttribute('data-urgency');
+let notes = button.getAttribute('data-notes');
 
-        document.getElementById('matchHospital').textContent = hospital || 'N/A';
-        document.getElementById('matchQuantity').textContent = quantity && blood ? `${quantity} (${blood})` : 'N/A';
+            fulfillBloodRequestForm.action = `/blood-requests/fulfill/${id}`;
+
+            document.getElementById('matchHospital').textContent = hospital || 'N/A';
+            document.getElementById('matchQuantity').textContent = quantity && blood ? `${quantity} (${blood})` : 'N/A';
+            document.getElementById('matchRequestHospital').textContent = requestHospital || 'N/A';
+document.getElementById('matchBloodType').textContent = bloodType || 'N/A';
+document.getElementById('matchQuantityRequested').textContent = quantityRequested || 'N/A';
+document.getElementById('matchUrgency').textContent = urgency || 'N/A';
+document.getElementById('matchNotes').textContent = notes || 'No reason provided';
+        });
+    }
+
+    // ✅ EDIT AVAILABILITY (SEPARATED FIX)
+    document.querySelectorAll('.editAvailabilityBtn').forEach(button => {
+        button.addEventListener('click', function () {
+
+            let id = this.dataset.id;
+            let blood = this.dataset.blood;
+            let quantity = this.dataset.quantity;
+            let status = this.dataset.status;
+
+            document.getElementById('editBlood').value = blood;
+            document.getElementById('editQuantity').value = quantity;
+            document.getElementById('editStatus').value = status;
+
+            document.getElementById('editAvailabilityForm').action = `/blood-availability/${id}`;
+        });
     });
+
 });
 </script>
 @endpush

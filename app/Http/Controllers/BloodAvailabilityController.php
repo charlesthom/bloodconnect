@@ -38,6 +38,31 @@ if ($existing) {
 
         return back()->with('success', 'Blood availability added!');
     }
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'blood_type' => 'required|string',
+        'quantity' => 'required|integer|min:1',
+        'status' => 'required|string',
+    ]);
+
+    $availability = BloodAvailability::findOrFail($id);
+
+    $user = Auth::user();
+    $hospital = Hospital::where('user_id', $user->id)->first();
+
+    if ($availability->hospital_id != $hospital->id) {
+        abort(403);
+    }
+
+    $availability->update([
+        'blood_type' => $request->blood_type,
+        'quantity' => $request->quantity,
+        'status' => $request->status,
+    ]);
+
+    return back()->with('success', 'Blood availability updated!');
+}
     public function destroy($id)
 {
     $availability = BloodAvailability::findOrFail($id);

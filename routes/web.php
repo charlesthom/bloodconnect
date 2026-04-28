@@ -117,6 +117,8 @@ Route::get('/export/hospital/filter/pdf', [DashboardController::class, 'exportHo
     ->name('blood.availability.store');
 	Route::delete('/blood-availability/{id}', [App\Http\Controllers\BloodAvailabilityController::class, 'destroy'])
     ->name('blood.availability.destroy');
+	Route::patch('/blood-availability/{id}', [BloodAvailabilityController::class, 'update'])
+    ->name('blood.availability.update');
 });
 
 
