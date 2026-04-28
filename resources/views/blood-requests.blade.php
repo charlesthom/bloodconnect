@@ -43,6 +43,83 @@
         <div class="row">
             <div class="col-12">
                 <div class="card mb-4 mx-4">
+                    <div class="card-header pb-0">
+        <h6>Add Blood Availability</h6>
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ route('blood.availability.store') }}">
+            @csrf
+
+            <div class="row">
+                <div class="col-md-4">
+                    <select name="blood_type" class="form-control" required>
+                        <option value="">Select Blood Type</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4">
+                    <input type="number" name="quantity" class="form-control" placeholder="Quantity" required>
+                </div>
+
+                <div class="col-md-4">
+                    <button type="submit" class="btn bg-gradient-danger w-100">
+                        Add Availability
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@if(isset($myAvailabilities) && $myAvailabilities->count())
+    <div class="card mb-4 mx-4">
+        <div class="card-header pb-0">
+            <h6>My Blood Availability</h6>
+        </div>
+
+        <div class="card-body px-0 pt-0 pb-2">
+            <div class="table-responsive p-0">
+                <table class="table align-items-center mb-0">
+                    <thead>
+                        <tr>
+                            <th>Blood Type</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Date Added</th>
+                            <th class="text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($myAvailabilities->where('quantity', '>', 0) as $availability)
+                            <tr>
+                                <td>{{ $availability->blood_type }}</td>
+                                <td class="text-center">{{ $availability->quantity }}</td>
+                                <td class="text-center">{{ ucfirst($availability->status) }}</td>
+                                <td class="text-center">{{ $availability->created_at->format('Y-m-d') }}</td>
+                                <td class="text-center">
+    <form action="{{ route('blood.availability.destroy', $availability->id) }}" method="POST" onsubmit="return confirm('Delete this availability?')">
+        @csrf
+        @method('DELETE')
+        <button type="submit" class="btn btn-sm bg-gradient-danger mb-0">
+            Delete
+        </button>
+    </form>
+</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+@endif
                     {{-- new blood request modal --}}
                     <x-create-blood-request />
                     {{-- fulfill blood request modal --}}
@@ -55,11 +132,9 @@
             <h5 class="mb-0">Blood Requests</h5>
         </div>
 
-        @php
-            $notifications = collect($data)
-                ->sortByDesc('created_at')
-                ->values();
-        @endphp
+       @php
+    $notifications = collect($matchedNotifications ?? []);
+@endphp
 
         <!-- RIGHT: BELL + SORT + NEW -->
         <div class="d-flex gap-2 align-items-center ms-auto">
@@ -180,7 +255,7 @@
                                 </thead>
                                 <tbody>
                                     @foreach($data as $dat)
-                                    <tr>
+                                    <tr class="{{ in_array($dat->id, $matchedIds ?? []) ? 'table-success' : '' }}">
                                         <td class="ps-4">
                                             <p class="text-xs font-weight-bold mb-0">{{$dat->id}}</p>
                                         </td>
@@ -206,21 +281,29 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{$dat->request_date->format('Y-m-d')}}</span>
                                         </td>
                                         <td class="text-center">
-                                            <span class="text-secondary text-xs font-weight-bold">{{$dat->status}}</span>
-                                        </td>
+    @if($dat->status === 'Fulfilled')
+        <span class="badge bg-success">Fulfilled</span>
+    @elseif(in_array($dat->id, $matchedIds ?? []))
+        <span class="badge bg-warning text-dark">Matched</span>
+    @else
+        <span class="badge bg-secondary">Pending</span>
+    @endif
+</td>
                                         <td class="text-center">
                                             <span class="text-secondary text-xs font-weight-bold">{{$dat->confirmedBy ? $dat->confirmedBy->name : null }}</span>
                                         </td>
                                         <td class="text-center">
                                             <a 
                                                 href="#"
-                                                class="mx-3 {{(Auth::user()->id === $dat->hospital->user->id || $dat->status === 'Fulfilled') ? 'disabled' : ''}}"
+                                                class="mx-3 {{ (!in_array($dat->id, $matchedIds ?? []) || $dat->status === 'Fulfilled') ? 'disabled' : '' }}"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#fulfillBloodRequestModal"
                                                 data-bs-original-title="Edit user"
                                                 data-id="{{ $dat->id }}"
                                             >
-                                                <i class="fas fa-user-edit text-secondary"></i>
+                                                <button class="btn btn-sm bg-gradient-success mb-0">
+    Accept / Fulfill
+</button>
                                             </a>
                                             {{-- <span>
                                                 <a

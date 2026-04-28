@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\BloodAvailabilityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +113,10 @@ Route::get('/export/hospital/filter/pdf', [DashboardController::class, 'exportHo
 	Route::patch('/blood-requests/fulfill/{id}', [BloodRequestController::class, 'fulfill'])->name('blood-requests.fulfill');
 	Route::patch('/donation-requests/decline/{id}', [DonationRequestController::class, 'decline'])
     ->name('donation-requests.decline');
+	Route::post('/blood-availability/store', [BloodAvailabilityController::class, 'store'])
+    ->name('blood.availability.store');
+	Route::delete('/blood-availability/{id}', [App\Http\Controllers\BloodAvailabilityController::class, 'destroy'])
+    ->name('blood.availability.destroy');
 });
 
 

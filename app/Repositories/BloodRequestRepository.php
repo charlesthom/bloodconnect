@@ -14,6 +14,7 @@ use App\Repositories\Contracts\BloodRequestRepositoryInterface;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use App\Models\BloodAvailability;
 
 class BloodRequestRepository implements BloodRequestRepositoryInterface
 {
@@ -45,22 +46,45 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
         return BloodRequest::findOrFail($id);
     }
 
-    public function create(array $data)
-    {
-        $user = Auth::user();
-        $hospital = Hospital::where('user_id', $user->id)->first();
-        $data['hospital_id'] = $hospital->id;
-        $data['status'] = BloodRequestStatusEnum::Pending;
-        $data['request_date'] = Carbon::now();
-        $create = BloodRequest::create($data);
-        $bloodRequest = BloodRequest::with(['hospital', 'hospital.user'])->where('id', $create->id)->first();
-        $hospitals = Hospital::with(['user'])->where('id', '<>', $hospital->id)->get();
-        Mail::to($bloodRequest->hospital->user->email)->queue(new BloodRequestOwnerMail($bloodRequest));
-        foreach ($hospitals as $hos) {
-            Mail::to($hos->user->email)->queue(new BloodRequestMail($bloodRequest, $hos));
-        }
-        return $bloodRequest;
+   public function create(array $data)
+{
+    $user = Auth::user();
+    $hospital = Hospital::where('user_id', $user->id)->first();
+
+    $data['hospital_id'] = $hospital->id;
+    $data['status'] = BloodRequestStatusEnum::Pending;
+    $data['request_date'] = Carbon::now();
+
+    $create = BloodRequest::create($data);
+
+    $bloodRequest = BloodRequest::with(['hospital', 'hospital.user'])
+        ->where('id', $create->id)
+        ->first();
+
+    $matchedAvailabilities = BloodAvailability::with(['hospital.user'])
+        ->where('blood_type', $bloodRequest->blood_type)
+        ->where('quantity', '>=', (int) $bloodRequest->quantity)
+        ->where('status', 'available')
+        ->where('hospital_id', '<>', $hospital->id)
+        ->get();
+
+    $hospitals = $matchedAvailabilities
+        ->pluck('hospital')
+        ->filter()
+        ->unique('id')
+        ->values();
+        
+
+    Mail::to($bloodRequest->hospital->user->email)
+        ->queue(new BloodRequestOwnerMail($bloodRequest));
+
+    foreach ($hospitals as $hos) {
+        Mail::to($hos->user->email)
+            ->queue(new BloodRequestMail($bloodRequest, $hos));
     }
+
+    return $bloodRequest;
+}
 
     public function fulfill(int $id)
 {
@@ -74,16 +98,29 @@ class BloodRequestRepository implements BloodRequestRepositoryInterface
         'confirmed_by' => $hospital->id,
     ]);
 
-    // 👉 ADD THIS LINE (reload with relation)
+    $availability = BloodAvailability::where('hospital_id', $hospital->id)
+        ->where('blood_type', $bloodRequest->blood_type)
+        ->where('status', 'available')
+        ->first();
+
+    if ($availability) {
+        $availability->quantity = (int) $availability->quantity - (int) $bloodRequest->quantity;
+
+        if ($availability->quantity <= 0) {
+            $availability->quantity = 0;
+            $availability->status = 'reserved';
+        }
+
+        $availability->save();
+    }
+
     $bloodRequest->load(['hospital', 'hospital.user', 'confirmedBy']);
 
-    // 👉 ADD EMAIL (owner)
     if (!empty($bloodRequest->hospital->user->email)) {
         Mail::to($bloodRequest->hospital->user->email)
             ->queue(new \App\Mail\BloodRequestFulfilledOwnerMail($bloodRequest));
     }
 
-    // 👉 ADD EMAIL (fulfilling hospital)
     if (!empty($hospital->user->email)) {
         Mail::to($hospital->user->email)
             ->queue(new \App\Mail\BloodRequestFulfilledMail($bloodRequest));
