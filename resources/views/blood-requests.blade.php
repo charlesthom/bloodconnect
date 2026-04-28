@@ -79,62 +79,78 @@
     </div>
 </div>
 @if(isset($myAvailabilities) && $myAvailabilities->count())
-    <div class="card mb-4 mx-4">
-        <div class="card-header pb-0">
-            <h6>My Blood Availability</h6>
-        </div>
+<div class="card mb-4 mx-4">
+    <div class="card-header pb-0">
+        <h6>My Blood Availability</h6>
+    </div>
 
-        <div class="card-body px-0 pt-0 pb-2">
-            <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th>Blood Type</th>
-                            <th class="text-center">Quantity</th>
-                            <th class="text-center">Status</th>
-                            <th class="text-center">Date Added</th>
-                            <th class="text-center">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($myAvailabilities->where('quantity', '>', 0) as $availability)
-                            <tr>
-                                <td>{{ $availability->blood_type }}</td>
-                                <td class="text-center">{{ $availability->quantity }}</td>
-                                <td class="text-center">{{ ucfirst($availability->status) }}</td>
-                                <td class="text-center">{{ $availability->created_at->format('Y-m-d') }}</td>
-                                <td class="text-center">
+    <div class="card-body">
+        <div class="row">
 
-    <!-- EDIT BUTTON -->
-    <button 
-        class="btn btn-sm bg-gradient-info mb-0 editAvailabilityBtn"
-        data-id="{{ $availability->id }}"
-        data-blood="{{ $availability->blood_type }}"
-        data-quantity="{{ $availability->quantity }}"
-        data-status="{{ $availability->status }}"
-        data-bs-toggle="modal"
-        data-bs-target="#editAvailabilityModal"
-    >
-        Edit
-    </button>
+            @foreach($myAvailabilities->where('quantity', '>', 0) as $availability)
+                @php
+                    $matchedCount = collect($matchedNotifications ?? [])
+                        ->where('blood_type', $availability->blood_type)
+                        ->count();
+                @endphp
 
-    <!-- DELETE BUTTON -->
-    <form action="{{ route('blood.availability.destroy', $availability->id) }}" method="POST" style="display:inline;">
-        @csrf
-        @method('DELETE')
-        <button type="submit" class="btn btn-sm bg-gradient-danger mb-0">
-            Delete
-        </button>
-    </form>
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100 border-0 availability-card">
+                        <div class="card-body">
 
-</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h4 class="fw-bold text-danger mb-0">
+                                    {{ $availability->blood_type }}
+                                </h4>
+
+                                <span class="badge bg-success">
+                                    {{ ucfirst($availability->status) }}
+                                </span>
+                            </div>
+
+                            <h5 class="fw-bold mb-2">
+                                {{ $availability->quantity }} Units
+                            </h5>
+
+                            <p class="mb-2 text-sm">
+                                ⚡ Matched Requests:
+                                <strong>{{ $matchedCount }}</strong>
+                            </p>
+
+                            <p class="text-muted small mb-3">
+                                Date Added: {{ $availability->created_at->format('M d, Y') }}
+                            </p>
+
+                            <div class="d-flex gap-2">
+                                <button 
+                                    class="btn btn-sm bg-gradient-info editAvailabilityBtn"
+                                    data-id="{{ $availability->id }}"
+                                    data-blood="{{ $availability->blood_type }}"
+                                    data-quantity="{{ $availability->quantity }}"
+                                    data-status="{{ $availability->status }}"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editAvailabilityModal"
+                                >
+                                    Edit
+                                </button>
+
+                                <form action="{{ route('blood.availability.destroy', $availability->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm bg-gradient-danger">
+                                        Delete
+                                    </button>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
         </div>
     </div>
+</div>
 @endif
                     {{-- new blood request modal --}}
                     <x-create-blood-request />
@@ -430,9 +446,9 @@
     filter: invert(1) grayscale(100%) brightness(200%);
 }
 a.disabled {
-    pointer-events: none;   /* disables clicking */
-    opacity: 0.5;           /* visual feedback */
-    cursor: not-allowed;    /* shows disabled cursor */
+    pointer-events: none;
+    opacity: 0.5;
+    cursor: not-allowed;
     text-decoration: none;
 }
 .blood-request-bg {
@@ -446,6 +462,18 @@ a.disabled {
     background-position: center;
     background-repeat: no-repeat;
 }
+
+/* 🔥 ADD THIS */
+.availability-card {
+    border-radius: 16px;
+    transition: 0.2s ease;
+}
+
+.availability-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12) !important;
+}
+
 </style>
 @endpush
 
