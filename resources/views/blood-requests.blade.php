@@ -293,18 +293,40 @@
                                             <span class="text-secondary text-xs font-weight-bold">{{$dat->confirmedBy ? $dat->confirmedBy->name : null }}</span>
                                         </td>
                                         <td class="text-center">
+                                             @if(in_array($dat->id, $matchedIds ?? []) && $dat->status !== 'Fulfilled')
                                             <a 
-                                                href="#"
-                                                class="mx-3 {{ (!in_array($dat->id, $matchedIds ?? []) || $dat->status === 'Fulfilled') ? 'disabled' : '' }}"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#fulfillBloodRequestModal"
-                                                data-bs-original-title="Edit user"
-                                                data-id="{{ $dat->id }}"
-                                            >
-                                                <button class="btn btn-sm bg-gradient-success mb-0">
-    Accept / Fulfill
-</button>
-                                            </a>
+            href="#"
+            class="mx-3"
+            data-bs-toggle="modal"
+            data-bs-target="#fulfillBloodRequestModal"
+            data-id="{{ $dat->id }}"
+            data-hospital="{{ $matchedDetails[$dat->id]['hospital_name'] ?? '' }}"
+            data-blood="{{ $matchedDetails[$dat->id]['blood_type'] ?? '' }}"
+            data-quantity="{{ $matchedDetails[$dat->id]['quantity'] ?? '' }}"
+        >
+            <button class="btn btn-sm bg-gradient-success mb-0">
+                Accept / Fulfill
+            </button>
+        </a>
+
+    @elseif($dat->status === 'Fulfilled')
+
+        <button class="btn btn-sm btn-success mb-0" disabled>
+            Fulfilled
+        </button>
+
+    @else
+
+        <button class="btn btn-sm btn-secondary mb-0" disabled title="Insufficient stock">
+            Not Available
+        </button>
+        @if(isset($missingMap[$dat->id]))
+    <div class="text-danger text-xs mt-1">
+        Need +{{ $missingMap[$dat->id] }} more
+    </div>
+@endif
+
+    @endif
                                             {{-- <span>
                                                 <a
                                                     href="#"
@@ -362,11 +384,19 @@ a.disabled {
 document.addEventListener("DOMContentLoaded", () => {
     const fulfillBloodRequestModal = document.getElementById('fulfillBloodRequestModal');
     const fulfillBloodRequestForm = document.getElementById('fulfillBloodRequestForm');
+
     fulfillBloodRequestModal.addEventListener('show.bs.modal', event => {
-        let button = event.relatedTarget; // the clicked button
+        let button = event.relatedTarget;
+
         let id = button.getAttribute('data-id');
+        let hospital = button.getAttribute('data-hospital');
+        let blood = button.getAttribute('data-blood');
+        let quantity = button.getAttribute('data-quantity');
 
         fulfillBloodRequestForm.action = `/blood-requests/fulfill/${id}`;
+
+        document.getElementById('matchHospital').textContent = hospital || 'N/A';
+        document.getElementById('matchQuantity').textContent = quantity && blood ? `${quantity} (${blood})` : 'N/A';
     });
 });
 </script>

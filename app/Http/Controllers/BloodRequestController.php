@@ -68,13 +68,59 @@ class BloodRequestController extends Controller
             ->latest()
             ->get();
     }
+    $matchedDetails = [];
+
+if ($hospital) {
+    foreach ($matchedNotifications as $item) {
+        $matchedAvailability = BloodAvailability::where('hospital_id', $hospital->id)
+            ->where('blood_type', $item->blood_type)
+            ->where('quantity', '>=', (int) $item->quantity)
+            ->where('status', 'available')
+            ->first();
+
+        if ($matchedAvailability) {
+            $matchedDetails[$item->id] = [
+                'hospital_name' => $hospital->name,
+                'blood_type' => $matchedAvailability->blood_type,
+                'quantity' => $matchedAvailability->quantity,
+            ];
+        }
+    }
+}
 $matchedIds = $matchedNotifications->pluck('id')->toArray();
+$availableTotals = collect();
+
+if ($hospital) {
+    $availableTotals = BloodAvailability::where('hospital_id', $hospital->id)
+        ->where('status', 'available')
+        ->get()
+        ->groupBy('blood_type')
+        ->map(fn ($rows) => (int) $rows->sum('quantity'));
+}
+
+$missingMap = [];
+
+foreach ($data as $item) {
+    $available = (int) ($availableTotals[$item->blood_type] ?? 0);
+    $required = (int) $item->quantity;
+
+    if (
+    $item->status !== 'Fulfilled' &&
+    $item->hospital_id != optional($hospital)->id &&
+    $available > 0 &&
+    $available < $required
+) {
+    $missingMap[$item->id] = $required - $available;
+}
+}
     return view('blood-requests')->with([
-        "data" => $data,
-        "matchedNotifications" => $matchedNotifications,
-        "myAvailabilities" => $myAvailabilities,
-        "matchedIds" => $matchedIds,
-    ]);
+    "data" => $data,
+    "matchedNotifications" => $matchedNotifications,
+    "myAvailabilities" => $myAvailabilities,
+    "matchedIds" => $matchedIds,
+    "matchedDetails" => $matchedDetails,
+    "missingMap" => $missingMap,
+]);
 }
 
     public function show($id)

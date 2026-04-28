@@ -20,6 +20,12 @@
                     <input type="text" class="form-control" id="notes" name="notes" required>
                 </div>
             </div> --}}
+            <div class="modal-body">
+    <div class="alert alert-success mb-0">
+        <strong>Supplying Hospital:</strong> <span id="matchHospital">N/A</span><br>
+        <strong>Available Blood:</strong> <span id="matchQuantity">N/A</span>
+    </div>
+</div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
                <button type="submit" class="btn text-white" style="background-color:#800000;">Yes</button>
