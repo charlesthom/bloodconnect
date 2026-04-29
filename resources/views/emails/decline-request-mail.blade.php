@@ -8,12 +8,12 @@
 
 <div style="max-width:600px; margin:auto; background:#fff; padding:20px; border-radius:10px;">
     
-    <h2 style="color:#800000;">Blood Donation Request Cancelled</h2>
+    <h2 style="color:#800000;">Blood Screening Request Cancelled</h2>
 
     <p>Hello {{ $donationRequest->user->name }},</p>
 
     <p>
-        We regret to inform you that your donation request has been <strong>cancelled</strong>.
+        We regret to inform you that your screening request has been <strong>cancelled</strong>.
     </p>
 
     @if(!empty($donationRequest->notes))

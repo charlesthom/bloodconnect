@@ -20,7 +20,7 @@ class ApproveRequestAdminMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject('You have approved a Blood Donation Request')
+        return $this->subject('You have approved a Screening Request')
             ->view('emails.approve-request-admin-mail');
     }
 }

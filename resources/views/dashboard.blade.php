@@ -16,7 +16,11 @@
         <div class="card">
           <div class="card-body p-3">
             <h5 class="mb-3">Reports Filter</h5>
-
+@if(session('error'))
+    <div class="alert alert-danger text-white mb-3">
+        {{ session('error') }}
+    </div>
+@endif
             <form action="{{ route('export.filtered.pdf') }}" method="GET">
               <div class="row align-items-end">
                 <div class="col-md-3 mb-3">
@@ -35,7 +39,7 @@
     <option value="">Choose Report</option>
     <option value="users">Users</option>
     <option value="hospitals">Hospitals</option>
-    <option value="donation">Donation Requests</option>
+    <option value="donation">Screening Requests</option>
     <option value="blood">Blood Requests</option>
 </select>
                 </div>
@@ -114,7 +118,7 @@
             <div class="row">
               <div class="col-8">
                 <div class="numbers">
-                  <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Donation Requests</p>
+                  <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Screening Requests</p>
                   <h5 class="font-weight-bolder mb-0">
                     {{$donation_request_count}}
                     {{-- <span class="text-danger text-sm font-weight-bolder">-2%</span> --}}

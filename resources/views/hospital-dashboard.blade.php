@@ -63,7 +63,7 @@
       <div class="card-body p-3">
         <div class="row">
           <div class="col-8">
-            <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Donation Requests</p>
+            <p class="text-sm mb-0 text-capitalize font-weight-bold">Total Screening Requests</p>
             <h5 class="font-weight-bolder mb-0">{{ $total_donation_request_count }}</h5>
           </div>
           <div class="col-4 text-end">
@@ -171,7 +171,7 @@
               <select name="report" class="form-control" required>  
                 <option value="">Choose Report</option>
                 <option value="donors">Donors</option>
-                <option value="donation">Donation Requests</option>
+                <option value="donation">Screening Requests</option>
                 <option value="blood">Blood Requests</option>
               </select>
             </div>
@@ -192,7 +192,7 @@
       <div class="col-lg-12">
         <div class="card z-index-2">
           <div class="card-header pb-0">
-            <h6>Donation Requests</h6>
+            <h6>Screening Requests</h6>
             <p class="text-sm mb-0">Monthly request overview</p>
           </div>
           <div class="card-body p-3">

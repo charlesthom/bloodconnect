@@ -94,7 +94,7 @@
             <div class="bloodconnect-brand-panel text-center text-white">
               <div class="bloodconnect-brand-title">BloodConnect</div>
               <p class="bloodconnect-brand-subtitle mb-0">
-                AI-Powered Blood Donation and Matching Platform
+                A Web-Based Blood Donation Scheduling For Screening and Hospital Matching
               </p>
             </div>
           </div>

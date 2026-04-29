@@ -101,7 +101,7 @@
                 The donor has been notified and their schedule has been updated accordingly in the system. No further action is required at this time.
             </p>
             <p>
-                Thank you for efficiently handling donation requests and contributing to our mission of saving lives.
+                Thank you for efficiently handling screening requests and contributing to our mission of saving lives.
             </p>
             <p>
                 Best regards,<br>

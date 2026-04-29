@@ -34,7 +34,7 @@
                         </div>
                     @endif
 
-                    <p class="text-muted mb-0">Confirm creation of new donation request?</p>
+                    <p class="text-muted mb-0">Confirm creation of new screening request?</p>
                 </div>
 
                 <div class="modal-footer border-0 pt-0">

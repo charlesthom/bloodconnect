@@ -1,5 +1,8 @@
 @extends('layouts.user_type.auth')
-
+@php
+    $breadcrumbTitle = 'Screening Requests/Reschedule';
+    $pageTitle = 'Screening Requests/Reschedule';
+@endphp
 @section('content')
 
 <div class="reschedule-bg"> <!-- ✅ ONLY ADDED -->

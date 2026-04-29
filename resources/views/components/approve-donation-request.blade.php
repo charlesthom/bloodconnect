@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content shadow-lg border-radius-xl">
         <div class="modal-header">
-            <h5 class="modal-title font-weight-bold" id="approveDonationRequestModalLable">Confirm Donation Request? Set a Schedule</h5>
+            <h5 class="modal-title font-weight-bold" id="approveDonationRequestModalLable">Confirm Screening Request? Set a Schedule</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
 

@@ -37,7 +37,7 @@
         <div class="card shadow-lg" style="border-radius:20px; border:none;">
 
           <div class="card-header text-center pt-4 bg-transparent">
-            <h4 style="color:#7b0f1a; font-weight:700;">Register</h4>
+            <h4 style="color:#7b0f1a; font-weight:700;">Donor Registration</h4>
           </div>
 
           <div class="card-body">

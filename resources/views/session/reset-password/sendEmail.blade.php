@@ -85,8 +85,8 @@
                     </h1>
 
                     <p class="bloodconnect-subtitle">
-                        AI-Powered Blood Donation and <br>
-                        Matching Platform
+                        A Web-Based Blood Donation Scheduling  <br>
+                        For Screening and Hospital Matching
                     </p>
 
                 </div>

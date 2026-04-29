@@ -20,7 +20,7 @@ class DeclineRequestMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject('Blood Donation Request Cancelled')
+        return $this->subject('Screening Request Cancelled')
             ->view('emails.decline-request-mail');
     }
 }

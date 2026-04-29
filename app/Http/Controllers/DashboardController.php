@@ -318,6 +318,14 @@ public function exportBloodRequestsPdf()
 public function exportFilteredPdf(Request $request)
 {
     $from = $request->from;
+$to = $request->to;
+
+if ($from && $to && $from > $to) {
+    return redirect()
+        ->back()
+        ->with('error', 'Invalid date range. From Date cannot be later than To Date.');
+}
+    $from = $request->from;
     $to = $request->to;
     $report = $request->report;
 

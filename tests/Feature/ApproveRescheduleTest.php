@@ -39,7 +39,7 @@ class ApproveRescheduleTest extends TestCase
         $requestId = DB::table('donation_requests')->insertGetId([
             'user_id' => $donor->id,
             'hospital_id' => $hospitalId,
-            'notes' => 'Donation request for reschedule approval',
+            'notes' => 'Screening request for reschedule approval',
             'status' => 'Pending',
             'created_at' => now(),
             'updated_at' => now(),

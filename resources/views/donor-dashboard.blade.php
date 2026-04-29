@@ -59,7 +59,7 @@
             <div class="col-8">
               <div class="numbers">
                 <p class="text-sm mb-0 text-capitalize font-weight-bold blood-title">
-                  Latest Active Donation
+                  Latest Active Screening
                 </p>
                 <h5 class="font-weight-bolder mb-0 blood-value" style="font-size: 15px">
                   {{ $latest_active?->schedules[0]?->date ?? 'No active donation yet' }}

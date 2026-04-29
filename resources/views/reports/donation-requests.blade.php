@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Donation Requests Report PDF</title>
+    <title>Screening Requests Report PDF</title>
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
@@ -116,7 +116,7 @@
         </table>
     </div>
 
-    <div class="report-title">Donation Requests Report</div>
+    <div class="report-title">Screening Requests Report</div>
     <div class="report-date">Date Generated: {{ now()->format('F d, Y') }}</div>
 
     <table class="data-table">

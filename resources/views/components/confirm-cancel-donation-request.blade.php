@@ -11,7 +11,7 @@
             @csrf
             @method('PATCH')
             <div class="modal-body row g-1">
-                <div id="delete_hospital_name">Confirm cancellation of donation request?</div>
+                <div id="delete_hospital_name">Confirm cancellation of screening request?</div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>

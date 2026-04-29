@@ -113,7 +113,7 @@
             <h2>Hello, {{ $donationRequest->hospital->name ?? 'User' }}!</h2>
 
             <p>
-                You have received a new <strong>Blood Donation Request</strong> through <strong>BloodConnect</strong>.
+                You have received a new <strong>Blood Screening Request</strong> through <strong>BloodConnect</strong>.
             </p>
 
             <p>

@@ -1,5 +1,8 @@
 @extends('layouts.user_type.auth')
-
+@php
+    $breadcrumbTitle = 'Screening Requests/Reschedule';
+    $pageTitle = 'Screening Requests/Reschedule';
+@endphp
 @section('content')
 
 <div class="donation-bg"> <!-- ✅ ADDED WRAPPER -->
@@ -27,17 +30,17 @@
     <div class="row">
         <div class="col-12">
             <div class="card mb-4 mx-4">
-                {{-- approve donation request modal --}}
+                {{-- approve screening request modal --}}
                 <x-approve-donation-request />
-                {{-- confirm cancellation of donation request modal --}}
+                {{-- confirm cancellation of screening request modal --}}
                 <x-confirm-cancel-donation-request />
-                {{-- decline donation request modal --}}
+                {{-- decline screening request modal --}}
 <div class="modal fade" id="declineDonationRequestModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content shadow-lg border-radius-xl">
 
             <div class="modal-header">
-                <h5 class="modal-title font-weight-bold">Decline Donation Request</h5>
+                <h5 class="modal-title font-weight-bold">Decline Screening Request</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
@@ -72,7 +75,7 @@
                 <div class="card-header pb-0">
                     <div class="d-flex flex-row justify-content-between align-items-center">
     <div>
-        <h5 class="mb-0">Donation Requests</h5>
+        <h5 class="mb-0">Screening Requests</h5>
     </div>
 @php
     $notifications = collect($data)
@@ -97,9 +100,9 @@
         @forelse($notifications as $notification)
             <li>
                 <div class="dropdown-item-text border-bottom py-2">
-                    <strong class="text-danger">New Donation Request</strong><br>
+                    <strong class="text-danger">New Screening Request</strong><br>
                     <small>
-                        {{ $notification->user->name }} requested a blood donation schedule.
+                        {{ $notification->user->name }} requested a Screening schedule.
                     </small>
 
                     <br>

@@ -1,5 +1,8 @@
 @extends('layouts.user_type.auth')
-
+@php
+    $breadcrumbTitle = 'Screening Requests/Donor';
+    $pageTitle = 'Screening Requests/Donor';
+@endphp
 @section('content')
 
 <div class="donation-request-page-bg">
@@ -67,7 +70,7 @@
     $blockMessage = null;
 
     if ($latestPendingRequest) {
-        $blockMessage = 'You already have a pending donation request.';
+        $blockMessage = 'You already have a pending screening request.';
     } elseif ($latestPendingRescheduleRequest) {
         $blockMessage = 'You already have a pending reschedule request.';
     } elseif ($latestApprovedRequest && $latestApprovedRequest->latestActiveSchedule?->date) {
@@ -90,7 +93,7 @@
                 <div class="card-header pb-0">
     <div class="d-flex flex-row justify-content-between align-items-start">
         <div>
-            <h5 class="mb-0">Donation Requests</h5>
+            <h5 class="mb-0">Donor Screening Request</h5>
         </div>
 
         @php
@@ -172,7 +175,7 @@
                 </ul>
             </div>
 
-                       {{-- @if(!$hasBlockingRequest)
+                    @if(!$hasBlockingRequest)
                             <a href="#" class="btn btn-danger btn-sm mb-0"
                                data-bs-toggle="modal"
                                data-bs-target="#confirmCreateDonationRequestModal">
@@ -192,12 +195,9 @@
                                     </div>
                                 @endif
                             </div>
-                        @endif --}}
-                        <a href="#" class="btn btn-danger btn-sm mb-0"
-   data-bs-toggle="modal"
-   data-bs-target="#confirmCreateDonationRequestModal">
-    + New (TEST)
-</a>
+                        @endif 
+                       
+                            </a>
                     </div>
                 </div>
 

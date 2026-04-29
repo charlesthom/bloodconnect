@@ -221,7 +221,7 @@
                   </g>
               </svg>            
             </div>
-            <span class="nav-link-text ms-1">Donation Requests</span>
+            <span class="nav-link-text ms-1">Screening Requests</span>
         </a>
       </li>
       @endif

@@ -81,7 +81,7 @@
 @if(isset($myAvailabilities) && $myAvailabilities->count())
 <div class="card mb-4 mx-4">
     <div class="card-header pb-0">
-        <h6>My Blood Availability</h6>
+        <h6>Inventory</h6>
     </div>
 
     <div class="card-body">
@@ -113,7 +113,7 @@
                             </h5>
 
                             <p class="mb-2 text-sm">
-                                ⚡ Matched Requests:
+                                 Matched Requests:
                                 <strong>{{ $matchedCount }}</strong>
                             </p>
 

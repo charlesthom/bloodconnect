@@ -96,11 +96,11 @@
     <h2>Hello, {{ $donationRequest->user->name ?? 'User' }}!</h2>
 
     <p>
-        Great news! Your <strong>Blood Donation Request</strong> has been <strong>approved</strong>.
+        Great news! Your <strong>Blood Screening Request</strong> has been <strong>approved</strong>.
     </p>
 
     <p>
-        The hospital or blood bank has accepted your donation request. Please make sure to attend on your scheduled donation date.
+        The hospital or blood bank has accepted your screening request. Please make sure to attend on your scheduled donation date.
     </p>
 
     <p>

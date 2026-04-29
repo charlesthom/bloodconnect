@@ -24,7 +24,7 @@ class DonationRequestAdminMail extends Mailable implements ShouldQueue
 
     public function build()
     {
-        return $this->subject('New Donation Request')
+        return $this->subject('New Screening Request')
             ->view('emails.donation-request-admin-mail');
     }
 }

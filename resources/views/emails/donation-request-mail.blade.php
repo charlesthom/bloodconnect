@@ -95,10 +95,10 @@
         <div class="content">
             <h2>Hello, {{ $donationRequest->user->name ?? 'User' }}!</h2>
             <p>
-                Thank you for submitting your <strong>Blood Donation Request</strong> with <strong>BloodConnect</strong>.
+                Thank you for submitting your <strong>Blood Screening Request</strong> with <strong>BloodConnect</strong>.
             </p>
             <p>
-                Your request has been successfully received and is now being reviewed. Our system will notify the nearest hospital/blood bank to cater your donation request.
+                Your request has been successfully received and is now being reviewed. Our system will notify the nearest hospital/blood bank to cater your screening request.
             </p>
             <p>
                 We appreciate your effort in reaching out — every request brings us one step closer to saving lives.

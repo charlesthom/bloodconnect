@@ -143,7 +143,7 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     ->latest()
     ->first();
       //
-      /*  if ($latestDonationRequest) {
+        if ($latestDonationRequest) {
             if (strtoupper($user->gender) == 'MALE') {
                 $allowDate = $latestDonationRequest->created_at->addMonths(4)->format('M d, Y');
                 if ($latestDonationRequest->created_at->gt(now()->subMonths(4))) {
@@ -165,10 +165,10 @@ class DonationRequestRepository implements DonationRequestRepositoryInterface
     ->first();
 
 if ($latestPendingRequest) {
-    throw new \Exception("You already have a pending donation request.");
+    throw new \Exception("You already have a pending screening requests.");
 }
             }
-        } */
+        } 
         $donationRequest = DonationRequest::create($data);
         return DonationRequest::with(['user', 'hospital', 'hospital.user'])->where('id', $donationRequest->id)->first();
     }
